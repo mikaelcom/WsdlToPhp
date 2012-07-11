@@ -1,0 +1,98 @@
+<?php
+/**
+ * Class file for OvhTypeSqlpriveMysqlProcessKill
+ * @date 02/07/2012
+ */
+/**
+ * Class OvhTypeSqlpriveMysqlProcessKill
+ * @date 02/07/2012
+ */
+class OvhTypeSqlpriveMysqlProcessKill extends OvhWsdlClass
+{
+	/**
+	 * The session
+	 * @var string
+	 */
+	public $session;
+	/**
+	 * The server
+	 * @var string
+	 */
+	public $server;
+	/**
+	 * The process
+	 * @var int
+	 */
+	public $process;
+	/**
+	 * Constructor
+	 * @param string session
+	 * @param string server
+	 * @param int process
+	 * @return OvhTypeSqlpriveMysqlProcessKill
+	 */
+	public function __construct($_session = null,$_server = null,$_process = null)
+	{
+		parent::__construct(array('session'=>$_session,'server'=>$_server,'process'=>$_process));
+	}
+	/**
+	 * Set session
+	 * @param string session
+	 * @return string
+	 */
+	public function setSession($_session)
+	{
+		return ($this->session = $_session);
+	}
+	/**
+	 * Get session
+	 * @return string
+	 */
+	public function getSession()
+	{
+		return $this->session;
+	}
+	/**
+	 * Set server
+	 * @param string server
+	 * @return string
+	 */
+	public function setServer($_server)
+	{
+		return ($this->server = $_server);
+	}
+	/**
+	 * Get server
+	 * @return string
+	 */
+	public function getServer()
+	{
+		return $this->server;
+	}
+	/**
+	 * Set process
+	 * @param int process
+	 * @return int
+	 */
+	public function setProcess($_process)
+	{
+		return ($this->process = $_process);
+	}
+	/**
+	 * Get process
+	 * @return int
+	 */
+	public function getProcess()
+	{
+		return $this->process;
+	}
+	/**
+	 * Method returning the class name
+	 * @return string __CLASS__
+	 */
+	public function __toString()
+	{
+		return __CLASS__;
+	}
+}
+?>

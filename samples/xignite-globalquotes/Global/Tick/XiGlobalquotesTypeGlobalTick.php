@@ -1,0 +1,445 @@
+<?php
+/**
+ * Class file for XiGlobalquotesTypeGlobalTick
+ * @date 08/07/2012
+ */
+/**
+ * Class XiGlobalquotesTypeGlobalTick
+ * @date 08/07/2012
+ */
+class XiGlobalquotesTypeGlobalTick extends XiGlobalquotesTypeCommon
+{
+	/**
+	 * The Symbol
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $Symbol;
+	/**
+	 * The Name
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $Name;
+	/**
+	 * The MarketIdentificationCode
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $MarketIdentificationCode;
+	/**
+	 * The Currency
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $Currency;
+	/**
+	 * The Date
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $Date;
+	/**
+	 * The Time
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $Time;
+	/**
+	 * The UTCDate
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $UTCDate;
+	/**
+	 * The UTCTime
+	 * Meta informations :
+	 * 	- minOccurs : 0
+	 * 	- maxOccurs : 1
+	 * @var string
+	 */
+	public $UTCTime;
+	/**
+	 * The Last
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $Last;
+	/**
+	 * The High
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $High;
+	/**
+	 * The Low
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $Low;
+	/**
+	 * The First
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $First;
+	/**
+	 * The Quantity
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $Quantity;
+	/**
+	 * The Trades
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var int
+	 */
+	public $Trades;
+	/**
+	 * The TWAP
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $TWAP;
+	/**
+	 * The VWAP
+	 * Meta informations :
+	 * 	- minOccurs : 1
+	 * 	- maxOccurs : 1
+	 * @var double
+	 */
+	public $VWAP;
+	/**
+	 * Constructor
+	 * @param string Symbol
+	 * @param string Name
+	 * @param string MarketIdentificationCode
+	 * @param string Currency
+	 * @param string Date
+	 * @param string Time
+	 * @param string UTCDate
+	 * @param string UTCTime
+	 * @param double Last
+	 * @param double High
+	 * @param double Low
+	 * @param double First
+	 * @param double Quantity
+	 * @param int Trades
+	 * @param double TWAP
+	 * @param double VWAP
+	 * @return XiGlobalquotesTypeGlobalTick
+	 */
+	public function __construct($_Symbol = null,$_Name = null,$_MarketIdentificationCode = null,$_Currency = null,$_Date = null,$_Time = null,$_UTCDate = null,$_UTCTime = null,$_Last,$_High,$_Low,$_First,$_Quantity,$_Trades,$_TWAP,$_VWAP)
+	{
+		XiGlobalquotesWsdlClass::__construct(array('Symbol'=>$_Symbol,'Name'=>$_Name,'MarketIdentificationCode'=>$_MarketIdentificationCode,'Currency'=>$_Currency,'Date'=>$_Date,'Time'=>$_Time,'UTCDate'=>$_UTCDate,'UTCTime'=>$_UTCTime,'Last'=>$_Last,'High'=>$_High,'Low'=>$_Low,'First'=>$_First,'Quantity'=>$_Quantity,'Trades'=>$_Trades,'TWAP'=>$_TWAP,'VWAP'=>$_VWAP));
+	}
+	/**
+	 * Set Symbol
+	 * @param string Symbol
+	 * @return string
+	 */
+	public function setSymbol($_Symbol)
+	{
+		return ($this->Symbol = $_Symbol);
+	}
+	/**
+	 * Get Symbol
+	 * @return string
+	 */
+	public function getSymbol()
+	{
+		return $this->Symbol;
+	}
+	/**
+	 * Set Name
+	 * @param string Name
+	 * @return string
+	 */
+	public function setName($_Name)
+	{
+		return ($this->Name = $_Name);
+	}
+	/**
+	 * Get Name
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->Name;
+	}
+	/**
+	 * Set MarketIdentificationCode
+	 * @param string MarketIdentificationCode
+	 * @return string
+	 */
+	public function setMarketIdentificationCode($_MarketIdentificationCode)
+	{
+		return ($this->MarketIdentificationCode = $_MarketIdentificationCode);
+	}
+	/**
+	 * Get MarketIdentificationCode
+	 * @return string
+	 */
+	public function getMarketIdentificationCode()
+	{
+		return $this->MarketIdentificationCode;
+	}
+	/**
+	 * Set Currency
+	 * @param string Currency
+	 * @return string
+	 */
+	public function setCurrency($_Currency)
+	{
+		return ($this->Currency = $_Currency);
+	}
+	/**
+	 * Get Currency
+	 * @return string
+	 */
+	public function getCurrency()
+	{
+		return $this->Currency;
+	}
+	/**
+	 * Set Date
+	 * @param string Date
+	 * @return string
+	 */
+	public function setDate($_Date)
+	{
+		return ($this->Date = $_Date);
+	}
+	/**
+	 * Get Date
+	 * @return string
+	 */
+	public function getDate()
+	{
+		return $this->Date;
+	}
+	/**
+	 * Set Time
+	 * @param string Time
+	 * @return string
+	 */
+	public function setTime($_Time)
+	{
+		return ($this->Time = $_Time);
+	}
+	/**
+	 * Get Time
+	 * @return string
+	 */
+	public function getTime()
+	{
+		return $this->Time;
+	}
+	/**
+	 * Set UTCDate
+	 * @param string UTCDate
+	 * @return string
+	 */
+	public function setUTCDate($_UTCDate)
+	{
+		return ($this->UTCDate = $_UTCDate);
+	}
+	/**
+	 * Get UTCDate
+	 * @return string
+	 */
+	public function getUTCDate()
+	{
+		return $this->UTCDate;
+	}
+	/**
+	 * Set UTCTime
+	 * @param string UTCTime
+	 * @return string
+	 */
+	public function setUTCTime($_UTCTime)
+	{
+		return ($this->UTCTime = $_UTCTime);
+	}
+	/**
+	 * Get UTCTime
+	 * @return string
+	 */
+	public function getUTCTime()
+	{
+		return $this->UTCTime;
+	}
+	/**
+	 * Set Last
+	 * @param double Last
+	 * @return double
+	 */
+	public function setLast($_Last)
+	{
+		return ($this->Last = $_Last);
+	}
+	/**
+	 * Get Last
+	 * @return double
+	 */
+	public function getLast()
+	{
+		return $this->Last;
+	}
+	/**
+	 * Set High
+	 * @param double High
+	 * @return double
+	 */
+	public function setHigh($_High)
+	{
+		return ($this->High = $_High);
+	}
+	/**
+	 * Get High
+	 * @return double
+	 */
+	public function getHigh()
+	{
+		return $this->High;
+	}
+	/**
+	 * Set Low
+	 * @param double Low
+	 * @return double
+	 */
+	public function setLow($_Low)
+	{
+		return ($this->Low = $_Low);
+	}
+	/**
+	 * Get Low
+	 * @return double
+	 */
+	public function getLow()
+	{
+		return $this->Low;
+	}
+	/**
+	 * Set First
+	 * @param double First
+	 * @return double
+	 */
+	public function setFirst($_First)
+	{
+		return ($this->First = $_First);
+	}
+	/**
+	 * Get First
+	 * @return double
+	 */
+	public function getFirst()
+	{
+		return $this->First;
+	}
+	/**
+	 * Set Quantity
+	 * @param double Quantity
+	 * @return double
+	 */
+	public function setQuantity($_Quantity)
+	{
+		return ($this->Quantity = $_Quantity);
+	}
+	/**
+	 * Get Quantity
+	 * @return double
+	 */
+	public function getQuantity()
+	{
+		return $this->Quantity;
+	}
+	/**
+	 * Set Trades
+	 * @param int Trades
+	 * @return int
+	 */
+	public function setTrades($_Trades)
+	{
+		return ($this->Trades = $_Trades);
+	}
+	/**
+	 * Get Trades
+	 * @return int
+	 */
+	public function getTrades()
+	{
+		return $this->Trades;
+	}
+	/**
+	 * Set TWAP
+	 * @param double TWAP
+	 * @return double
+	 */
+	public function setTWAP($_TWAP)
+	{
+		return ($this->TWAP = $_TWAP);
+	}
+	/**
+	 * Get TWAP
+	 * @return double
+	 */
+	public function getTWAP()
+	{
+		return $this->TWAP;
+	}
+	/**
+	 * Set VWAP
+	 * @param double VWAP
+	 * @return double
+	 */
+	public function setVWAP($_VWAP)
+	{
+		return ($this->VWAP = $_VWAP);
+	}
+	/**
+	 * Get VWAP
+	 * @return double
+	 */
+	public function getVWAP()
+	{
+		return $this->VWAP;
+	}
+	/**
+	 * Method returning the class name
+	 * @return string __CLASS__
+	 */
+	public function __toString()
+	{
+		return __CLASS__;
+	}
+}
+?>

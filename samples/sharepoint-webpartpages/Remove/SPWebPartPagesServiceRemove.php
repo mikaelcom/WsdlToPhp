@@ -1,0 +1,54 @@
+<?php
+/**
+ * Class file for SPWebPartPagesServiceRemove
+ * @date 06/07/2012
+ */
+/**
+ * Class SPWebPartPagesServiceRemove
+ * @date 06/07/2012
+ */
+class SPWebPartPagesServiceRemove extends SPWebPartPagesWsdlClass
+{
+	/**
+	 * Method to call RemoveWorkflowAssociation
+	 * @uses SPWebPartPagesWsdlClass::getSoapClient()
+	 * @uses SPWebPartPagesWsdlClass::setResult()
+	 * @uses SPWebPartPagesWsdlClass::getResult()
+	 * @uses SPWebPartPagesWsdlClass::saveLastError()
+	 * @uses SPWebPartPagesTypeRemoveWorkflowAssociation::getConfigUrl()
+	 * @uses SPWebPartPagesTypeRemoveWorkflowAssociation::getConfigVersion()
+	 * @param SPWebPartPagesTypeRemoveWorkflowAssociation RemoveWorkflowAssociation
+	 * @return SPWebPartPagesTypeRemoveWorkflowAssociationResponse
+	 */
+	public function RemoveWorkflowAssociation(SPWebPartPagesTypeRemoveWorkflowAssociation $_SPWebPartPagesTypeRemoveWorkflowAssociation)
+	{
+		try
+		{
+			$this->setResult(self::getSoapClient()->RemoveWorkflowAssociation(array('configUrl'=>$_SPWebPartPagesTypeRemoveWorkflowAssociation->getConfigUrl(),'configVersion'=>$_SPWebPartPagesTypeRemoveWorkflowAssociation->getConfigVersion())));
+		}
+		catch(SoapFault $fault)
+		{
+			return !$this->saveLastError(__METHOD__,$fault);
+		}
+		return $this->getResult();
+	}
+	/**
+	 * Method returning the result content
+	 *
+	 * @return SPWebPartPagesTypeRemoveWorkflowAssociationResponse
+	 */
+	public function getResult()
+	{
+		return parent::getResult();
+	}
+	/**
+	 * Method returning the class name
+	 *
+	 * @return string __CLASS__
+	 */
+	public function __toString()
+	{
+		return __CLASS__;
+	}
+}
+?>
