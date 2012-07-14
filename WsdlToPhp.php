@@ -299,10 +299,6 @@ class WsdlToPhp extends SoapClient
 				$type = str_replace("\n",'',$type);
 				$type = str_replace("\t",'',$type);
 				/**
-				 * Remove special characters
-				 */
-				$type = self::cleanName($type);
-				/**
 				 * Remove brackets
 				 */
 				$type = str_replace("{",'',$type);
@@ -466,7 +462,7 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Class definition
 				 */
-				$className = $ClassType . 'Type' . ucFirst($structName);
+				$className = $ClassType . 'Type' . ucFirst(self::cleanClassName($structName));
 				$classMap[$structName] = $className;
 				/**
 				 * Define struct class file name and initialize struct class generator
@@ -481,7 +477,7 @@ class WsdlToPhp extends SoapClient
 				$php = new ezcPhpGenerator($structClassFileName,true,true);
 				$php->indentString = "	";
 				$php->appendCustomCode("/**\r\n * Class file for $className\r\n * @date " . date('d/m/Y') . "\r\n */\r\n/**\r\n * Class $className$documentation\r\n * @date " . date('d/m/Y') . "\r\n */");
-				$php->appendCustomCode("class $className" . (!empty($extend)?' extends ' . $extend:''));
+				$php->appendCustomCode("class $className" . (!empty($extend)?' extends ' . self::cleanClassName($extend):''));
 				$php->appendCustomCode("{");
 				/**
 				 * Attributes
@@ -501,8 +497,9 @@ class WsdlToPhp extends SoapClient
 						if(!is_numeric($elementIndex))
 							continue;
 						$type = $element['type'];
-						$Type = ucfirst($type);
+						$Type = self::cleanClassName(ucfirst($type));
 						$name = $element['name'];
+						$cleanName = self::cleanPropertyName($name);
 						$meta = $element['meta'];
 						$isRestriction = (array_key_exists('isRestriction',$element) && $element['isRestriction'] == true);
 						if(!$isRestriction)
@@ -514,7 +511,7 @@ class WsdlToPhp extends SoapClient
 								$parametersSring .= "\r\n * @param " . $ClassType . 'Type' . $Type . " $name";
 							else
 								$parametersSring .= "\r\n * @param " . $type . " $name";
-							$usesSring .= "\r\n * @uses $className::set" . ucfirst($name) . "()";
+							$usesSring .= "\r\n * @uses $className::set" . ucfirst($cleanName) . "()";
 							$parametersType[] = array_key_exists($type,$this->getStructs())?$ClassType . "Type" . $Type:$type;
 							if(array_key_exists('default',$meta))
 							{
@@ -523,23 +520,23 @@ class WsdlToPhp extends SoapClient
 									$defaultValue = floatval($defaultValue);
 								elseif(is_bool($defaultValue) || $defaultValue === 'true' || $defaultValue === 'false')
 									$defaultValue = ($defaultValue === true || $defaultValue == 'true')?true:false;
-								$parametersList[] = '$_' . $name . ' = ' . var_export($defaultValue,true);
+								$parametersList[] = '$_' . $cleanName . ' = ' . var_export($defaultValue,true);
 							}
 							elseif(array_key_exists('minOccurs',$meta) && $meta['minOccurs'] >= 1)
-								$parametersList[] = '$_' . $name;
+								$parametersList[] = '$_' . $cleanName;
 							else
-								$parametersList[] = '$_' . $name . ' = null';
+								$parametersList[] = '$_' . $cleanName . ' = null';
 							if(strpos($type,'ArrayOf') !== false)
-								$parametersForParent[] = "'$name'=>new " . $ClassType . "Type$Type(" . '$_' . $name . ")";
+								$parametersForParent[] = "'$cleanName'=>new " . $ClassType . "Type$Type(" . '$_' . $cleanName . ")";
 							else
-								$parametersForParent[] = "'$name'=>\$_$name";
+								$parametersForParent[] = "'$cleanName'=>\$_$cleanName";
 							$metas = array();
 							foreach($meta as $metaName=>$metaValue)
 								$metas[] = "\t- " . $metaName . ' : ' . $metaValue;
 							if(count($metas))
 								array_unshift($metas,"\r\n * " . 'Meta informations :');
 							$php->appendCustomCode("/**\r\n * The $name" . implode("\r\n * ",$metas) . "\r\n * @var " . (array_key_exists($type,$this->getStructs())?$ClassType . "Type" . $Type:$type) . "\r\n */");
-							$php->appendCustomCode("public \$$name;");
+							$php->appendCustomCode("public \$$cleanName;");
 						}
 					}
 				}
@@ -548,6 +545,8 @@ class WsdlToPhp extends SoapClient
 				 */
 				if($isRestriction && array_key_exists('values',$element) && count($element['values']))
 				{
+					$valuesDone = array();
+					$inArray = array();
 					foreach($element['values'] as $value)
 					{
 						$meta = '';
@@ -558,7 +557,19 @@ class WsdlToPhp extends SoapClient
 						}
 						$meta = !empty($meta)?"\r\n * " . 'Meta informations :' . $meta:$meta;
 						$php->appendCustomCode("/**\r\n * Constant for value '$value'$meta\r\n * @return string '" . $value . "'\r\n */");
-						$php->appendCustomCode('const VALUE_' . strtoupper(self::cleanConstantName($value)) . ' = \'' . $value . '\';');
+						/**
+						 * Avoid multiple constant with same name for different case value
+						 */
+						$cleanValueName = self::cleanConstantName($value);
+						$constantValueName = strtoupper($cleanValueName);
+						if(!array_key_exists($constantValueName,$valuesDone))
+							$valuesDone[$constantValueName] = 0;
+						else
+							$valuesDone[$constantValueName]++;
+						$constantValueName .= ((array_key_exists($constantValueName,$valuesDone) && $valuesDone[$constantValueName])?'_' . $valuesDone[$constantValueName]:'');
+						echo "\r\n$constantValueName";
+						$inArray[] = 'self::VALUE_' . $constantValueName;
+						$php->appendCustomCode('const VALUE_' . $constantValueName . ' = \'' . $value . '\';');
 					}
 				}
 				/**
@@ -578,130 +589,128 @@ class WsdlToPhp extends SoapClient
 				{
 					foreach($parameters as $parameter)
 					{
+						$cleanParameter = self::cleanPropertyName($parameter['name']);
 						/**
 						 * Set
 						 */
-						$php->appendCustomCode("/**\r\n * Set " . $parameter['name'] . "\r\n * @param " . $parameter['type'] . " " . $parameter['name'] . "\r\n * @return " . $parameter['type'] . "\r\n */");
-						$php->appendCustomCode("public function set" . ucfirst($parameter['name']) . "(\$_" . $parameter['name'] . ")");
+						$php->appendCustomCode("/**\r\n * Set " . $cleanParameter . "\r\n * @param " . $parameter['type'] . " " . $cleanParameter . "\r\n * @return " . $parameter['type'] . "\r\n */");
+						$php->appendCustomCode("public function set" . ucfirst($cleanParameter) . "(\$_" . $cleanParameter . ")");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
 						if(strpos($className,'ArrayOf') === false && array_key_exists($parameter['type'],$this->getStructs()) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true)
-							$php->appendCustomCode('return ($this->' . $parameter['name'] . ' = ' . $ClassType . 'Type' . $parameter['type'] . '::valueIsValid($_' . $parameter['name'] . ')?$_' . $parameter['name'] . ':null);');
+							$php->appendCustomCode('return ($this->' . $cleanParameter . ' = ' . $ClassType . 'Type' . $parameter['type'] . '::valueIsValid($_' . $cleanParameter . ')?$_' . $cleanParameter . ':null);');
 						else
-							$php->appendCustomCode("return (\$this->" . $parameter['name'] . ' = $_' . $parameter['name'] . ');');
+							$php->appendCustomCode("return (\$this->" . $cleanParameter . ' = $_' . $cleanParameter . ');');
 						$php->indentLevel--;
 						$php->appendCustomCode("}");
 						/**
 						 * Get
 						 */
-						$php->appendCustomCode("/**\r\n * Get " . $parameter['name'] . "\r\n * @return " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . "\r\n */");
-						$php->appendCustomCode("public function get" . ucfirst($parameter['name']) . "()");
+						$php->appendCustomCode("/**\r\n * Get " . $cleanParameter . "\r\n * @return " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . "\r\n */");
+						$php->appendCustomCode("public function get" . ucfirst($cleanParameter) . "()");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
 						if(strpos($parameter['type'],'XML') !== false || strpos($parameter['type'],'DOMDocument') !== false)
 						{
-							$php->appendCustomCode("if(!(\$this->" . $parameter['name'] . " instanceof DOMDocument))");
+							$php->appendCustomCode("if(!(\$this->" . $cleanParameter . " instanceof DOMDocument))");
 							$php->appendCustomCode("{");
 							$php->indentLevel++;
 							$php->appendCustomCode("\$dom = new DOMDocument('1.0','UTF-8');");
 							$php->appendCustomCode("\$dom->formatOutput = true;");
-							$php->appendCustomCode("\$dom->loadXML(\$this->" . $parameter['name'] . ");");
-							$php->appendCustomCode("\$this->set" . ucfirst($parameter['name']) . "(\$dom);");
+							$php->appendCustomCode("\$dom->loadXML(\$this->" . $cleanParameter . ");");
+							$php->appendCustomCode("\$this->set" . ucfirst($cleanParameter) . "(\$dom);");
 							$php->indentLevel--;
 							$php->appendCustomCode("}");
 						}
-						$php->appendCustomCode("return \$this->" . $parameter['name'] . ';');
+						$php->appendCustomCode("return \$this->" . $cleanParameter . ';');
 						$php->indentLevel--;
 						$php->appendCustomCode("}");
 					}
-				}
-				/**
-				 * Add specifics methods for classes like "*ArrayOf" in order to give type to value returned by specifics methods
-				 */
-				if(strpos($className,'ArrayOf') !== false && count($parametersType) == 1)
-				{
 					/**
-					 * current method
+					 * Add specifics methods for classes like "*ArrayOf" in order to give type to value returned by specifics methods
 					 */
-					$php->appendCustomCode("/**\r\n * Returns the current element\r\n * @see " . $ClassType . "WsdlClass::current()\r\n * @return " . $parametersType[0] . "\r\n */");
-					$php->appendCustomCode("public function current()");
-					$php->appendCustomCode("{");
-					$php->indentLevel++;
-					$php->appendCustomCode("return parent::current();");
-					$php->indentLevel--;
-					$php->appendCustomCode("}");
-					/**
-					 * item method
-					 */
-					$php->appendCustomCode("/**\r\n * Returns the element\r\n * @see " . $ClassType . "WsdlClass::item()\r\n * @param int\r\n * @return " . $parametersType[0] . "\r\n */");
-					$php->appendCustomCode("public function item(\$_index)");
-					$php->appendCustomCode("{");
-					$php->indentLevel++;
-					$php->appendCustomCode("return parent::item(\$_index);");
-					$php->indentLevel--;
-					$php->appendCustomCode("}");
-					/**
-					 * first method
-					 */
-					$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::first()\r\n * @return " . $parametersType[0] . "\r\n */");
-					$php->appendCustomCode("public function first()");
-					$php->appendCustomCode("{");
-					$php->indentLevel++;
-					$php->appendCustomCode("return parent::first();");
-					$php->indentLevel--;
-					$php->appendCustomCode("}");
-					/**
-					 * last method
-					 */
-					$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::last()\r\n * @return " . $parametersType[0] . "\r\n */");
-					$php->appendCustomCode("public function last()");
-					$php->appendCustomCode("{");
-					$php->indentLevel++;
-					$php->appendCustomCode("return parent::last();");
-					$php->indentLevel--;
-					$php->appendCustomCode("}");
-					/**
-					 * offsetGet method
-					 */
-					$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::offsetGet()\r\n * @param int\r\n * @return " . $parametersType[0] . "\r\n */");
-					$php->appendCustomCode("public function offsetGet(\$_offset)");
-					$php->appendCustomCode("{");
-					$php->indentLevel++;
-					$php->appendCustomCode("return parent::offsetGet(\$_offset);");
-					$php->indentLevel--;
-					$php->appendCustomCode("}");
-					/**
-					 * Add method
-					 */
-					if(array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true)
+					if(strpos($className,'ArrayOf') !== false && count($parametersType) == 1)
 					{
-						$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @param " . $parametersType[0] . "\r\n * @return bool true|false\r\n */");
-						$php->appendCustomCode("public function add(\$_item)");
+						/**
+						 * current method
+						 */
+						$php->appendCustomCode("/**\r\n * Returns the current element\r\n * @see " . $ClassType . "WsdlClass::current()\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("public function current()");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
-						$php->appendCustomCode("return " . $ClassType . 'Type' . $parameter['type'] . '::valueIsValid($_item)?parent::add($_item):false;');
+						$php->appendCustomCode("return parent::current();");
+						$php->indentLevel--;
+						$php->appendCustomCode("}");
+						/**
+						 * item method
+						 */
+						$php->appendCustomCode("/**\r\n * Returns the element\r\n * @see " . $ClassType . "WsdlClass::item()\r\n * @param int\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("public function item(\$_index)");
+						$php->appendCustomCode("{");
+						$php->indentLevel++;
+						$php->appendCustomCode("return parent::item(\$_index);");
+						$php->indentLevel--;
+						$php->appendCustomCode("}");
+						/**
+						 * first method
+						 */
+						$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::first()\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("public function first()");
+						$php->appendCustomCode("{");
+						$php->indentLevel++;
+						$php->appendCustomCode("return parent::first();");
+						$php->indentLevel--;
+						$php->appendCustomCode("}");
+						/**
+						 * last method
+						 */
+						$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::last()\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("public function last()");
+						$php->appendCustomCode("{");
+						$php->indentLevel++;
+						$php->appendCustomCode("return parent::last();");
+						$php->indentLevel--;
+						$php->appendCustomCode("}");
+						/**
+						 * offsetGet method
+						 */
+						$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::offsetGet()\r\n * @param int\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("public function offsetGet(\$_offset)");
+						$php->appendCustomCode("{");
+						$php->indentLevel++;
+						$php->appendCustomCode("return parent::offsetGet(\$_offset);");
+						$php->indentLevel--;
+						$php->appendCustomCode("}");
+						/**
+						 * Add method
+						 */
+						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true)
+						{
+							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @param " . $parametersType[0] . "\r\n * @return bool true|false\r\n */");
+							$php->appendCustomCode("public function add(\$_item)");
+							$php->appendCustomCode("{");
+							$php->indentLevel++;
+							$php->appendCustomCode("return " . $ClassType . 'Type' . self::cleanClassName($parameter['type']) . '::valueIsValid($_item)?parent::add($_item):false;');
+							$php->indentLevel--;
+							$php->appendCustomCode("}");
+						}
+						/**
+						 * Return alone attribute name
+						 */
+						$php->appendCustomCode("/**\r\n * Returns the attribute name\r\n * @return string '" . $cleanParameter . "'\r\n */");
+						$php->appendCustomCode("public function getAttributeName()");
+						$php->appendCustomCode("{");
+						$php->indentLevel++;
+						$php->appendCustomCode("return '" . str_replace($ClassType . 'Type','',$cleanParameter) . "';");
 						$php->indentLevel--;
 						$php->appendCustomCode("}");
 					}
-					/**
-					 * Return alone attribute name
-					 */
-					$php->appendCustomCode("/**\r\n * Returns the attribute name\r\n * @return string '" . $parameter['name'] . "'\r\n */");
-					$php->appendCustomCode("public function getAttributeName()");
-					$php->appendCustomCode("{");
-					$php->indentLevel++;
-					$php->appendCustomCode("return '" . str_replace($ClassType . 'Type','',$parameter['name']) . "';");
-					$php->indentLevel--;
-					$php->appendCustomCode("}");
 				}
 				/**
 				 * Restriction class, set constant and values allowed
 				 */
 				if($isRestriction && array_key_exists('values',$element) && count($element['values']))
 				{
-					$inArray = array();
-					foreach($element['values'] as $value)
-						$inArray[] = 'self::VALUE_' . strtoupper(self::cleanConstantName($value));
 					/**
 					 * Return true if value is allowed
 					 */
@@ -771,7 +780,7 @@ class WsdlToPhp extends SoapClient
 			foreach($functions as $className=>$methods)
 			{
 				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$className);
-				$ClassName = $PackageName . 'Service' . ucfirst($className);
+				$ClassName = $PackageName . 'Service' . ucfirst(self::cleanClassName($className));
 				$functionsClassesFiles[] = $functionClassFileName = $elementFolder . $ClassName . '.php';
 				$php = new ezcPhpGenerator($functionClassFileName,true,true);
 				$php->indentString = "	";
@@ -1784,8 +1793,7 @@ class WsdlToPhp extends SoapClient
 	 */
 	public static function cleanName($_name)
 	{
-		$name = str_replace('.','',$_name);
-		return $name;
+		return $_name;
 	}
 	/**
 	 * Clean constant name
@@ -1794,7 +1802,25 @@ class WsdlToPhp extends SoapClient
 	 */
 	public static function cleanConstantName($_name)
 	{
-		return preg_replace('/[^a-zA-Z_\x7f-\xff]/','_',$_name);
+		return preg_replace('/[_]+/','_',preg_replace('/[^a-zA-Z0-9_]/','_',$_name));
+	}
+	/**
+	 * Clean property name
+	 * @param string $_name
+	 * @return string
+	 */
+	public static function cleanPropertyName($_name)
+	{
+		return preg_replace('/[_]+/','_',preg_replace('/[^a-zA-Z0-9_]/','_',$_name));
+	}
+	/**
+	 * Clean class name
+	 * @param string $_name
+	 * @return string
+	 */
+	public static function cleanClassName($_name)
+	{
+		return preg_replace('/[_]+/','_',preg_replace('/[^a-zA-Z0-9_]/','_',$_name));
 	}
 	/**
 	 * Return current class name
