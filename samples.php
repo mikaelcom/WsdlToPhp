@@ -23,6 +23,16 @@ require_once $localDir . 'PhpGenerator/src/structs/php_generator_return_data.php
 require_once $localDir . 'PhpGenerator/src/structs/php_generator_parameter.php';
 require_once $localDir . 'WsdlToPhp.php';
 /**
+ * Cleaning tests
+ */
+if(false)
+{
+	echo "\r\n Clean constant Name for '2And'is-go54  83od+*/you=yèçés_3' is ".WsdlToPhp::cleanConstantName("2And'is-go54  83od+*/you=yéçès_3")." \r\n";
+	echo "\r\n Clean class Name for '2And'is-go54  83od+*/you=yèçés_3' is ".WsdlToPhp::cleanClassName("2And'is-go54  83od+*/you=yéçès_3")." \r\n";
+	echo "\r\n Clean property Name for '2And'is-go54  83od+*/you=yèçés_3' is ".WsdlToPhp::cleanPropertyName("2And'is-go54  83od+*/you=yéçès_3")." \r\n";
+	return ;
+}
+/**
  * OVH SOAP API
  */
 if(false)
@@ -219,7 +229,8 @@ if(false)
 }
 /**
  * PayPal API
- * @todo : some structs have attributes that have incompatible name (ccp-header-image) to geenrate it properly... 
+ * @todo : some structs have attributes that have incompatible name (ccp-header-image) to generate it properly...
+ * @date 13/07/2012 : bug fix with clean*Name methods
  */
 if(false)
 {
@@ -1700,7 +1711,7 @@ if(false)
 /**
  * Amazon services
  */
-if(true)
+if(false)
 {
 	$services = array(
 					'http://webservices.amazon.com/AWSECommerceService/AWSECommerceService.wsdl',
