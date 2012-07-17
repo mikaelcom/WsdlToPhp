@@ -104,7 +104,7 @@ class WsdlToPhp extends SoapClient
 	 * Index to set the generation of contants names based on the enumeration name with an incremental value
 	 * @var string
 	 */
-	const OPT_GENERIC_CONSTANTS_NAMES_KEY = 'option_generaic_constants_names_key';
+	const OPT_GENERIC_CONSTANTS_NAMES_KEY = 'option_generic_constants_names_key';
 	/**
 	 * Structs array
 	 * @var array
@@ -558,7 +558,9 @@ class WsdlToPhp extends SoapClient
 				{
 					$valuesDone = array();
 					$inArray = array();
-					foreach($element['values'] as $value)
+					$valuesCount = count($element['values']);
+					$valuesCountLength = strlen($valuesCount);
+					foreach($element['values'] as $index=>$value)
 					{
 						$meta = '';
 						if(array_key_exists($value,$element['meta']))
@@ -569,17 +571,26 @@ class WsdlToPhp extends SoapClient
 						$meta = !empty($meta)?"\r\n * " . 'Meta informations :' . $meta:$meta;
 						$php->appendCustomCode("/**\r\n * Constant for value '$value'$meta\r\n * @return string '" . $value . "'\r\n */");
 						/**
-						 * Avoid multiple constant with same name for different case value
+						 * Generic name avoiding naming problems from custom values
 						 */
-						$cleanValueName = self::cleanConstantName($value);
-						$constantValueName = strtoupper($cleanValueName);
-						if(!array_key_exists($constantValueName,$valuesDone))
-							$valuesDone[$constantValueName] = 0;
+						if($this->getOptionGenericConstantsNames())
+							$constantValueName = 'ENUM_VALUE_' . str_repeat('0',$valuesCountLength - strlen($index)) . $index;
 						else
-							$valuesDone[$constantValueName]++;
-						$constantValueName .= ((array_key_exists($constantValueName,$valuesDone) && $valuesDone[$constantValueName])?'_' . $valuesDone[$constantValueName]:'');
-						$inArray[] = 'self::VALUE_' . $constantValueName;
-						$php->appendCustomCode('const VALUE_' . $constantValueName . ' = \'' . $value . '\';');
+						{
+							/**
+							 * Avoid multiple constant with same name for different case value
+							 */
+							$cleanValueName = self::cleanConstantName($value);
+							$constantValueName = strtoupper($cleanValueName);
+							if(!array_key_exists($constantValueName,$valuesDone))
+								$valuesDone[$constantValueName] = 0;
+							else
+								$valuesDone[$constantValueName]++;
+							$constantValueName .= ((array_key_exists($constantValueName,$valuesDone) && $valuesDone[$constantValueName])?'_' . $valuesDone[$constantValueName]:'');
+							$constantValueName = 'VALUE_' . $constantValueName;
+						}
+						$inArray[] = 'self::' . $constantValueName;
+						$php->appendCustomCode('const ' . $constantValueName . ' = \'' . $value . '\';');
 					}
 				}
 				/**

@@ -27,10 +27,10 @@ require_once $localDir . 'WsdlToPhp.php';
  */
 if(false)
 {
-	echo "\r\n Clean constant Name for '2And'is-go54  83od+*/you=yèçés_3' is ".WsdlToPhp::cleanConstantName("2And'is-go54  83od+*/you=yéçès_3")." \r\n";
-	echo "\r\n Clean class Name for '2And'is-go54  83od+*/you=yèçés_3' is ".WsdlToPhp::cleanClassName("2And'is-go54  83od+*/you=yéçès_3")." \r\n";
-	echo "\r\n Clean property Name for '2And'is-go54  83od+*/you=yèçés_3' is ".WsdlToPhp::cleanPropertyName("2And'is-go54  83od+*/you=yéçès_3")." \r\n";
-	return ;
+	echo "\r\n Clean constant Name for '2And'is-go54  83od+*/you=yèçés_3' is " . WsdlToPhp::cleanConstantName("2And'is-go54  83od+*/you=yéçès_3") . " \r\n";
+	echo "\r\n Clean class Name for '2And'is-go54  83od+*/you=yèçés_3' is " . WsdlToPhp::cleanClassName("2And'is-go54  83od+*/you=yéçès_3") . " \r\n";
+	echo "\r\n Clean property Name for '2And'is-go54  83od+*/you=yèçés_3' is " . WsdlToPhp::cleanPropertyName("2And'is-go54  83od+*/you=yéçès_3") . " \r\n";
+	return;
 }
 /**
  * OVH SOAP API
@@ -54,9 +54,12 @@ if(false)
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendParametersAsArray(true);
+	$w->setOptionGenericConstantsNames(true);
 	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
 	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
 	$w->generateClasses('bing',dirname(__FILE__) . '/samples/bing-search/');
+	$w->setOptionGenericConstantsNames(false);
+	$w->generateClasses('bing',dirname(__FILE__) . '/samples/bing-search_2/');
 }
 /**
  * BING Geocode API
