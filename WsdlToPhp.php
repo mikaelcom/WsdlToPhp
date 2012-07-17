@@ -101,6 +101,11 @@ class WsdlToPhp extends SoapClient
 	 */
 	const OPT_INHERITS_FROM_IDENTIFIER_KEY = 'option_inherits_from_identifier_key';
 	/**
+	 * Index to set the generation of contants names based on the enumeration name with an incremental value
+	 * @var string
+	 */
+	const OPT_GENERIC_CONSTANTS_NAMES_KEY = 'option_generaic_constants_names_key';
+	/**
 	 * Structs array
 	 * @var array
 	 */
@@ -161,6 +166,11 @@ class WsdlToPhp extends SoapClient
 	 */
 	private $optionInheritsClassIdentifier;
 	/**
+	 * Option to set set the generation of contants names based on the enumeration name with an incremental value
+	 * @var string
+	 */
+	private $optionGenericConstantsNames;
+	/**
 	 * Constructor
 	 * @param string $_pathToWsdl
 	 * @param string $_login
@@ -207,6 +217,7 @@ class WsdlToPhp extends SoapClient
 		$this->setOptionGatherMethods(array_key_exists(self::OPT_GATH_METH_KEY,$_options)?$_options[self::OPT_GATH_METH_KEY]:self::OPT_GATH_METH_START_NAME);
 		$this->setOptionSendArrayAsParameter(array_key_exists(self::OPT_SEND_PARAM_AS_ARRAY_KEY,$_options)?$_options[self::OPT_SEND_PARAM_AS_ARRAY_KEY]:false);
 		$this->setOptionResponseAsWsdlObject(array_key_exists(self::OPT_RESPONSE_AS_WSDL_OBJECT_KEY,$_options)?$_options[self::OPT_RESPONSE_AS_WSDL_OBJECT_KEY]:false);
+		$this->setOptionGenericConstantsNames(array_key_exists(self::OPT_GENERIC_CONSTANTS_NAMES_KEY,$_options)?$_options[self::OPT_GENERIC_CONSTANTS_NAMES_KEY]:false);
 		$this->setOptionInheritsClassIdentifier(array_key_exists(self::OPT_INHERITS_FROM_IDENTIFIER_KEY,$_options)?$_options[self::OPT_INHERITS_FROM_IDENTIFIER_KEY]:'');
 		$this->setOptionSendParametersAsArray(array_key_exists(self::OPT_SEND_PARAMETERS_AS_ARRAY_KEY,$_options)?$_options[self::OPT_SEND_PARAMETERS_AS_ARRAY_KEY]:false);
 	}
@@ -567,7 +578,6 @@ class WsdlToPhp extends SoapClient
 						else
 							$valuesDone[$constantValueName]++;
 						$constantValueName .= ((array_key_exists($constantValueName,$valuesDone) && $valuesDone[$constantValueName])?'_' . $valuesDone[$constantValueName]:'');
-						echo "\r\n$constantValueName";
 						$inArray[] = 'self::VALUE_' . $constantValueName;
 						$php->appendCustomCode('const VALUE_' . $constantValueName . ' = \'' . $value . '\';');
 					}
@@ -597,7 +607,7 @@ class WsdlToPhp extends SoapClient
 						$php->appendCustomCode("public function set" . ucfirst($cleanParameter) . "(\$_" . $cleanParameter . ")");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
-						if(strpos($className,'ArrayOf') === false && array_key_exists($parameter['type'],$this->getStructs()) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true)
+						if(strpos($className,'ArrayOf') === false && array_key_exists($parameter['type'],$this->getStructs()) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
 							$php->appendCustomCode('return ($this->' . $cleanParameter . ' = ' . $ClassType . 'Type' . $parameter['type'] . '::valueIsValid($_' . $cleanParameter . ')?$_' . $cleanParameter . ':null);');
 						else
 							$php->appendCustomCode("return (\$this->" . $cleanParameter . ' = $_' . $cleanParameter . ');');
@@ -684,7 +694,7 @@ class WsdlToPhp extends SoapClient
 						/**
 						 * Add method
 						 */
-						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true)
+						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
 						{
 							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @param " . $parametersType[0] . "\r\n * @return bool true|false\r\n */");
 							$php->appendCustomCode("public function add(\$_item)");
@@ -1358,6 +1368,20 @@ class WsdlToPhp extends SoapClient
 	public function setOptionInheritsClassIdentifier($_optionInheritsClassIdentifier = '')
 	{
 		$this->optionInheritsClassIdentifier = (is_string($_optionInheritsClassIdentifier) && !empty($_optionInheritsClassIdentifier))?$_optionInheritsClassIdentifier:'';
+	}
+	/**
+	 * @return bool
+	 */
+	public function getOptionGenericConstantsNames()
+	{
+		return $this->optionGenericConstantsNames;
+	}
+	/**
+	 * @param bool $optionGenericConstantsNames
+	 */
+	public function setOptionGenericConstantsNames($_optionGenericConstantsNames = false)
+	{
+		$this->optionGenericConstantsNames = $_optionGenericConstantsNames;
 	}
 	/**
 	 * @return the $wsdls
