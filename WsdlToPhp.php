@@ -285,7 +285,7 @@ class WsdlToPhp extends SoapClient
 	 * - Get structs defined
 	 * - Parse each struct definition
 	 * - Analyze each struct paramaters
-	 * @tutorial restriction aren't get with structs, see loadWsdls : 
+	 * @tutorial restriction aren't get with structs, see loadWsdls :
 	 * <xsd:simpleType name="SearchOption">
 	 * --<xsd:restriction base="xsd:string">
 	 * ----<xsd:enumeration value="DisableLocationDetection"/>
@@ -817,6 +817,10 @@ class WsdlToPhp extends SoapClient
 				$php->appendCustomCode("{");
 				$php->indentLevel++;
 				/**
+				 * Returns type list
+				 */
+				$methodReturns = array();
+				/**
 				 * Methods
 				 */
 				foreach($methods as $index=>$methodInfos)
@@ -850,6 +854,7 @@ class WsdlToPhp extends SoapClient
 					 * Return name
 					 */
 					$methodReturn = ucfirst($methodInfos['return']);
+					$methodReturns[] = $PackageName . 'Type' . $methodReturn;
 					/**
 					 * Method
 					 */
@@ -896,7 +901,7 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Result method
 				 */
-				$php->appendCustomCode("/**\r\n * Method returning the result content\r\n *\r\n * @return " . $PackageName . "Type$methodReturn\r\n */");
+				$php->appendCustomCode("/**\r\n * Method returning the result content\r\n *\r\n * @return " . implode('|',$methodReturns) . "\r\n */");
 				$php->appendCustomCode("public function getResult()");
 				$php->appendCustomCode("{");
 				$php->indentLevel++;
