@@ -1743,4 +1743,86 @@ if(false)
 		$w->generateClasses('Amazon' . ucfirst($serviceName),dirname(__FILE__) . '/samples/amazon-' . strtolower($serviceName) . '/');
 	}
 }
+/**
+ * BarCodeSoft
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://www.barcodesoft.com/bcdgen.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('BarCodeSoft',dirname(__FILE__) . '/samples/barcodesoft/');
+}
+/**
+ * DirectSmile
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://dsmo.directsmile.de/dsmo/lb.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('DirectSmile',dirname(__FILE__) . '/samples/directsmile/');
+}
+/**
+ * LifePics
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://api.lifepics.com/v3/LPWebService.asmx?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('LifePics',dirname(__FILE__) . '/samples/lifepics/');
+}
+/**
+ * BioIDWS
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://playground.bioid.com/Content/BWS/www.bioid.com.2011.12.bws.wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('BioIDWS',dirname(__FILE__) . '/samples/bioid-web-service/');
+}
+/**
+ * RESTFUL
+ */
+if(false)
+{
+	$restfuls = array(
+					'http://www.restfulwebservices.net/wcf/AirportService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/BibleASVService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/EmailValidationService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/StockQuoteService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/GeoIPService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/HCPCSService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/AustraliaPostalCodeService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/UNSPSCService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/USAZipCodeService.svc?wsdl',
+					'http://www.restfulwebservices.net/wcf/WeatherForecastService.svc?wsdl');
+	foreach($restfuls as $restful)
+	{
+		$w = new WsdlToPhp($restful);
+		$pathinfo = pathinfo($restful);
+		$serviceName = str_replace('Service.svc?wsdl','',$pathinfo['basename']);
+		$w->setOptionGenerateAutoloadFile(true);
+		$w->setOptionGenerateWsdlClassFile(true);
+		$w->setOptionSendArrayAsParameter(true);
+		$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+		$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+		echo "\r\n$serviceName\r\n";
+		$w->generateClasses('RF' . $serviceName,dirname(__FILE__) . '/samples/restful-' . strtolower($serviceName) . '/');
+	}
+}
 ?>
