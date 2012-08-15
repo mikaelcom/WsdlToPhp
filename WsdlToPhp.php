@@ -505,25 +505,49 @@ class WsdlToPhp extends SoapClient
 				{
 					foreach($structParams as $elementIndex=>$element)
 					{
+						/**
+						 * Current index is not valid
+						 */
 						if(!is_numeric($elementIndex))
 							continue;
+						/**
+						 * Get informations and sanitize them
+						 */
 						$type = $element['type'];
 						$Type = self::cleanClassName(ucfirst($type));
 						$name = $element['name'];
 						$cleanName = self::cleanPropertyName($name);
 						$meta = $element['meta'];
 						$isRestriction = (array_key_exists('isRestriction',$element) && $element['isRestriction'] == true);
+						/**
+						 * Is it's not a restriction, aka an enumeration in mot case, we generate the attributes
+						 */
 						if(!$isRestriction)
 						{
+							/**
+							 * List of attributes for whoch we generate setters, getters, general methods
+							 */
 							$parameters[] = array(
 												'type'=>$type,
 												'name'=>$name);
+							/**
+							 * Is attribute is a know type
+							 */
 							if(array_key_exists($type,$this->getStructs()) || strpos($type,'ArrayOf') !== false)
 								$parametersSring .= "\r\n * @param " . $ClassType . 'Type' . $Type . " $name";
 							else
 								$parametersSring .= "\r\n * @param " . $type . " $name";
+							/**
+							 * Uses documentation part
+							 */
 							$usesSring .= "\r\n * @uses $className::set" . ucfirst($cleanName) . "()";
+							/**
+							 * Parameters used for methods assigned to classes matching ArrayOf
+							 */
 							$parametersType[] = array_key_exists($type,$this->getStructs())?$ClassType . "Type" . $Type:$type;
+							/**
+							 * Attribute has a default value ? then use it
+							 */
 							if(array_key_exists('default',$meta))
 							{
 								$defaultValue = $meta['default'];
@@ -533,14 +557,26 @@ class WsdlToPhp extends SoapClient
 									$defaultValue = ($defaultValue === true || $defaultValue == 'true')?true:false;
 								$parametersList[] = '$_' . $cleanName . ' = ' . var_export($defaultValue,true);
 							}
+							/**
+							 * Attribute is required, then the value si required ! 
+							 */
 							elseif(array_key_exists('minOccurs',$meta) && $meta['minOccurs'] >= 1)
 								$parametersList[] = '$_' . $cleanName;
+							/**
+							 * Default value assignement
+							 */
 							else
 								$parametersList[] = '$_' . $cleanName . ' = null';
+							/**
+							 * If attribute is type of ArrayOf, then we assign the returned value to the ArrayOf class
+							 */
 							if(strpos($type,'ArrayOf') !== false)
 								$parametersForParent[] = "'$cleanName'=>new " . $ClassType . "Type$Type(" . '$_' . $cleanName . ")";
 							else
 								$parametersForParent[] = "'$cleanName'=>\$_$cleanName";
+							/**
+							 * Informations extracted from the XML/WSDL tag attributes of the current attribute
+							 */
 							$metas = array();
 							foreach($meta as $metaName=>$metaValue)
 								$metas[] = "\t- " . $metaName . ' : ' . $metaValue;
@@ -575,6 +611,9 @@ class WsdlToPhp extends SoapClient
 						 */
 						if($this->getOptionGenericConstantsNames())
 							$constantValueName = 'ENUM_VALUE_' . str_repeat('0',$valuesCountLength - strlen($index)) . $index;
+						/**
+						 * Constant name based on the value contained by the constant
+						 */
 						else
 						{
 							/**
@@ -707,7 +746,7 @@ class WsdlToPhp extends SoapClient
 						 */
 						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
 						{
-							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @param " . $parametersType[0] . "\r\n * @return bool true|false\r\n */");
+							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @uses " . $ClassType . 'Type' . self::cleanClassName($parameter['type']) . "::valueIsValid()\r\n * @param " . $parametersType[0] . "\r\n * @return bool true|false\r\n */");
 							$php->appendCustomCode("public function add(\$_item)");
 							$php->appendCustomCode("{");
 							$php->indentLevel++;
