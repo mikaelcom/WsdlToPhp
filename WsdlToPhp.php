@@ -1506,7 +1506,16 @@ class WsdlToPhp extends SoapClient
 				$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
 			}
 			if(!empty($wsdlLocationContent) && $dom->loadXML($wsdlLocationContent) && $dom->hasChildNodes())
-				$this->loadWsdls('',$dom->childNodes->item(0),$_wsdlLocation);
+            {
+                foreach($dom->childNodes as $item)
+                {
+                    if($item->nodeName !== '#comment')
+                    {
+                        $this->loadWsdls('',$item,$_wsdlLocation);
+                        break;
+                    }
+                }
+            }
 		}
 		/**
 		 * New node to browse
