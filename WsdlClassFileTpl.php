@@ -86,7 +86,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 */
 	const WSDL_FKEEP_ALIVE = 'wsdl_keep_alive';
 	/**
-	 * Objet de la classe SOAP permettant de faire les requetes SOAP
+	 * Soapclient called to communicate with the actual SOAP Service
 	 * @var SoapClient
 	 */
 	private static $soapClient;
@@ -438,9 +438,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return ($this->lastError = $_lastError);
 	}
 	/**
-	 * Méthode permettant d'enregistrer les erreurs survenues lors des appels au service OVH
-	 *
-	 * @param string la méthode dnas laquelle est survenue l'erreur
+	 * Method to save the last error returned by the SoapClient
+	 * @param string the method called when the error occurred
 	 * @param Soapault l'objet de l'erreur
 	 * @return bool true
 	 */
@@ -449,9 +448,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return ($this->lastError[$_methoName] = $_soapFault);
 	}
 	/**
-	 * Méthode permettant de récupérer la dernière erreur relative à une méthode
-	 *
-	 * @param string le nom de la méthode
+	 * Method to get the last error for a certain method
+	 * @param string method name to get error from
 	 * @return SoapFault|null
 	 */
 	public function getLastErrorForMethod($_methoName)
@@ -564,8 +562,16 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return '';
 	}
 	/**
-	 * Méthode retournant le nom de la classe telle quelle
-	 *
+	 * Generic method to tell if current value is valid according to the attribute setted with the current value
+	 * @param mixe the value to test
+	 * @return bool true|false
+	 */
+	public static function valueIsValid($_value)
+	{
+		return true;
+	}
+	/**
+	 * Returns actual class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()
