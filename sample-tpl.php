@@ -14,7 +14,7 @@ require_once dirname(__FILE__) . '/PackageNameAutoload.php';
  */
 define('PACKAGENAME_WSDL_URL','WSDL_PATH');
 define('PACKAGENAME_USER_LOGIN','');
-define('PACKAGENAME_USER_PASSWWORD','');
+define('PACKAGENAME_USER_PASSWORD','');
 /**
  * Wsdl instanciation infos
  */
@@ -24,8 +24,8 @@ $wsdl[PackageNameWsdlClass::WSDL_CACHE_WSDL] = WSDL_CACHE_NONE;
 $wsdl[PackageNameWsdlClass::WSDL_TRACE] = true;
 if(PACKAGENAME_USER_LOGIN !== '')
 	$wsdl[PackageNameWsdlClass::WSDL_LOGIN] = PACKAGENAME_USER_LOGIN;
-if(PACKAGENAME_USER_LOGIN !== '')
-	$wsdl[PackageNameWsdlClass::WSDL_PASSWD] = PACKAGENAME_USER_PASSWWORD;
+if(PACKAGENAME_USER_PASSWORD !== '')
+	$wsdl[PackageNameWsdlClass::WSDL_PASSWD] = PACKAGENAME_USER_PASSWORD;
 // etc....
 /**
  * Examples
