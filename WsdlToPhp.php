@@ -106,6 +106,11 @@ class WsdlToPhp extends SoapClient
 	 */
 	const OPT_GENERIC_CONSTANTS_NAMES_KEY = 'option_generic_constants_names_key';
 	/**
+	 * Index to enable/disable tutorial file generation
+	 * @var string
+	 */
+	const OPT_GEN_TUTORIAL_KEY = 'option_generate_tutorial_file_key';
+	/**
 	 * Structs array
 	 * @var array
 	 */
@@ -171,6 +176,11 @@ class WsdlToPhp extends SoapClient
 	 */
 	private $optionGenericConstantsNames;
 	/**
+	 * Option to enabled/disable tutorial file generation
+	 * @var bool
+	 */
+	private $optionGenerateTutorialFile;
+	/**
 	 * Constructor
 	 * @param string $_pathToWsdl
 	 * @param string $_login
@@ -212,6 +222,7 @@ class WsdlToPhp extends SoapClient
 		 */
 		$this->setOptionCategory(array_key_exists(self::OPT_CAT_KEY,$_options)?$_options[self::OPT_CAT_KEY]:self::OPT_CAT_START_NAME);
 		$this->setOptionGenerateAutoloadFile(array_key_exists(self::OPT_GEN_AUTOLOAD_KEY,$_options)?$_options[self::OPT_GEN_AUTOLOAD_KEY]:false);
+		$this->setOptionGenerateTutorialFile(array_key_exists(self::OPT_GEN_TUTORIAL_KEY,$_options)?$_options[self::OPT_GEN_TUTORIAL_KEY]:false);
 		$this->setOptionSubCategory(array_key_exists(self::OPT_SUB_CAT_KEY,$_options)?$_options[self::OPT_SUB_CAT_KEY]:self::OPT_SUB_CAT_START_NAME);
 		$this->setOptionGenerateWsdlClassFile(array_key_exists(self::OPT_GEN_WSDL_CLASS_KEY,$_options)?$_options[self::OPT_GEN_WSDL_CLASS_KEY]:false);
 		$this->setOptionGatherMethods(array_key_exists(self::OPT_GATH_METH_KEY,$_options)?$_options[self::OPT_GATH_METH_KEY]:self::OPT_GATH_METH_START_NAME);
@@ -275,6 +286,11 @@ class WsdlToPhp extends SoapClient
 			 */
 			if($this->getOptionGenerateAutoloadFile())
 				$this->generateAutoloadFile($_packageName,$rootDirectory,$_rootDirectoryRights,array_merge($wsdlClassFile,$structsClassesFiles,$functionsClassesFiles,$classMapFile));
+			/**
+			 * Generate tutorial ?
+			 */
+			if($this->getOptionGenerateTutorialFile())
+				$this->generateTutorialFile($_packageName,$rootDirectory,$_rootDirectoryRights,$functionsClassesFiles);
 			return true;
 		}
 		else
@@ -1055,6 +1071,79 @@ class WsdlToPhp extends SoapClient
 			return array();
 	}
 	/**
+	 * Generate tutorial file
+	 * @uses ezcPhpGenerator::appendCustomCode()
+	 * @uses ezcPhpGenerator::finish()
+	 * @param string $_packageName
+	 * @param string $_rootDirectory
+	 * @param bool $_rootDirectoryRights
+	 * @param array $_classesFiles
+	 * @return bool true|false
+	 */
+	private function generateTutorialFile($_packageName,$_rootDirectory,$_rootDirectoryRights,array $_functionsClassesFiles = array())
+	{
+		if(class_exists('ReflectionClass') && count($_functionsClassesFiles) && is_file(dirname(__FILE__) . '/sample-tpl.php') && $this->getOptionGenerateAutoloadFile() && is_file($_rootDirectory . '/' . ucfirst($_packageName) . 'Autoload.php'))
+		{
+			require_once $_rootDirectory . '/' . ucfirst($_packageName) . 'Autoload.php';
+			$content = '';
+			foreach($_functionsClassesFiles as $classFilePath)
+			{
+				$pathinfo = pathinfo($classFilePath);
+				$className = str_replace('.' . $pathinfo['extension'],'',$pathinfo['filename']);
+				if(class_exists($className))
+				{
+					$r = new ReflectionClass($className);
+					$methods = $r->getMethods();
+					$classMethods = array();
+					foreach($methods as $method)
+					{
+						if($method->class === $className && !in_array($method->getName(),array('__toString','__construct','getResult')))
+							array_push($classMethods,$method);
+					}
+					if(count($classMethods))
+					{
+						$content .= "\r\n\r\n/**" . str_repeat('*',strlen("Example for $className")) . "\r\n * Example for $className\r\n */";
+						$content .= "\r\n\$$className = new $className(\$wsdl);";
+						foreach($classMethods as $classMethod)
+						{
+							$content .= "\r\n// sample call for $className::" . $classMethod->getName() . '()';
+							$classParameters = $classMethod->getParameters();
+							$parameters = array();
+							foreach($classParameters as $classParameter)
+								array_push($parameters, 'new ' . ucfirst(str_replace('_','',$classParameter->getName())) . '(/*** update parameters list ***/)');
+							$content .= "\r\n\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . ');';
+							$content .= "\r\n" . 'print_r($' . $className . '->getResult());' . "\r\n";
+						}
+					}
+				}
+			}
+			if(!empty($content))
+			{
+				$fileContent = file_get_contents(dirname(__FILE__) . '/sample-tpl.php');
+				$fileContent = str_replace(array(
+													'packageName',
+													'PackageName',
+													'PACKAGENAME',
+													'WSDL_PATH',
+													'generation_date',
+													'$content;'),array(
+																			lcfirst($_packageName),
+																			ucfirst($_packageName),
+																			strtoupper($_packageName),
+																			implode('',array_slice(array_keys($this->getWsdls()),0,1)),
+																			date('d/m/Y'),
+																			$content),$fileContent);
+				file_put_contents($_rootDirectory . 'sample-' . strtolower($_packageName) . '.php',$fileContent);
+			}
+			return true;
+		}
+		else
+		{
+			echo "\r\n WsdlToPhp::generateTutorialFile() needs ReflectionClass, see http://fr2.php.net/manual/fr/class.reflectionclass.php\r\n";
+			return false;
+		}
+	}
+	/**
 	 * @return array
 	 */
 	public function getStructs()
@@ -1437,6 +1526,20 @@ class WsdlToPhp extends SoapClient
 	public function setOptionGenericConstantsNames($_optionGenericConstantsNames = false)
 	{
 		$this->optionGenericConstantsNames = $_optionGenericConstantsNames;
+	}
+	/**
+	 * @return bool
+	 */
+	public function getOptionGenerateTutorialFile()
+	{
+		return $this->optionGenerateTutorialFile;
+	}
+	/**
+	 * @param bool $optionGenerateTutorialFile
+	 */
+	public function setOptionGenerateTutorialFile($_optionGenerateTutorialFile = false)
+	{
+		$this->optionGenerateTutorialFile = $_optionGenerateTutorialFile;
 	}
 	/**
 	 * @return the $wsdls
