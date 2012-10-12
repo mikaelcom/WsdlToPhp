@@ -3,6 +3,7 @@
  * Sample to show how to use WSdlToPhp class
  * @date 01/07/2012
  */
+ini_set('display_errors',true);
 /**
  * In case function lcfirst doesn't exist 
  */
@@ -1174,7 +1175,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://pichet-ext.aql.fr/_vti_bin/lists.asmx?WSDL','pichet\marketing','Pichet111');
+	$w = new WsdlToPhp('*******************************/_vti_bin/lists.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1187,7 +1188,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://pichet-ext.aql.fr/_vti_bin/copy.asmx?WSDL','pichet\marketing','Pichet111');
+	$w = new WsdlToPhp('*******************************/_vti_bin/copy.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1200,7 +1201,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadSP2010-uat.it4pichet.com/_vti_bin/alerts.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/alerts.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1213,7 +1214,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadSP2010-uat.it4pichet.com/_vti_bin/authentication.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/authentication.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1226,7 +1227,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/dws.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/dws.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1239,7 +1240,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/forms.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/forms.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1252,7 +1253,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/imaging.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/imaging.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1265,7 +1266,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/dspsts.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/dspsts.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1278,7 +1279,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/dspsts.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/dspsts.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1291,7 +1292,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/dspsts.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/dspsts.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1304,7 +1305,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/meetings.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/meetings.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1317,7 +1318,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/people.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/people.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1330,7 +1331,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/permissions.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/permissions.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1343,7 +1344,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/sitedata.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/sitedata.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1356,7 +1357,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/sites.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/sites.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1369,7 +1370,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/search.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/search.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1382,7 +1383,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/usergroup.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/usergroup.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1395,7 +1396,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/versions.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/versions.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1408,7 +1409,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/views.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/views.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1421,7 +1422,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/webpartpages.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/webpartpages.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1434,7 +1435,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/webs.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/webs.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1447,7 +1448,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('https://ipadsp2010-uat.it4pichet.com/_vti_bin/sharepointemailws.asmx?WSDL','ipad.dsi@eurobat.com','VX5$:KWg');
+	$w = new WsdlToPhp('*******************************/_vti_bin/sharepointemailws.asmx?WSDL','*******************************','*******************************');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendArrayAsParameter(true);
@@ -1824,5 +1825,33 @@ if(false)
 		echo "\r\n$serviceName\r\n";
 		$w->generateClasses('RF' . $serviceName,dirname(__FILE__) . '/samples/restful-' . strtolower($serviceName) . '/');
 	}
+}
+/**
+ * ConeSearchWS
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://skyserver.sdss.org/vo/dr2cone/sdssconesearch.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('ConeSearch',dirname(__FILE__) . '/samples/cone-search/');
+}
+/**
+ * Science Search Service
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://www.science.gov/strata_scigov/services/searchService.wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('ScienceGovSearch',dirname(__FILE__) . '/samples/science-gov-search/');
 }
 ?>
