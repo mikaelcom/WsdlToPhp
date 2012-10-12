@@ -182,6 +182,36 @@ class WsdlToPhp extends SoapClient
 	private $optionGenerateTutorialFile;
 	/**
 	 * Constructor
+	 * @uses SoapClient::__construct()
+	 * @uses WsdlToPhp::setStructs()
+	 * @uses WsdlToPhp::setFunctions()
+	 * @uses WsdlToPhp::setWsdls()
+	 * @uses WsdlToPhp::addWsdl()
+	 * @uses WsdlToPhp::setOptionCategory()
+	 * @uses WsdlToPhp::setOptionGenerateAutoloadFile()
+	 * @uses WsdlToPhp::setOptionGenerateTutorialFile()
+	 * @uses WsdlToPhp::setOptionSubCategory()
+	 * @uses WsdlToPhp::setOptionGenerateWsdlClassFile()
+	 * @uses WsdlToPhp::setOptionGatherMethods()
+	 * @uses WsdlToPhp::setOptionSendArrayAsParameter()
+	 * @uses WsdlToPhp::setOptionResponseAsWsdlObject()
+	 * @uses WsdlToPhp::setOptionGenericConstantsNames()
+	 * @uses WsdlToPhp::setOptionInheritsClassIdentifier()
+	 * @uses WsdlToPhp::setOptionSendParametersAsArray()
+	 * @uses WsdlToPhp::OPT_CAT_KEY
+	 * @uses WsdlToPhp::OPT_CAT_START_NAME
+	 * @uses WsdlToPhp::OPT_GEN_AUTOLOAD_KEY
+	 * @uses WsdlToPhp::OPT_GEN_TUTORIAL_KEY
+	 * @uses WsdlToPhp::OPT_SUB_CAT_KEY
+	 * @uses WsdlToPhp::OPT_SUB_CAT_START_NAME
+	 * @uses WsdlToPhp::OPT_GEN_WSDL_CLASS_KEY
+	 * @uses WsdlToPhp::OPT_GATH_METH_KEY
+	 * @uses WsdlToPhp::OPT_GATH_METH_START_NAME
+	 * @uses WsdlToPhp::OPT_SEND_PARAM_AS_ARRAY_KEY
+	 * @uses WsdlToPhp::OPT_RESPONSE_AS_WSDL_OBJECT_KEY
+	 * @uses WsdlToPhp::OPT_GENERIC_CONSTANTS_NAMES_KEY
+	 * @uses WsdlToPhp::OPT_INHERITS_FROM_IDENTIFIER_KEY
+	 * @uses WsdlToPhp::OPT_SEND_PARAMETERS_AS_ARRAY_KEY
 	 * @param string $_pathToWsdl
 	 * @param string $_login
 	 * @param string $_password
@@ -234,10 +264,26 @@ class WsdlToPhp extends SoapClient
 	}
 	/**
 	 * Generate all classes based on options
+	 * @uses WsdlToPhp::getStructs()
+	 * @uses WsdlToPhp::initStructs()
+	 * @uses WsdlToPhp::getFunctions()
+	 * @uses WsdlToPhp::initFunctions()
+	 * @uses WsdlToPhp::loadWsdls()
+	 * @uses WsdlToPhp::getOptionGenerateWsdlClassFile()
+	 * @uses WsdlToPhp::generateWsdlClassFile()
+	 * @uses WsdlToPhp::setOptionGenerateWsdlClassFile()
+	 * @uses WsdlToPhp::generateStructsClasses()
+	 * @uses WsdlToPhp::generateFunctionsClasses()
+	 * @uses WsdlToPhp::generateClassMap()
+	 * @uses WsdlToPhp::getOptionGenerateAutoloadFile()
+	 * @uses WsdlToPhp::generateAutoloadFile()
+	 * @uses WsdlToPhp::getOptionGenerateTutorialFile()
+	 * @uses WsdlToPhp::generateTutorialFile()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param int $_rootDirectoryRights
 	 * @param bool $_createRootDirectory
+	 * @return bool true|false depending on the well creation fot the root directory
 	 */
 	public function generateClasses($_packageName,$_rootDirectory,$_rootDirectoryRights = 0775,$_createRootDirectory = true)
 	{
@@ -301,6 +347,8 @@ class WsdlToPhp extends SoapClient
 	 * - Get structs defined
 	 * - Parse each struct definition
 	 * - Analyze each struct paramaters
+	 * @uses SoapClient::__getTypes()
+	 * @uses WsdlToPhp::addStruct()
 	 * @tutorial restriction aren't get with structs, see loadWsdls :
 	 * <xsd:simpleType name="SearchOption">
 	 * --<xsd:restriction base="xsd:string">
@@ -309,6 +357,7 @@ class WsdlToPhp extends SoapClient
 	 * --</xsd:restriction>
 	 * </xsd:simpleType>
 	 * Example on how to send them : http://msdn.microsoft.com/en-us/library/dd250961
+	 * @return bool true|false depending on the well types catching from the WSDL
 	 */
 	private function initStructs()
 	{
@@ -409,12 +458,22 @@ class WsdlToPhp extends SoapClient
 				else
 					$this->addStruct($structParamType,$structParamName,$structName);
 			}
+			return true;
 		}
 		else
 			return false;
 	}
 	/**
 	 * Generate structs classes based on structs collected
+	 * @uses WsdlToPhp::getStructs()
+	 * @uses WsdlToPhp::getDirectory()
+	 * @uses WsdlToPhp::getOptionInheritsClassIdentifier()
+	 * @uses WsdlToPhp::getOptionCategory()
+	 * @uses WsdlToPhp::setOptionCategory()
+	 * @uses WsdlToPhp::cleanClassName()
+	 * @uses WsdlToPhp::cleanPropertyName()
+	 * @uses WsdlToPhp::getOptionGenericConstantsNames()
+	 * @uses WsdlToPhp::cleanConstantName()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
@@ -822,6 +881,9 @@ class WsdlToPhp extends SoapClient
 	 * Initialize functions :
 	 * - Get structs defined
 	 * - Parse each struct definition
+	 * @uses SoapClient::__getFunctions()
+	 * @uses WsdlToPhp::addFunction()
+	 * @return bool true|false depending on the well functions catching from the WSDL
 	 */
 	private function initFunctions()
 	{
@@ -835,15 +897,26 @@ class WsdlToPhp extends SoapClient
 				if(count($infos) == 4)
 					$this->addFunction($infos[2],$infos[3],$infos[1]);
 			}
+			return true;
 		}
 		else
 			return false;
 	}
 	/**
 	 * Generate methods by class
+	 * @uses WsdlToPhp::getFunctions()
+	 * @uses WsdlToPhp::getStructs()
+	 * @uses WsdlToPhp::getDirectory()
+	 * @uses WsdlToPhp::getOptionGenerateWsdlClassFile()
+	 * @uses WsdlToPhp::getOptionSendArrayAsParameter()
+	 * @uses WsdlToPhp::getOptionSendParametersAsArray()
+	 * @uses WsdlToPhp::getOptionResponseAsWsdlObject()
+	 * @uses WsdlToPhp::getOptionGenericConstantsNames()
+	 * @uses WsdlToPhp::cleanClassName()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
+	 * @return array the absolute paths to the generated files
 	 */
 	private function generateFunctionsClasses($_packageName,$_rootDirectory,$_rootDirectoryRights)
 	{
@@ -985,9 +1058,11 @@ class WsdlToPhp extends SoapClient
 	}
 	/**
 	 * Generate classMap class
+	 * @uses WsdlToPhp::getStructs()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
+	 * @return array the absolute path to the generated file
 	 */
 	private function generateClassMap($_packageName,$_rootDirectory,$_rootDirectoryRights)
 	{
@@ -1041,7 +1116,7 @@ class WsdlToPhp extends SoapClient
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param int $_rootDirectoryRights
-	 * @return array class file
+	 * @return array the absolute path to the generated file
 	 */
 	private function generateWsdlClassFile($_packageName,$_rootDirectory,$_rootDirectoryRights)
 	{
@@ -1072,8 +1147,13 @@ class WsdlToPhp extends SoapClient
 	}
 	/**
 	 * Generate tutorial file
+	 * @uses WsdlToPhp::getOptionGenerateAutoloadFile()
+	 * @uses WsdlToPhp::getWsdls()
 	 * @uses ezcPhpGenerator::appendCustomCode()
 	 * @uses ezcPhpGenerator::finish()
+	 * @uses ReflectionClass::getMethods()
+	 * @uses ReflectionMethod::getName()
+	 * @uses ReflectionMethod::getParameters()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
@@ -1097,7 +1177,10 @@ class WsdlToPhp extends SoapClient
 					$classMethods = array();
 					foreach($methods as $method)
 					{
-						if($method->class === $className && !in_array($method->getName(),array('__toString','__construct','getResult')))
+						if($method->class === $className && !in_array($method->getName(),array(
+																								'__toString',
+																								'__construct',
+																								'getResult')))
 							array_push($classMethods,$method);
 					}
 					if(count($classMethods))
@@ -1110,9 +1193,11 @@ class WsdlToPhp extends SoapClient
 							$classParameters = $classMethod->getParameters();
 							$parameters = array();
 							foreach($classParameters as $classParameter)
-								array_push($parameters, 'new ' . ucfirst(str_replace('_','',$classParameter->getName())) . '(/*** update parameters list ***/)');
-							$content .= "\r\n\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . ');';
-							$content .= "\r\n" . 'print_r($' . $className . '->getResult());' . "\r\n";
+								array_push($parameters,'new ' . ucfirst(str_replace('_','',$classParameter->getName())) . '(/*** update parameters list ***/)');
+							$content .= "\r\nif(\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
+							$content .= "\r\n\t" . 'print_r($' . $className . '->getResult());';
+							$content .= "\r\nelse";
+							$content .= "\r\n\tprint_r(\$this->getLastError());";
 						}
 					}
 				}
@@ -1121,18 +1206,18 @@ class WsdlToPhp extends SoapClient
 			{
 				$fileContent = file_get_contents(dirname(__FILE__) . '/sample-tpl.php');
 				$fileContent = str_replace(array(
-													'packageName',
-													'PackageName',
-													'PACKAGENAME',
-													'WSDL_PATH',
-													'generation_date',
-													'$content;'),array(
-																			lcfirst($_packageName),
-																			ucfirst($_packageName),
-																			strtoupper($_packageName),
-																			implode('',array_slice(array_keys($this->getWsdls()),0,1)),
-																			date('d/m/Y'),
-																			$content),$fileContent);
+												'packageName',
+												'PackageName',
+												'PACKAGENAME',
+												'WSDL_PATH',
+												'generation_date',
+												'$content;'),array(
+																lcfirst($_packageName),
+																ucfirst($_packageName),
+																strtoupper($_packageName),
+																implode('',array_slice(array_keys($this->getWsdls()),0,1)),
+																date('d/m/Y'),
+																$content),$fileContent);
 				file_put_contents($_rootDirectory . 'sample-' . strtolower($_packageName) . '.php',$fileContent);
 			}
 			return true;
@@ -1153,12 +1238,13 @@ class WsdlToPhp extends SoapClient
 	/**
 	 * @param array $types
 	 */
-	private function setStructs($_structs)
+	protected function setStructs($_structs)
 	{
 		$this->structs = $_structs;
 	}
 	/**
 	 * Add type to structs
+	 * @uses WsdlToPhp::cleanName()
 	 * @param string $_paramType
 	 * @param string $_paramName
 	 * @param string $_structName
@@ -1182,6 +1268,7 @@ class WsdlToPhp extends SoapClient
 	 * Method to add info value to an existing struct and param
 	 * @uses WsdlToPhp::getStructs()
 	 * @uses WsdlToPhp::setStructs()
+	 * @uses WsdlToPhp::cleanName()
 	 * @param string $_structName
 	 * @param string $_paramName
 	 * @param string $_structInfoName
@@ -1220,6 +1307,7 @@ class WsdlToPhp extends SoapClient
 	 * Add struct inheritence info
 	 * @uses WsdlToPhp::getStructs()
 	 * @uses WsdlToPhp::setStructs()
+	 * @uses WsdlToPhp::cleanName()
 	 * @param string $_structName
 	 * @param string $_inherits
 	 */
@@ -1241,6 +1329,7 @@ class WsdlToPhp extends SoapClient
 	 * Add struct documentation info
 	 * @uses WsdlToPhp::getStructs()
 	 * @uses WsdlToPhp::setStructs()
+	 * @uses WsdlToPhp::cleanName()
 	 * @param string $_structName
 	 * @param string $_documentation
 	 */
@@ -1262,6 +1351,7 @@ class WsdlToPhp extends SoapClient
 	 * Add type to restrictions
 	 * @uses WsdlToPhp::addStruct()
 	 * @uses WsdlToPhp::addStructInfo()
+	 * @uses WsdlToPhp::cleanName()
 	 * @param string $_paramType
 	 * @param string $_paramValue
 	 * @param string $_restrictionName
@@ -1296,12 +1386,14 @@ class WsdlToPhp extends SoapClient
 	/**
 	 * @param array $functions
 	 */
-	private function setFunctions($_functions)
+	protected function setFunctions($_functions)
 	{
 		$this->functions = $_functions;
 	}
 	/**
 	 * @uses WsdlToPhp::getGather()
+	 * @uses WsdlToPhp::cleanName()
+	 * @uses WsdlToPhp::getFunctions()
 	 * @param string $_function
 	 */
 	private function addFunction($_functionName,$_functionParameter,$_functionReturn)
@@ -1329,6 +1421,9 @@ class WsdlToPhp extends SoapClient
 	 * Method to add info value to an existing function and method name
 	 * @uses WsdlToPhp::getStructs()
 	 * @uses WsdlToPhp::setStructs()
+	 * @uses WsdlToPhp::setFunctions()
+	 * @uses WsdlToPhp::getFunctions()
+	 * @uses WsdlToPhp::cleanName()
 	 * @param string $_functionName
 	 * @param string $_functiontInfoName
 	 * @param mixed $_functionInfoValue
@@ -1577,13 +1672,8 @@ class WsdlToPhp extends SoapClient
 	}
 	/**
 	 * Methods to load WSDL from current WSDL when current WSDL imports other WSDL
-	 * @uses WsdlToPhp::loadWsdls()
-	 * @uses WsdlToPhp::getWsdls()
-	 * @uses WsdlToPhp::addWsdl()
-	 * @uses WsdlToPhp::loadWsdls()
-	 * @uses WsdlToPhp::addRestriction()
-	 * @uses WsdlToPhp::addStructInfo()
-	 * @uses WsdlToPhp::addFunctionInfo()
+	 * @uses WsdlToPhp::manageWsdlLocation()
+	 * @uses WsdlToPhp::manageWsdlNode()
 	 * @param string $_wsdlLocation wsdl location to load
 	 * @param DOMNode $_domNode DOMNode to browse
 	 * @param string $_fromWsdlLocation wsdl location where the current $_domNode or $_wsdlLocation is from
@@ -1595,222 +1685,320 @@ class WsdlToPhp extends SoapClient
 		 * Not empty location
 		 */
 		if(!empty($_wsdlLocation))
-		{
-			$wsdlLocationContent = '';
-			$dom = new DOMDocument('1.0','UTF-8');
-			if($dom->load($_wsdlLocation))
-				$wsdlLocationContent = trim($dom->saveXML());
-			/**
-			 * Comments tag on the beginning block parsing the DOMDocument
-			 */
-			if(empty($wsdlLocationContent) || trim($wsdlLocationContent) == '<?xml version="1.0" encoding="UTF-8"?>')
-			{
-				$wsdlLocationContent = file_get_contents($_wsdlLocation);
-				$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
-			}
-			if(!empty($wsdlLocationContent) && $dom->loadXML($wsdlLocationContent) && $dom->hasChildNodes())
-			{
-				foreach($dom->childNodes as $childNode)
-				{
-					if($childNode->nodeName !== '#comment')
-					{
-						$this->loadWsdls('',$childNode,$_wsdlLocation);
-						break;
-					}
-				}
-			}
-		}
+			$this->manageWsdlLocation($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * New node to browse
 		 */
 		elseif($_domNode instanceof DOMElement)
+			$this->manageWsdlNode($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+	}
+	/**
+	 * Default manage method for a location
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return true
+	 */
+	protected function manageWsdlLocation($_wsdlLocation,$_domNode,$_fromWsdlLocation)
+	{
+		$wsdlLocationContent = '';
+		$dom = new DOMDocument('1.0','UTF-8');
+		if($dom->load($_wsdlLocation))
+			$wsdlLocationContent = trim($dom->saveXML());
+		/**
+		 * Comments tag on the beginning block parsing the DOMDocument
+		 */
+		if(empty($wsdlLocationContent) || trim($wsdlLocationContent) == '<?xml version="1.0" encoding="UTF-8"?>')
+		{
+			$wsdlLocationContent = file_get_contents($_wsdlLocation);
+			$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
+		}
+		if(!empty($wsdlLocationContent) && $dom->loadXML($wsdlLocationContent) && $dom->hasChildNodes())
+		{
+			foreach($dom->childNodes as $childNode)
+			{
+				if($childNode->nodeName !== '#comment')
+				{
+					$this->loadWsdls('',$childNode,$_wsdlLocation);
+					break;
+				}
+			}
+		}
+	}
+	/**
+	 * Default manage method for a node
+	 * @uses WsdlToPhp::manageWsdlNodeImport()
+	 * @uses WsdlToPhp::manageWsdlNodeRestriction()
+	 * @uses WsdlToPhp::manageWsdlNodeElement()
+	 * @uses WsdlToPhp::manageWsdlNodeDocumentation()
+	 * @uses WsdlToPhp::manageWsdlNodeExtension()
+	 * @uses WsdlToPhp::manageWsdlNodeUndefined()
+	 * @uses WsdlToPhp::loadWsdls()
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return true
+	 */
+	protected function manageWsdlNode($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '')
+	{
+		/**
+		 * Current node is type of "import" and contains the location
+		 */
+		if(strpos($_domNode->nodeName,'import') !== false && ($_domNode->hasAttribute('location') || $_domNode->hasAttribute('schemaLocation')))
+			$this->manageWsdlNodeImport($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		/**
+		 * Enumeration's and restriction's
+		 */
+		elseif((strpos($_domNode->nodeName,'restriction') !== false || strpos($_domNode->nodeName,'enumeration') !== false))
+			$this->manageWsdlNodeRestriction($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		/**
+		 * Element's, part of a struct
+		 */
+		elseif((strpos($_domNode->nodeName,'element') !== false || strpos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
+			$this->manageWsdlNodeElement($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		/**
+		 * Documentation's
+		 */
+		elseif(strpos($_domNode->nodeName,'documentation') !== false && !empty($_domNode->nodeValue))
+			$this->manageWsdlNodeDocumentation($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		/**
+		 * Extension of struct
+		 */
+		elseif(strpos($_domNode->nodeName,'extension') !== false && $_domNode->hasAttribute('base') && $_domNode->getAttribute('base') != '')
+			$this->manageWsdlNodeExtension($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		/**
+		 * Undefined node
+		 */
+		else
+			$this->manageWsdlNodeUndefined($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		/**
+		 * other child nodes
+		 */
+		if($_domNode->hasChildNodes())
+		{
+			$childNodes = $_domNode->childNodes;
+			$childNodesLength = $childNodes->length;
+			for($i = 0;$i < $childNodesLength;$i++)
+			{
+				if($childNodes->item($i))
+					$this->loadWsdls('',$childNodes->item($i),!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+			}
+		}
+	}
+	/**
+	 * Undefined node manage method
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return void
+	 */
+	protected function manageWsdlNodeUndefined($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '')
+	{
+		return true;
+	}
+	/**
+	 * Manage shema import method
+	 * @uses WsdlToPhp::addWsdl()
+	 * @uses WsdlToPhp::loadWsdls()
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return void
+	 */
+	protected function manageWsdlNodeImport($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
+	{
+		$location = $_domNode->hasAttribute('location')?$_domNode->getAttribute('location'):$_domNode->getAttribute('schemaLocation');
+		/**
+		 * Define valid location
+		 */
+		if(!empty($location) && strpos($location,'http://') === false && strpos($location,'https://') === false && (!empty($_wsdlLocation) || !empty($_fromWsdlLocation)))
+		{
+			$locationToParse = !empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation;
+			$fileParts = pathinfo($locationToParse);
+			$fileBasename = (is_array($fileParts) && array_key_exists('basename',$fileParts))?$fileParts['basename']:'';
+			$parts = parse_url(str_replace($fileBasename,'',$locationToParse));
+			$scheme = (is_array($parts) && array_key_exists('scheme',$parts))?$parts['scheme']:'';
+			$host = (is_array($parts) && array_key_exists('host',$parts))?$parts['host']:'';
+			$path = (is_array($parts) && array_key_exists('path',$parts))?$parts['path']:'';
+			$path = str_replace($fileBasename,'',$path);
+			$port = (is_array($parts) && array_key_exists('port',$parts))?$parts['port']:'';
+			if(!empty($scheme) && !empty($host))
+				$location = $scheme . '://' . $host . (!empty($port)?':' . $port:'') . (!empty($path)?$path:'/') . $location;
+		}
+		/**
+		 * New WSDL
+		 */
+		if(!empty($location) && !array_key_exists($location,$this->getWsdls()))
 		{
 			/**
-			 * Current node is type of "import" and contains the location
+			 * Save Wsdl location
 			 */
-			if(strpos($_domNode->nodeName,'import') !== false && ($_domNode->hasAttribute('location') || $_domNode->hasAttribute('schemaLocation')))
-			{
-				$location = $_domNode->hasAttribute('location')?$_domNode->getAttribute('location'):$_domNode->getAttribute('schemaLocation');
-				/**
-				 * Define valid location
-				 */
-				if(!empty($location) && strpos($location,'http://') === false && strpos($location,'https://') === false && (!empty($_wsdlLocation) || !empty($_fromWsdlLocation)))
-				{
-					$locationToParse = !empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation;
-					$fileParts = pathinfo($locationToParse);
-					$fileBasename = (is_array($fileParts) && array_key_exists('basename',$fileParts))?$fileParts['basename']:'';
-					$parts = parse_url(str_replace($fileBasename,'',$locationToParse));
-					$scheme = (is_array($parts) && array_key_exists('scheme',$parts))?$parts['scheme']:'';
-					$host = (is_array($parts) && array_key_exists('host',$parts))?$parts['host']:'';
-					$path = (is_array($parts) && array_key_exists('path',$parts))?$parts['path']:'';
-					$path = str_replace($fileBasename,'',$path);
-					$port = (is_array($parts) && array_key_exists('port',$parts))?$parts['port']:'';
-					if(!empty($scheme) && !empty($host))
-						$location = $scheme . '://' . $host . (!empty($port)?':' . $port:'') . (!empty($path)?$path:'/') . $location;
-				}
-				/**
-				 * New WSDL
-				 */
-				if(!empty($location) && !array_key_exists($location,$this->getWsdls()))
-				{
-					/**
-					 * Save Wsdl location
-					 */
-					$this->addWsdl($location);
-					/**
-					 * Load Wsdl
-					 */
-					$this->loadWsdls($location,null,$_wsdlLocation);
-				}
-			}
+			$this->addWsdl($location);
 			/**
-			 * Enumeration's and restriction's
+			 * Load Wsdl
 			 */
-			elseif((strpos($_domNode->nodeName,'restriction') !== false || strpos($_domNode->nodeName,'enumeration') !== false))
+			$this->loadWsdls($location,null,$_wsdlLocation);
+		}
+	}
+	/**
+	 * Manage restriction method
+	 * @uses WsdlToPhp::addRestriction()
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return void
+	 */
+	protected function manageWsdlNodeRestriction($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
+	{
+		$parentNode = strpos($_domNode->nodeName,'restriction') !== false?$_domNode->parentNode:$_domNode->parentNode->parentNode;
+		if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+		{
+			if(strpos($_domNode->nodeName,'restriction') !== false)
 			{
-				$parentNode = strpos($_domNode->nodeName,'restriction') !== false?$_domNode->parentNode:$_domNode->parentNode->parentNode;
-				if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
-				{
-					if(strpos($_domNode->nodeName,'restriction') !== false)
-					{
-						$type = explode(':',$_domNode->getAttribute('base'));
-						$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'));
-					}
-					else
-						$this->addRestriction('',$_domNode->getAttribute('value'),$parentNode->getAttribute('name'));
-				}
+				$type = explode(':',$_domNode->getAttribute('base'));
+				$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'));
 			}
+			else
+				$this->addRestriction('',$_domNode->getAttribute('value'),$parentNode->getAttribute('name'));
+		}
+	}
+	/**
+	 * Manage element method
+	 * @uses WsdlToPhp::addStructInfo()
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return void
+	 */
+	protected function manageWsdlNodeElement($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
+	{
+		/**
+		 * Find parent node of this element node
+		 */
+		$parentNode = $_domNode->parentNode;
+		$maxDeep = 5;
+		while($maxDeep-- > 0 && ($parentNode instanceof DOMNode) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
+			$parentNode = $parentNode->parentNode;
+		if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+		{
+			$attributes = $_domNode->attributes;
+			$attributesLength = $attributes->length;
+			for($i = 0;$i < $attributesLength;$i++)
+			{
+				$attribute = $attributes->item($i);
+				if($attribute && $attribute->nodeName != 'name' && $attribute->nodeName != 'type')
+					$this->addStructInfo($parentNode->getAttribute('name'),$_domNode->getAttribute('name'),'meta',array(
+																														$attribute->nodeName=>trim($attribute->nodeValue)));
+			}
+		}
+	}
+	/**
+	 * Manage element method
+	 * @uses WsdlToPhp::addStructInfo()
+	 * @uses WsdlToPhp::addRestriction()
+	 * @uses WsdlToPhp::addStructDocumentation()
+	 * @uses WsdlToPhp::addWsdlMeta()
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return void
+	 */
+	protected function manageWsdlNodeDocumentation($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
+	{
+		$documentation = trim($_domNode->nodeValue);
+		$documentation = str_replace(array(
+											"\r",
+											"\n",
+											"\t"),array(
+													'',
+													'',
+													' '),$documentation);
+		$documentation = preg_replace('[\s+]',' ',$documentation);
+		/**
+		 * Find parent node of this documentation node
+		 */
+		$parentNode = $_domNode->parentNode;
+		$maxDeep = 5;
+		while($maxDeep-- > 0 && $parentNode && ($parentNode instanceof DOMElement) && $parentNode->nodeName && strpos($parentNode->nodeName,'operation') === false && strpos($parentNode->nodeName,'element') === false && strpos($parentNode->nodeName,'simpleType') === false && strpos($parentNode->nodeName,'complexType') === false && strpos($parentNode->nodeName,'enumeration') === false && strpos($parentNode->nodeName,'definitions') === false)
+			$parentNode = $parentNode->parentNode;
+		if($parentNode && ($parentNode instanceof DOMElement))
+		{
 			/**
-			 * Element's, part of a struct
+			 * is it an element ? part of a struct
 			 */
-			elseif((strpos($_domNode->nodeName,'element') !== false || strpos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
+			if(strpos($parentNode->nodeName,'element') !== false && $parentNode->hasAttribute('type'))
 			{
 				/**
 				 * Find parent node of this documentation node
 				 */
-				$parentNode = $_domNode->parentNode;
+				$upParentNode = $parentNode->parentNode;
 				$maxDeep = 5;
-				while($maxDeep-- > 0 && ($parentNode instanceof DOMNode) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
-					$parentNode = $parentNode->parentNode;
-				if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos($upParentNode->nodeName,'element') !== false || (strpos($upParentNode->nodeName,'complexType') !== false && $upParentNode->hasAttribute('name'))))
+					$upParentNode = $upParentNode->parentNode;
+				if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
 				{
-					$attributes = $_domNode->attributes;
-					$attributesLength = $attributes->length;
-					for($i = 0;$i < $attributesLength;$i++)
-					{
-						$attribute = $attributes->item($i);
-						if($attribute && $attribute->nodeName != 'name' && $attribute->nodeName != 'type')
-							$this->addStructInfo($parentNode->getAttribute('name'),$_domNode->getAttribute('name'),'meta',array(
-																																$attribute->nodeName=>trim($attribute->nodeValue)));
-					}
+					$this->addStructInfo($upParentNode->getAttribute('name'),$parentNode->getAttribute('name'),'meta',array(
+																															'documentation'=>$documentation));
 				}
 			}
 			/**
-			 * Documentation's
+			 * is it an enumeration
 			 */
-			elseif(strpos($_domNode->nodeName,'documentation') !== false && !empty($_domNode->nodeValue))
+			elseif(strpos($parentNode->nodeName,'enumeration') !== false)
 			{
-				$documentation = trim($_domNode->nodeValue);
-				$documentation = str_replace(array(
-													"\r",
-													"\n",
-													"\t"),array(
-															'',
-															'',
-															' '),$documentation);
-				$documentation = preg_replace('[\s+]',' ',$documentation);
 				/**
-				 * Find parent node of this documentation node
+				 * Find parent node of this enumeration node
 				 */
-				$parentNode = $_domNode->parentNode;
+				$upParentNode = $parentNode->parentNode;
 				$maxDeep = 5;
-				while($maxDeep-- > 0 && $parentNode && ($parentNode instanceof DOMElement) && $parentNode->nodeName && strpos($parentNode->nodeName,'operation') === false && strpos($parentNode->nodeName,'element') === false && strpos($parentNode->nodeName,'simpleType') === false && strpos($parentNode->nodeName,'complexType') === false && strpos($parentNode->nodeName,'enumeration') === false && strpos($parentNode->nodeName,'definitions') === false)
-					$parentNode = $parentNode->parentNode;
-				if($parentNode && ($parentNode instanceof DOMElement))
-				{
-					/**
-					 * is it an element ? part of a struct
-					 */
-					if(strpos($parentNode->nodeName,'element') !== false && $parentNode->hasAttribute('type'))
-					{
-						/**
-						 * Find parent node of this documentation node
-						 */
-						$upParentNode = $parentNode->parentNode;
-						$maxDeep = 5;
-						while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos($upParentNode->nodeName,'element') !== false || (strpos($upParentNode->nodeName,'complexType') !== false && $upParentNode->hasAttribute('name'))))
-							$upParentNode = $upParentNode->parentNode;
-						if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
-						{
-							$this->addStructInfo($upParentNode->getAttribute('name'),$parentNode->getAttribute('name'),'meta',array(
-																																	'documentation'=>$documentation));
-						}
-					}
-					/**
-					 * is it an enumeration
-					 */
-					elseif(strpos($parentNode->nodeName,'enumeration') !== false)
-					{
-						/**
-						 * Find parent node of this enumeration node
-						 */
-						$upParentNode = $parentNode->parentNode;
-						$maxDeep = 5;
-						while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos($upParentNode->nodeName,'element') !== false || (strpos($upParentNode->nodeName,'simpleType') !== false && $upParentNode->hasAttribute('name'))))
-							$upParentNode = $upParentNode->parentNode;
-						if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
-							$this->addRestriction('meta',array(
-																$parentNode->getAttribute('value')=>array(
-																										'documentation'=>$documentation)),$upParentNode->getAttribute('name'));
-					}
-					/**
-					 * is it a struct ?
-					 */
-					elseif((strpos($parentNode->nodeName,'element') !== false || strpos($parentNode->nodeName,'complexType') !== false || strpos($parentNode->nodeName,'simpleType') !== false) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
-						$this->addStructDocumentation($parentNode->getAttribute('name'),$documentation);
-					/**
-					 * is it an operation ?
-					 */
-					elseif(strpos($parentNode->nodeName,'operation') !== false && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
-						$this->addFunctionInfo($parentNode->getAttribute('name'),'meta',array(
-																							'documentation'=>$documentation));
-					/**
-					 * is it a definitions ?
-					 */
-					elseif(strpos($parentNode->nodeName,'definitions') !== false)
-						$this->addWsdlMeta('documentation',$documentation);
-				}
-			}
-			elseif(strpos($_domNode->nodeName,'extension') !== false && $_domNode->hasAttribute('base') && $_domNode->getAttribute('base') != '')
-			{
-				$base = explode(':',$_domNode->getAttribute('base'));
-				$inheritsName = $base[count($base) - 1];
-				if(!empty($inheritsName))
-				{
-					/**
-					 * Find parent node of this extension node
-					 */
-					$parentNode = $_domNode->parentNode;
-					$maxDeep = 5;
-					while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
-						$parentNode = $parentNode->parentNode;
-					if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
-						$this->addStructInherits($parentNode->getAttribute('name'),$inheritsName);
-				}
+				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos($upParentNode->nodeName,'element') !== false || (strpos($upParentNode->nodeName,'simpleType') !== false && $upParentNode->hasAttribute('name'))))
+					$upParentNode = $upParentNode->parentNode;
+				if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
+					$this->addRestriction('meta',array(
+														$parentNode->getAttribute('value')=>array(
+																								'documentation'=>$documentation)),$upParentNode->getAttribute('name'));
 			}
 			/**
-			 * other child nodes
+			 * is it a struct ?
 			 */
-			if($_domNode->hasChildNodes())
-			{
-				$childNodes = $_domNode->childNodes;
-				$childNodesLength = $childNodes->length;
-				for($i = 0;$i < $childNodesLength;$i++)
-				{
-					if($childNodes->item($i))
-						$this->loadWsdls('',$childNodes->item($i),!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
-				}
-			}
+			elseif((strpos($parentNode->nodeName,'element') !== false || strpos($parentNode->nodeName,'complexType') !== false || strpos($parentNode->nodeName,'simpleType') !== false) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+				$this->addStructDocumentation($parentNode->getAttribute('name'),$documentation);
+			/**
+			 * is it an operation ?
+			 */
+			elseif(strpos($parentNode->nodeName,'operation') !== false && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+				$this->addFunctionInfo($parentNode->getAttribute('name'),'meta',array(
+																					'documentation'=>$documentation));
+			/**
+			 * is it a definitions ?
+			 */
+			elseif(strpos($parentNode->nodeName,'definitions') !== false)
+				$this->addWsdlMeta('documentation',$documentation);
+		}
+	}
+	/**
+	 * Manage extension method
+	 * @uses WsdlToPhp::addStructInherits()
+	 * @param string $_wsdlLocation
+	 * @param DOMNode $_domNode
+	 * @param string $_fromWsdlLocation
+	 * @return void
+	 */
+	protected function manageWsdlNodeExtension($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
+	{
+		$base = explode(':',$_domNode->getAttribute('base'));
+		$inheritsName = $base[count($base) - 1];
+		if(!empty($inheritsName))
+		{
+			/**
+			 * Find parent node of this extension node
+			 */
+			$parentNode = $_domNode->parentNode;
+			$maxDeep = 5;
+			while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
+				$parentNode = $parentNode->parentNode;
+			if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+				$this->addStructInherits($parentNode->getAttribute('name'),$inheritsName);
 		}
 	}
 	/**
@@ -1877,7 +2065,7 @@ class WsdlToPhp extends SoapClient
 	 * @param string $_string category type
 	 * @return string
 	 */
-	private function getPart($_string,$_optionName)
+	protected function getPart($_string,$_optionName)
 	{
 		$elementType = '';
 		$optionValue = 0;
