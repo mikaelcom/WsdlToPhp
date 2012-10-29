@@ -1744,7 +1744,7 @@ class WsdlToPhp extends SoapClient
 		/**
 		 * Current node is type of "import" and contains the location
 		 */
-		if(strpos($_domNode->nodeName,'import') !== false && ($_domNode->hasAttribute('location') || $_domNode->hasAttribute('schemaLocation')))
+		if(strpos($_domNode->nodeName,'import') !== false && ($_domNode->hasAttribute('location') || $_domNode->hasAttribute('schemaLocation') || $_domNode->hasAttribute('schemalocation')))
 			$this->manageWsdlNodeImport($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Enumeration's and restriction's
@@ -1807,7 +1807,7 @@ class WsdlToPhp extends SoapClient
 	 */
 	protected function manageWsdlNodeImport($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
 	{
-		$location = $_domNode->hasAttribute('location')?$_domNode->getAttribute('location'):$_domNode->getAttribute('schemaLocation');
+		$location = $_domNode->hasAttribute('location')?$_domNode->getAttribute('location'):($_domNode->hasAttribute('schemaLocation')?$_domNode->getAttribute('schemaLocation'):$_domNode->getAttribute('schemalocation'));
 		/**
 		 * Define valid location
 		 */
