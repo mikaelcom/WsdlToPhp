@@ -375,10 +375,15 @@ class WsdlToPhp extends SoapClient
 				$type = str_replace("\n",'',$type);
 				$type = str_replace("\t",'',$type);
 				/**
-				 * Remove brackets
+				 * Remove curly braces
 				 */
 				$type = str_replace("{",'',$type);
 				$type = str_replace("}",'',$type);
+				/**
+				 * Remove brackets
+				 */
+				$type = str_replace("[",'',$type);
+				$type = str_replace("]",'',$type);
 				/**
 				 * Add space to parse it
 				 */
@@ -1998,7 +2003,20 @@ class WsdlToPhp extends SoapClient
 			while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
 				$parentNode = $parentNode->parentNode;
 			if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
-				$this->addStructInherits($parentNode->getAttribute('name'),$inheritsName);
+			{
+				/**
+				 * Avoid infinite loop on case like this when looping/managing inheritance :
+				 * <xs:complexType name="duration">
+				 * -<xs:simpleContent>
+				 * --<xs:extension base="xs:duration">
+				 * ---<xs:attributeGroup ref="tns:commonAttributes"/>
+				 * --</xs:extension>
+				 * -</xs:simpleContent>
+				 * </xs:complexType>
+				 */
+				if($inheritsName !== $parentNode->getAttribute('name'))
+					$this->addStructInherits($parentNode->getAttribute('name'),$inheritsName);
+			}
 		}
 	}
 	/**
