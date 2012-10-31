@@ -401,7 +401,7 @@ class WsdlToPhp extends SoapClient
 				 * Get struct definition start
 				 */
 				$struct = $typeDef[0];
-				if($struct != 'struct')
+				if($struct != 'struct' && !array_key_exists(self::cleanName($struct),$this->getStructs()))
 					continue;
 				/**
 				 * Replace some uppercase words in struct name
@@ -605,13 +605,13 @@ class WsdlToPhp extends SoapClient
 						if(!$isRestriction)
 						{
 							/**
-							 * List of attributes for whoch we generate setters, getters, general methods
+							 * List of attributes for which we generate setters, getters, general methods
 							 */
 							$parameters[] = array(
 												'type'=>$type,
 												'name'=>$name);
 							/**
-							 * Is attribute is a know type
+							 * Is this attribute a know type ?
 							 */
 							if(array_key_exists($type,$this->getStructs()) || strpos($type,'ArrayOf') !== false)
 								$parametersSring .= "\r\n * @param " . $ClassType . 'Type' . $Type . " $name";
@@ -767,7 +767,7 @@ class WsdlToPhp extends SoapClient
 						$php->appendCustomCode("}");
 					}
 					/**
-					 * Add specifics methods for classes like "*ArrayOf" in order to give type to value returned by specifics methods
+					 * Add specifics methods for classes like "*ArrayOf*" in order to give type to value returned by specifics methods
 					 */
 					if(strpos($className,'ArrayOf') !== false && count($parametersType) == 1)
 					{
@@ -1227,11 +1227,12 @@ class WsdlToPhp extends SoapClient
 			}
 			return true;
 		}
-		else
+		elseif(!class_exists('ReflectionClass'))
 		{
 			echo "\r\n WsdlToPhp::generateTutorialFile() needs ReflectionClass, see http://fr2.php.net/manual/fr/class.reflectionclass.php\r\n";
 			return false;
 		}
+		return false;
 	}
 	/**
 	 * @return array
@@ -1708,14 +1709,14 @@ class WsdlToPhp extends SoapClient
 	{
 		$wsdlLocationContent = '';
 		$dom = new DOMDocument('1.0','UTF-8');
-		if($dom->load($_wsdlLocation))
+		if(@$dom->load($_wsdlLocation))
 			$wsdlLocationContent = trim($dom->saveXML());
 		/**
 		 * Comments tag on the beginning block parsing the DOMDocument
 		 */
 		if(empty($wsdlLocationContent) || trim($wsdlLocationContent) == '<?xml version="1.0" encoding="UTF-8"?>')
 		{
-			$wsdlLocationContent = file_get_contents($_wsdlLocation);
+			$wsdlLocationContent = @file_get_contents($_wsdlLocation);
 			$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
 		}
 		if(!empty($wsdlLocationContent) && $dom->loadXML($wsdlLocationContent) && $dom->hasChildNodes())
@@ -1749,7 +1750,7 @@ class WsdlToPhp extends SoapClient
 		/**
 		 * Current node is type of "import" and contains the location
 		 */
-		if(strpos($_domNode->nodeName,'import') !== false && ($_domNode->hasAttribute('location') || $_domNode->hasAttribute('schemaLocation') || $_domNode->hasAttribute('schemalocation')))
+		if(strpos($_domNode->nodeName,'import') !== false)
 			$this->manageWsdlNodeImport($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Enumeration's and restriction's
@@ -1812,7 +1813,14 @@ class WsdlToPhp extends SoapClient
 	 */
 	protected function manageWsdlNodeImport($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
 	{
-		$location = $_domNode->hasAttribute('location')?$_domNode->getAttribute('location'):($_domNode->hasAttribute('schemaLocation')?$_domNode->getAttribute('schemaLocation'):$_domNode->getAttribute('schemalocation'));
+		if($_domNode->hasAttribute('location'))
+			$location = $_domNode->getAttribute('location');
+		elseif($_domNode->hasAttribute('schemaLocation'))
+			$location = $_domNode->getAttribute('schemaLocation');
+		elseif($_domNode->hasAttribute('schemalocation'))
+			$location = $_domNode->getAttribute('schemalocation');
+		elseif($_domNode->hasAttribute('namespace') && (strpos($_domNode->getAttribute('namespace'),'http://') !== false || strpos($_domNode->getAttribute('namespace'),'https://') !== false))
+			$location = $_domNode->getAttribute('namespace');
 		/**
 		 * Define valid location
 		 */
