@@ -1265,10 +1265,19 @@ class WsdlToPhp extends SoapClient
 		if(!array_key_exists($structNameCleaned,$this->structs))
 			$this->structs[$structNameCleaned] = array();
 		if(!empty($_paramType) && !empty($paramNameCleaned))
-			$this->structs[$structNameCleaned][] = array(
-														'type'=>$_paramType,
-														'name'=>$paramNameCleaned,
-														'meta'=>array());
+		{
+			/**
+			 * Ensure class attribute isn't already defined
+			 */
+			$paramExists = false;
+			foreach($this->structs[$structNameCleaned] as $index=>$structParam)
+				$paramExists |= (is_array($structParam) && array_key_exists('name',$structParam) && $structParam['name'] === $paramNameCleaned);
+			if(!$paramExists)
+				$this->structs[$structNameCleaned][] = array(
+															'type'=>$_paramType,
+															'name'=>$paramNameCleaned,
+															'meta'=>array());
+		}
 	}
 	/**
 	 * Method to add info value to an existing struct and param
