@@ -1550,7 +1550,7 @@ class WsdlToPhp extends SoapClient
 	 */
 	public function setOptionSendArrayAsParameter($_optionSendArrayAsParameter = false)
 	{
-		$this->optionSendArrayAsParameter = $_optionSendArrayAsParameter?true:false;
+		$this->optionSendArrayAsParameter = $_optionSendArrayAsParameter;
 	}
 	/**
 	 * @return bool
@@ -1602,12 +1602,14 @@ class WsdlToPhp extends SoapClient
 		return $this->optionSendParametersAsArray;
 	}
 	/**
+	 * @uses WsdlToPhp::setOptionSendArrayAsParameter() if param is true
 	 * @param bool $optionSendParametersAsArray
 	 */
 	public function setOptionSendParametersAsArray($_optionSendParametersAsArray = false)
 	{
 		$this->optionSendParametersAsArray = $_optionSendParametersAsArray;
-		$this->setOptionSendArrayAsParameter($_optionSendParametersAsArray);
+		if($_optionSendParametersAsArray)
+			$this->setOptionSendArrayAsParameter($_optionSendParametersAsArray);
 	}
 	/**
 	 * @return the $optionInheritsClassIdentifier
