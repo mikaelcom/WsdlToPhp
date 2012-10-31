@@ -1202,7 +1202,7 @@ class WsdlToPhp extends SoapClient
 							$content .= "\r\nif(\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
 							$content .= "\r\n\t" . 'print_r($' . $className . '->getResult());';
 							$content .= "\r\nelse";
-							$content .= "\r\n\tprint_r(\$this->getLastError());";
+							$content .= "\r\n\tprint_r($" . $className . "->getLastError());";
 						}
 					}
 				}
