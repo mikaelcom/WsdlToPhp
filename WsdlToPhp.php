@@ -733,7 +733,7 @@ class WsdlToPhp extends SoapClient
 						/**
 						 * Set
 						 */
-						$php->appendCustomCode("/**\r\n * Set " . $cleanParameter . "\r\n * @param " . $parameter['type'] . " " . $cleanParameter . "\r\n * @return " . $parameter['type'] . "\r\n */");
+						$php->appendCustomCode("/**\r\n * Set " . $cleanParameter . "\r\n * @param " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . " " . $cleanParameter . "\r\n * @return " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . "\r\n */");
 						$php->appendCustomCode("public function set" . ucfirst($cleanParameter) . "(\$_" . $cleanParameter . ")");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
