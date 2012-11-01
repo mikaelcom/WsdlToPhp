@@ -1198,7 +1198,7 @@ class WsdlToPhp extends SoapClient
 							$classParameters = $classMethod->getParameters();
 							$parameters = array();
 							foreach($classParameters as $classParameter)
-								array_push($parameters,'new ' . ucfirst(str_replace('_','',$classParameter->getName())) . '(/*** update parameters list ***/)');
+								array_push($parameters,'new ' . ucfirst(substr($classParameter->getName(),1)) . '(/*** update parameters list ***/)');
 							$content .= "\r\nif(\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
 							$content .= "\r\n\t" . 'print_r($' . $className . '->getResult());';
 							$content .= "\r\nelse";
