@@ -1335,7 +1335,7 @@ class WsdlToPhp extends SoapClient
 		$structs = $this->getStructs();
 		foreach($structs as $structName=>$params)
 		{
-			if($structNameCleaned == $structName && is_array($params) && count($params))
+			if($structNameCleaned == $structName)
 				$structs[$structNameCleaned]['inherits'] = $_inherits;
 		}
 		$this->setStructs($structs);
@@ -1901,7 +1901,7 @@ class WsdlToPhp extends SoapClient
 		 */
 		$parentNode = $_domNode->parentNode;
 		$maxDeep = 5;
-		while($maxDeep-- > 0 && ($parentNode instanceof DOMNode) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
+		while($maxDeep-- > 0 && ($parentNode instanceof DOMNode) && $parentNode->nodeName && !(stripos($parentNode->nodeName,'element') !== false || (stripos($parentNode->nodeName,'complextype') !== false && $parentNode->hasAttribute('name'))))
 			$parentNode = $parentNode->parentNode;
 		if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 		{
@@ -1943,7 +1943,7 @@ class WsdlToPhp extends SoapClient
 		 */
 		$parentNode = $_domNode->parentNode;
 		$maxDeep = 5;
-		while($maxDeep-- > 0 && $parentNode && ($parentNode instanceof DOMElement) && $parentNode->nodeName && strpos($parentNode->nodeName,'operation') === false && strpos($parentNode->nodeName,'element') === false && strpos($parentNode->nodeName,'simpleType') === false && strpos($parentNode->nodeName,'complexType') === false && strpos($parentNode->nodeName,'enumeration') === false && strpos($parentNode->nodeName,'definitions') === false)
+		while($maxDeep-- > 0 && $parentNode && ($parentNode instanceof DOMElement) && $parentNode->nodeName && stripos($parentNode->nodeName,'operation') === false && stripos($parentNode->nodeName,'element') === false && stripos($parentNode->nodeName,'simpletype') === false && stripos($parentNode->nodeName,'complextype') === false && stripos($parentNode->nodeName,'enumeration') === false && stripos($parentNode->nodeName,'definitions') === false)
 			$parentNode = $parentNode->parentNode;
 		if($parentNode && ($parentNode instanceof DOMElement))
 		{
@@ -1957,7 +1957,7 @@ class WsdlToPhp extends SoapClient
 				 */
 				$upParentNode = $parentNode->parentNode;
 				$maxDeep = 5;
-				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos($upParentNode->nodeName,'element') !== false || (strpos($upParentNode->nodeName,'complexType') !== false && $upParentNode->hasAttribute('name'))))
+				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos(strtolower($upParentNode->nodeName),'element') !== false || (strpos(strtolower($upParentNode->nodeName),'complextype') !== false && $upParentNode->hasAttribute('name'))))
 					$upParentNode = $upParentNode->parentNode;
 				if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
 				{
@@ -1975,7 +1975,7 @@ class WsdlToPhp extends SoapClient
 				 */
 				$upParentNode = $parentNode->parentNode;
 				$maxDeep = 5;
-				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos($upParentNode->nodeName,'element') !== false || (strpos($upParentNode->nodeName,'simpleType') !== false && $upParentNode->hasAttribute('name'))))
+				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos(strtolower($upParentNode->nodeName),'element') !== false || (strpos(strtolower($upParentNode->nodeName),'simpletype') !== false && $upParentNode->hasAttribute('name'))))
 					$upParentNode = $upParentNode->parentNode;
 				if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
 					$this->addRestriction('meta',array(
@@ -1985,7 +1985,7 @@ class WsdlToPhp extends SoapClient
 			/**
 			 * is it a struct ?
 			 */
-			elseif((strpos($parentNode->nodeName,'element') !== false || strpos($parentNode->nodeName,'complexType') !== false || strpos($parentNode->nodeName,'simpleType') !== false) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+			elseif((strpos($parentNode->nodeName,'element') !== false || stripos($parentNode->nodeName,'complextype') !== false || stripos($parentNode->nodeName,'simpletype') !== false) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 				$this->addStructDocumentation($parentNode->getAttribute('name'),$documentation);
 			/**
 			 * is it an operation ?
@@ -2019,7 +2019,7 @@ class WsdlToPhp extends SoapClient
 			 */
 			$parentNode = $_domNode->parentNode;
 			$maxDeep = 5;
-			while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(strpos($parentNode->nodeName,'element') !== false || (strpos($parentNode->nodeName,'complexType') !== false && $parentNode->hasAttribute('name'))))
+			while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(stripos($parentNode->nodeName,'element') !== false || (stripos($parentNode->nodeName,'complextype') !== false && $parentNode->hasAttribute('name'))))
 				$parentNode = $parentNode->parentNode;
 			if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 			{
