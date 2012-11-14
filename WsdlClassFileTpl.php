@@ -121,7 +121,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::initSoapClient()
 	 * @uses PackageNameWsdlClass::initInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::_set()
-	 * @param array values
+	 * @param array $_arrayOfValues values
 	 * @return Lists
 	 */
 	public function __construct($_arrayOfValues = array())
@@ -146,6 +146,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		}
 	}
 	/**
+	 * Static method getting current SoapClient
 	 * @return SoapClient
 	 */
 	public static function getSoapClient()
@@ -153,17 +154,20 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return self::$soapClient;
 	}
 	/**
-	 * @param SoapClient $soapClient
+	 * Static method setting current SoapClient
+	 * @param SoapClient $_soapClient
+	 * @return SoapClient
 	 */
 	protected static function setSoapClient(SoapClient $_soapClient)
 	{
 		return (self::$soapClient = $_soapClient);
 	}
 	/**
-	 * Init SoapClient
+	 * Method initiating SoapClient
 	 * @uses PackageNameWsdlClass::classMap()
 	 * @uses PackageNameWsdlClass::getDefaultWsdlOptions()
-	 * @param array WSDL options
+	 * @param array $_wsdlOptions WSDL options
+	 * @return void
 	 */
 	public function initSoapClient($_wsdlOptions)
 	{
@@ -188,7 +192,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		}
 	}
 	/**
-	 * Returns all default options values
+	 * Method returning all default options values
 	 * @uses PackageNameWsdlClass::WSDL_CACHE_WSDL
 	 * @uses PackageNameWsdlClass::WSDL_COMPRESSION
 	 * @uses PackageNameWsdlClass::WSDL_CONNECTION_TIMEOUT
@@ -224,7 +228,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 					self::WSDL_USER_AGENT=>null);
 	}
 	/**
-	 * Alias to count
+	 * Method alias to count
 	 * @uses PackageNameWsdlClass::count()
 	 * @return int
 	 */
@@ -243,7 +247,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->getInternArrayToIterateIsArray()?count($this->getInternArrayToIterate()):-1;
 	}
 	/**
-	 * Returns the current element
+	 * Method returning the current element
 	 * @uses PackageNameWsdlClass::offsetGet()
 	 * @return mixed
 	 */
@@ -252,7 +256,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->offsetGet($this->internArrayToIterateOffset);
 	}
 	/**
-	 * Moves the current position to the next element
+	 * Method moving the current position to the next element
 	 * @uses PackageNameWsdlClass::getInternArrayToIterateOffset()
 	 * @uses PackageNameWsdlClass::setInternArrayToIterateOffset()
 	 * @return int
@@ -262,7 +266,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->setInternArrayToIterateOffset($this->getInternArrayToIterateOffset() + 1);
 	}
 	/**
-	 * Reset itemOffset
+	 * Method resetting itemOffset
 	 * @uses PackageNameWsdlClass::setInternArrayToIterateOffset()
 	 * @return int
 	 */
@@ -271,7 +275,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->setInternArrayToIterateOffset(0);
 	}
 	/**
-	 * Check if current itemOffset points to an existing item
+	 * Method checking if current itemOffset points to an existing item
 	 * @uses PackageNameWsdlClass::getInternArrayToIterateOffset()
 	 * @uses PackageNameWsdlClass::offsetExists()
 	 * @return bool true|false
@@ -281,7 +285,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->offsetExists($this->getInternArrayToIterateOffset());
 	}
 	/**
-	 * Returns current itemOffset value, alias to getInternArrayToIterateOffset
+	 * Method returning current itemOffset value, alias to getInternArrayToIterateOffset
 	 * @uses PackageNameWsdlClass::getInternArrayToIterateOffset()
 	 * @return int
 	 */
@@ -290,7 +294,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->getInternArrayToIterateOffset();
 	}
 	/**
-	 * Alias to offsetGet
+	 * Method alias to offsetGet
 	 * @see PackageNameWsdlClass::offsetGet()
 	 * @uses PackageNameWsdlClass::offsetGet()
 	 * @param int
@@ -301,7 +305,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->offsetGet($_index);
 	}
 	/**
-	 * Default method to add item to array
+	 * Default method adding item to array
 	 * @uses PackageNameWsdlClass::getAttributeName()
 	 * @uses PackageNameWsdlClass::__toString()
 	 * @uses PackageNameWsdlClass::_set()
@@ -309,7 +313,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::setInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::setInternArrayToIterateIsArray()
 	 * @uses PackageNameWsdlClass::setInternArrayToIterateOffset()
-	 * @param mixed value
+	 * @param mixed $_item value
 	 * @return bool true|false
 	 */
 	public function add($_item)
@@ -335,8 +339,9 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return false;
 	}
 	/**
-	 * Method to call when sending data to request for ArrayOf type classe
+	 * Method to call when sending data to request for ArrayOf type class
 	 * @uses PackageNameWsdlClass::getAttributeName()
+	 * @uses PackageNameWsdlClass::__toString()
 	 * @uses PackageNameWsdlClass::_get()
 	 * @return mixed
 	 */
@@ -389,8 +394,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	}
 	/**
 	 * Method useless but necessarly overriden, can't set
-	 * @param null
-	 * @param null
+	 * @param mixed $_offset
+	 * @param mixed $_value
 	 * @return null
 	 */
 	public function offsetSet($_offset,$_value)
@@ -399,8 +404,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	}
 	/**
 	 * Method useless but necessarly overriden, can't set
-	 * @param null
-	 * @param null
+	 * @param mixed $_offset
 	 * @return null
 	 */
 	public function offsetUnset($_offset)
@@ -408,6 +412,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return null;
 	}
 	/**
+	 * Method returnint current result from Soap call
 	 * @return mixed
 	 */
 	public function getResult()
@@ -415,14 +420,16 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->result;
 	}
 	/**
-	 * @param mixed
-	 * @return bool true
+	 * Method setting current result from Soap call
+	 * @param mixed $_result
+	 * @return mixed
 	 */
 	protected function setResult($_result)
 	{
 		return ($this->result = $_result);
 	}
 	/**
+	 * Method returning last errors occured during the calls
 	 * @return array
 	 */
 	public function getLastError()
@@ -430,7 +437,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->lastError;
 	}
 	/**
-	 * @param array
+	 * Method setting last errors occured during the calls
+	 * @param array $_lastError
 	 * @return array
 	 */
 	private function setLastError($_lastError)
@@ -438,17 +446,17 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return ($this->lastError = $_lastError);
 	}
 	/**
-	 * Method to save the last error returned by the SoapClient
-	 * @param string the method called when the error occurred
-	 * @param Soapault l'objet de l'erreur
-	 * @return bool true
+	 * Method saving the last error returned by the SoapClient
+	 * @param string $_methoName the method called when the error occurred
+	 * @param SoapFault $_soapFault l'objet de l'erreur
+	 * @return bool true|false
 	 */
 	protected function saveLastError($_methoName,SoapFault $_soapFault)
 	{
 		return ($this->lastError[$_methoName] = $_soapFault);
 	}
 	/**
-	 * Method to get the last error for a certain method
+	 * Method getting the last error for a certain method
 	 * @param string method name to get error from
 	 * @return SoapFault|null
 	 */
@@ -457,20 +465,25 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return (is_array($this->lastError) && array_key_exists($_methoName,$this->lastError))?$this->lastError[$_methoName]:null;
 	}
 	/**
+	 * Method returning intern array to iterate trough
 	 * @return array
+	 * @return void
 	 */
 	public function getInternArrayToIterate()
 	{
 		return $this->internArrayToIterate;
 	}
 	/**
-	 * @param array $internArrayToIterate
+	 * Method setting intern array to iterate trough
+	 * @param array $_internArrayToIterate
+	 * @return array
 	 */
 	public function setInternArrayToIterate($_internArrayToIterate)
 	{
 		return ($this->internArrayToIterate = $_internArrayToIterate);
 	}
 	/**
+	 * Method returnint intern array index when iterating trough
 	 * @return int
 	 */
 	public function getInternArrayToIterateOffset()
@@ -478,7 +491,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->internArrayToIterateOffset;
 	}
 	/**
-	 * Function to initiate internArrayToIterate
+	 * Method initiating internArrayToIterate
 	 * @uses PackageNameWsdlClass::setInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::setInternArrayToIterateOffset()
 	 * @uses PackageNameWsdlClass::setInternArrayToIterateIsArray()
@@ -503,30 +516,35 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		}
 	}
 	/**
-	 * @param int $internArrayToIterateOffset
+	 * Method setting intern array offset when iterating trough
+	 * @param int $_internArrayToIterateOffset
+	 * @return int
 	 */
 	public function setInternArrayToIterateOffset($_internArrayToIterateOffset)
 	{
-		$this->internArrayToIterateOffset = $_internArrayToIterateOffset;
+		return ($this->internArrayToIterateOffset = $_internArrayToIterateOffset);
 	}
 	/**
-	 * @return bool
+	 * Method returning true if intern array is an actual array
+	 * @return bool true|false
 	 */
 	public function getInternArrayToIterateIsArray()
 	{
 		return $this->internArrayToIterateIsArray;
 	}
 	/**
-	 * @param bool $internArrayToIterateIsArray
+	 * Method setting if intern array is an actual array
+	 * @param bool $_internArrayToIterateIsArray
+	 * @return bool true|false
 	 */
 	public function setInternArrayToIterateIsArray($_internArrayToIterateIsArray = false)
 	{
 		return ($this->internArrayToIterateIsArray = $_internArrayToIterateIsArray);
 	}
 	/**
-	 * Generic method to set value
-	 * @param string property name to set
-	 * @param mixed property value to use
+	 * Generic method setting value
+	 * @param string $_name property name to set
+	 * @param mixed $_value property value to use
 	 * @return bool
 	 */
 	public function _set($_name,$_value)
@@ -541,8 +559,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 			return false;
 	}
 	/**
-	 * Generic method to get value
-	 * @param string property name to get
+	 * Generic method getting value
+	 * @param string $_name property name to get
 	 * @return mixed
 	 */
 	public function _get($_name)
@@ -554,7 +572,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 			return false;
 	}
 	/**
-	 * Method which returns alone attribute name when class is ArrayOf type
+	 * Method returning alone attribute name when class is ArrayOf type
 	 * @return string
 	 */
 	public function getAttributeName()
@@ -562,8 +580,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return '';
 	}
 	/**
-	 * Generic method to tell if current value is valid according to the attribute setted with the current value
-	 * @param mixe the value to test
+	 * Generic method telling if current value is valid according to the attribute setted with the current value
+	 * @param mixed $_value the value to test
 	 * @return bool true|false
 	 */
 	public static function valueIsValid($_value)
@@ -571,7 +589,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return true;
 	}
 	/**
-	 * Returns actual class name
+	 * Method returning actual class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()

@@ -212,14 +212,16 @@ class WsdlToPhp extends SoapClient
 	 * @uses WsdlToPhp::OPT_GENERIC_CONSTANTS_NAMES_KEY
 	 * @uses WsdlToPhp::OPT_INHERITS_FROM_IDENTIFIER_KEY
 	 * @uses WsdlToPhp::OPT_SEND_PARAMETERS_AS_ARRAY_KEY
-	 * @param string $_pathToWsdl
-	 * @param string $_login
-	 * @param string $_password
-	 * @param array $_options
-	 * @param array $_wsdlOptions
+	 * @param string $_pathToWsdl WSDL url or path
+	 * @param string $_login login to get access to WSDL
+	 * @param string $_password password to get access to WSDL
+	 * @param array $_options associative array between WsdlToPhp options keys and values
+	 * @param array $_wsdlOptions options to get access to WSDL
+	 * @return WsdlToPhp
 	 */
 	public function __construct($_pathToWsdl,$_login = false,$_password = false,array $_options = array(),array $_wsdlOptions = array())
 	{
+		$pathToWsdl = trim($_pathToWsdl);
 		/**
 		 * Options for WSDL
 		 */
@@ -240,13 +242,13 @@ class WsdlToPhp extends SoapClient
 		 */
 		try
 		{
-			parent::__construct($_pathToWsdl,$options);
+			parent::__construct($pathToWsdl,$options);
 		}
 		catch(SoapFault $fault)
 		{
 			print_r($fault);
 		}
-		$this->addWsdl($_pathToWsdl);
+		$this->addWsdl($pathToWsdl);
 		/**
 		 * Set attributes
 		 */
@@ -279,10 +281,10 @@ class WsdlToPhp extends SoapClient
 	 * @uses WsdlToPhp::generateAutoloadFile()
 	 * @uses WsdlToPhp::getOptionGenerateTutorialFile()
 	 * @uses WsdlToPhp::generateTutorialFile()
-	 * @param string $_packageName
-	 * @param string $_rootDirectory
-	 * @param int $_rootDirectoryRights
-	 * @param bool $_createRootDirectory
+	 * @param string $_packageName the string used to prefix all generate classes
+	 * @param string $_rootDirectory path where classes should be generated
+	 * @param int $_rootDirectoryRights system rights to apply on folder
+	 * @param bool $_createRootDirectory create root directory if not exist
 	 * @return bool true|false depending on the well creation fot the root directory
 	 */
 	public function generateClasses($_packageName,$_rootDirectory,$_rootDirectoryRights = 0775,$_createRootDirectory = true)
@@ -349,6 +351,7 @@ class WsdlToPhp extends SoapClient
 	 * - Analyze each struct paramaters
 	 * @uses SoapClient::__getTypes()
 	 * @uses WsdlToPhp::addStruct()
+	 * @uses WsdlToPhp::cleanName()
 	 * @tutorial restriction aren't get with structs, see loadWsdls :
 	 * <xsd:simpleType name="SearchOption">
 	 * --<xsd:restriction base="xsd:string">
@@ -479,6 +482,10 @@ class WsdlToPhp extends SoapClient
 	 * @uses WsdlToPhp::cleanPropertyName()
 	 * @uses WsdlToPhp::getOptionGenericConstantsNames()
 	 * @uses WsdlToPhp::cleanConstantName()
+	 * @uses WsdlToPhp::structIsKnown()
+	 * @uses WsdlToPhp::structName()
+	 * @uses ezcPhpGenerator::appendCustomCode()
+	 * @uses ezcPhpGenerator::finish()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
@@ -535,16 +542,16 @@ class WsdlToPhp extends SoapClient
 					$currentOptionValue = $this->getOptionCategory();
 					$this->setOptionCategory(self::OPT_CAT_END_NAME);
 					$structType = $this->getPart($structName,self::OPT_CAT_KEY);
-					if(array_key_exists($structType . $this->getOptionInheritsClassIdentifier(),$this->getStructs()))
+					if(self::structIsKnown($structType . $this->getOptionInheritsClassIdentifier()))
 					{
-						$extend = $ClassType . 'Type' . $structType . $this->getOptionInheritsClassIdentifier();
+						$extend = self::structName($structType . $this->getOptionInheritsClassIdentifier(),$_packageName,true);
 						$inherits = true;
 					}
 					$this->setOptionCategory($currentOptionValue);
 				}
-				elseif(array_key_exists('inherits',$structParams) && array_key_exists($structParams['inherits'],$this->getStructs()))
+				elseif(array_key_exists('inherits',$structParams) && self::structIsKnown($structParams['inherits']))
 				{
-					$extend = $ClassType . 'Type' . $structParams['inherits'];
+					$extend = self::structName($structParams['inherits'],$_packageName,true);
 					$inherits = true;
 					unset($structParams['inherits']);
 				}
@@ -553,7 +560,7 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Class definition
 				 */
-				$className = $ClassType . 'Type' . ucFirst(self::cleanClassName($structName));
+				$className = self::structName($structName,$_packageName);
 				$classMap[$structName] = $className;
 				/**
 				 * Define struct class file name and initialize struct class generator
@@ -594,7 +601,7 @@ class WsdlToPhp extends SoapClient
 						 * Get informations and sanitize them
 						 */
 						$type = $element['type'];
-						$Type = self::cleanClassName(ucfirst($type));
+						$Type = self::structName($type,$_packageName);
 						$name = $element['name'];
 						$cleanName = self::cleanPropertyName($name);
 						$meta = $element['meta'];
@@ -613,10 +620,7 @@ class WsdlToPhp extends SoapClient
 							/**
 							 * Is this attribute a know type ?
 							 */
-							if(array_key_exists($type,$this->getStructs()) || strpos($type,'ArrayOf') !== false)
-								$parametersSring .= "\r\n * @param " . $ClassType . 'Type' . $Type . " $name";
-							else
-								$parametersSring .= "\r\n * @param " . $type . " $name";
+							$parametersSring .= "\r\n * @param " . (self::structIsKnown($type)?$Type:$type) . ' $_' . lcfirst($cleanName) . " $name";
 							/**
 							 * Uses documentation part
 							 */
@@ -624,7 +628,7 @@ class WsdlToPhp extends SoapClient
 							/**
 							 * Parameters used for methods assigned to classes matching ArrayOf
 							 */
-							$parametersType[] = array_key_exists($type,$this->getStructs())?$ClassType . "Type" . $Type:$type;
+							$parametersType[] = $Type;
 							/**
 							 * Attribute has a default value ? then use it
 							 */
@@ -635,25 +639,25 @@ class WsdlToPhp extends SoapClient
 									$defaultValue = floatval($defaultValue);
 								elseif(is_bool($defaultValue) || $defaultValue === 'true' || $defaultValue === 'false')
 									$defaultValue = ($defaultValue === true || $defaultValue == 'true')?true:false;
-								$parametersList[] = '$_' . $cleanName . ' = ' . var_export($defaultValue,true);
+								$parametersList[] = '$_' . lcfirst($cleanName) . ' = ' . var_export($defaultValue,true);
 							}
 							/**
 							 * Attribute is required, then the value si required ! 
 							 */
-							elseif(array_key_exists('minOccurs',$meta) && $meta['minOccurs'] >= 1)
-								$parametersList[] = '$_' . $cleanName;
+							elseif((array_key_exists('minOccurs',$meta) && $meta['minOccurs'] >= 1) || (array_key_exists('minoccurs',$meta) && $meta['minoccurs'] >= 1))
+								$parametersList[] = '$_' . lcfirst($cleanName);
 							/**
 							 * Default value assignement
 							 */
 							else
-								$parametersList[] = '$_' . $cleanName . ' = null';
+								$parametersList[] = '$_' . lcfirst($cleanName) . ' = null';
 							/**
 							 * If attribute is type of ArrayOf, then we assign the returned value to the ArrayOf class
 							 */
-							if(strpos($type,'ArrayOf') !== false)
-								$parametersForParent[] = "'$cleanName'=>new " . $ClassType . "Type$Type(" . '$_' . $cleanName . ")";
+							if(strpos($type,'ArrayOf') !== false && self::structIsKnown($type))
+								$parametersForParent[] = "'$cleanName'=>new $Type(" . '$_' . lcfirst($cleanName) . ")";
 							else
-								$parametersForParent[] = "'$cleanName'=>\$_$cleanName";
+								$parametersForParent[] = "'$cleanName'=>\$_" . lcfirst($cleanName);
 							/**
 							 * Informations extracted from the XML/WSDL tag attributes of the current attribute
 							 */
@@ -662,7 +666,7 @@ class WsdlToPhp extends SoapClient
 								$metas[] = "\t- " . $metaName . ' : ' . $metaValue;
 							if(count($metas))
 								array_unshift($metas,"\r\n * " . 'Meta informations :');
-							$php->appendCustomCode("/**\r\n * The $name" . implode("\r\n * ",$metas) . "\r\n * @var " . (array_key_exists($type,$this->getStructs())?$ClassType . "Type" . $Type:$type) . "\r\n */");
+							$php->appendCustomCode("/**\r\n * The $name" . implode("\r\n * ",$metas) . "\r\n * @var " . (self::structIsKnown($type)?$Type:$type) . "\r\n */");
 							$php->appendCustomCode("public \$$cleanName;");
 						}
 					}
@@ -674,6 +678,7 @@ class WsdlToPhp extends SoapClient
 				{
 					$valuesDone = array();
 					$inArray = array();
+					$constantsUsed = "";
 					$valuesCount = count($element['values']);
 					$valuesCountLength = strlen($valuesCount);
 					foreach($element['values'] as $index=>$value)
@@ -685,7 +690,7 @@ class WsdlToPhp extends SoapClient
 								$meta = "\r\n * \t- $metaName : $metaValue";
 						}
 						$meta = !empty($meta)?"\r\n * " . 'Meta informations :' . $meta:$meta;
-						$php->appendCustomCode("/**\r\n * Constant for value '$value'$meta\r\n * @return string '" . $value . "'\r\n */");
+						$php->appendCustomCode("/**\r\n * Constant for value " . var_export($value,true) . "$meta\r\n * @return " . gettype($value) . " " . var_export($value,true) . "\r\n */");
 						/**
 						 * Generic name avoiding naming problems from custom values
 						 */
@@ -708,8 +713,9 @@ class WsdlToPhp extends SoapClient
 							$constantValueName .= ((array_key_exists($constantValueName,$valuesDone) && $valuesDone[$constantValueName])?'_' . $valuesDone[$constantValueName]:'');
 							$constantValueName = 'VALUE_' . $constantValueName;
 						}
-						$inArray[] = 'self::' . $constantValueName;
-						$php->appendCustomCode('const ' . $constantValueName . ' = \'' . $value . '\';');
+						$inArray[] = "self::$constantValueName";
+						$constantsUsed .= "\r\n * @uses $className" . "::$constantValueName";
+						$php->appendCustomCode('const ' . $constantValueName . ' = ' . var_export($value,true) . ';');
 					}
 				}
 				/**
@@ -730,23 +736,24 @@ class WsdlToPhp extends SoapClient
 					foreach($parameters as $parameter)
 					{
 						$cleanParameter = self::cleanPropertyName($parameter['name']);
+						$cleanType = self::structName($parameter['type'],$_packageName);
 						/**
 						 * Set
 						 */
-						$php->appendCustomCode("/**\r\n * Set " . $cleanParameter . "\r\n * @param " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . " " . $cleanParameter . "\r\n * @return " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . "\r\n */");
-						$php->appendCustomCode("public function set" . ucfirst($cleanParameter) . "(\$_" . $cleanParameter . ")");
+						$php->appendCustomCode("/**\r\n * Set " . $cleanParameter . "\r\n * @param $cleanType \$_" . lcfirst($cleanParameter) . " $cleanParameter\r\n * @return " . $cleanType . "\r\n */");
+						$php->appendCustomCode("public function set" . ucfirst($cleanParameter) . "(\$_" . lcfirst($cleanParameter) . ")");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
-						if(strpos($className,'ArrayOf') === false && array_key_exists($parameter['type'],$this->getStructs()) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
-							$php->appendCustomCode('return ($this->' . $cleanParameter . ' = ' . $ClassType . 'Type' . $parameter['type'] . '::valueIsValid($_' . $cleanParameter . ')?$_' . $cleanParameter . ':null);');
+						if(strpos($className,'ArrayOf') === false && array_key_exists($parameter['type'],$this->getStructs()) && array_key_exists(0,$this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
+							$php->appendCustomCode('return ($this->' . $cleanParameter . ' = ' . $cleanType . '::valueIsValid($_' . lcfirst($cleanParameter) . ')?$_' . lcfirst($cleanParameter) . ':null);');
 						else
-							$php->appendCustomCode("return (\$this->" . $cleanParameter . ' = $_' . $cleanParameter . ');');
+							$php->appendCustomCode("return (\$this->" . $cleanParameter . ' = $_' . lcfirst($cleanParameter) . ');');
 						$php->indentLevel--;
 						$php->appendCustomCode("}");
 						/**
 						 * Get
 						 */
-						$php->appendCustomCode("/**\r\n * Get " . $cleanParameter . "\r\n * @return " . ((array_key_exists($parameter['type'],$this->getStructs()) || strpos($parameter['type'],'ArrayOf') !== false)?$ClassType . 'Type' . $parameter['type']:$parameter['type']) . "\r\n */");
+						$php->appendCustomCode("/**\r\n * Get " . $cleanParameter . "\r\n * @return $cleanType\r\n */");
 						$php->appendCustomCode("public function get" . ucfirst($cleanParameter) . "()");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
@@ -784,7 +791,7 @@ class WsdlToPhp extends SoapClient
 						/**
 						 * item method
 						 */
-						$php->appendCustomCode("/**\r\n * Returns the element\r\n * @see " . $ClassType . "WsdlClass::item()\r\n * @param int\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("/**\r\n * Returns the element\r\n * @see " . $ClassType . "WsdlClass::item()\r\n * @param int \$_index\r\n * @return " . $parametersType[0] . "\r\n */");
 						$php->appendCustomCode("public function item(\$_index)");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
@@ -814,7 +821,7 @@ class WsdlToPhp extends SoapClient
 						/**
 						 * offsetGet method
 						 */
-						$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::offsetGet()\r\n * @param int\r\n * @return " . $parametersType[0] . "\r\n */");
+						$php->appendCustomCode("/**\r\n * Returns the first element\r\n * @see " . $ClassType . "WsdlClass::offsetGet()\r\n * @param int \$_offset\r\n * @return " . $parametersType[0] . "\r\n */");
 						$php->appendCustomCode("public function offsetGet(\$_offset)");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
@@ -826,18 +833,18 @@ class WsdlToPhp extends SoapClient
 						 */
 						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
 						{
-							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @uses " . $ClassType . 'Type' . self::cleanClassName($parameter['type']) . "::valueIsValid()\r\n * @param " . $parametersType[0] . "\r\n * @return bool true|false\r\n */");
+							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @uses " . $cleanType . "::valueIsValid()\r\n * @param " . $parametersType[0] . " \$_item\r\n * @return bool true|false\r\n */");
 							$php->appendCustomCode("public function add(\$_item)");
 							$php->appendCustomCode("{");
 							$php->indentLevel++;
-							$php->appendCustomCode("return " . $ClassType . 'Type' . self::cleanClassName($parameter['type']) . '::valueIsValid($_item)?parent::add($_item):false;');
+							$php->appendCustomCode("return " . $cleanType . '::valueIsValid($_item)?parent::add($_item):false;');
 							$php->indentLevel--;
 							$php->appendCustomCode("}");
 						}
 						/**
 						 * Return alone attribute name
 						 */
-						$php->appendCustomCode("/**\r\n * Returns the attribute name\r\n * @return string '" . $cleanParameter . "'\r\n */");
+						$php->appendCustomCode("/**\r\n * Returns the attribute name\r\n * @return string '$cleanParameter'\r\n */");
 						$php->appendCustomCode("public function getAttributeName()");
 						$php->appendCustomCode("{");
 						$php->indentLevel++;
@@ -854,7 +861,7 @@ class WsdlToPhp extends SoapClient
 					/**
 					 * Return true if value is allowed
 					 */
-					$php->appendCustomCode("/**\r\n * Return true if value is allowed\r\n * @param string value\r\n * @return bool true|false\r\n */");
+					$php->appendCustomCode("/**\r\n * Return true if value is allowed$constantsUsed\r\n * @param mixed \$_value value\r\n * @return bool true|false\r\n */");
 					$php->appendCustomCode("public static function valueIsValid(\$_value)");
 					$php->appendCustomCode("{");
 					$php->indentLevel++;
@@ -918,6 +925,10 @@ class WsdlToPhp extends SoapClient
 	 * @uses WsdlToPhp::getOptionResponseAsWsdlObject()
 	 * @uses WsdlToPhp::getOptionGenericConstantsNames()
 	 * @uses WsdlToPhp::cleanClassName()
+	 * @uses WsdlToPhp::structIsKnown()
+	 * @uses WsdlToPhp::structName()
+	 * @uses ezcPhpGenerator::appendCustomCode()
+	 * @uses ezcPhpGenerator::finish()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
@@ -964,22 +975,23 @@ class WsdlToPhp extends SoapClient
 					 * Parameter name
 					 */
 					$methodParam = ucfirst($methodInfos['parameter']);
-					$lmethodParam = lcfirst($methodParam);
-					$umethodParam = ucfirst($methodParam);
+					$lMethodParam = lcfirst($methodInfos['parameter']);
+					$uMethodParam = ucfirst($methodInfos['parameter']);
+					$cleanParameterName = self::structName($methodInfos['parameter'],$_packageName);
 					/**
 					 * Get parameter infos
 					 */
 					$methodsToCall = array();
 					$methodsUsed = array();
-					if(array_key_exists($lmethodParam,$structs) || array_key_exists($umethodParam,$structs))
+					if(self::structIsKnown($methodInfos['parameter']))
 					{
-						$methodParamAttributes = array_key_exists($lmethodParam,$structs)?$structs[$lmethodParam]:$structs[$umethodParam];
+						$methodParamAttributes = array_key_exists($lMethodParam,$structs)?$structs[$lMethodParam]:$structs[$uMethodParam];
 						foreach($methodParamAttributes as $structInfoIndex=>$structInfos)
 						{
 							if(is_numeric($structInfoIndex))
 							{
-								$methodsToCall[] = ($this->getOptionSendArrayAsParameter()?'\'' . $structInfos['name'] . '\'=>':'') . '$_' . $_packageName . 'Type' . ucfirst($methodParam) . '->get' . ucfirst($structInfos['name']) . '()';
-								$methodsUsed[] = $PackageName . 'Type' . ucfirst($methodParam) . '::get' . ucfirst($structInfos['name']) . '()';
+								$methodsToCall[] = ($this->getOptionSendArrayAsParameter()?'\'' . $structInfos['name'] . '\'=>':'') . '$_' . lcfirst($cleanParameterName) . '->get' . ucfirst($structInfos['name']) . '()';
+								$methodsUsed[] = $cleanParameterName . '::get' . ucfirst($structInfos['name']) . '()';
 							}
 						}
 					}
@@ -987,7 +999,10 @@ class WsdlToPhp extends SoapClient
 					 * Return name
 					 */
 					$methodReturn = ucfirst($methodInfos['return']);
-					$methodReturns[] = $PackageName . 'Type' . $methodReturn;
+					$cleanReturnName = self::structName($methodInfos['return'],$_packageName);
+					$lmethodReturn = lcfirst($methodReturn);
+					$umethodReturn = ucfirst($methodReturn);
+					$methodReturns[] = $cleanReturnName;
 					/**
 					 * Method
 					 */
@@ -1007,18 +1022,15 @@ class WsdlToPhp extends SoapClient
 					}
 					foreach($methodsUsed as $methodToUse)
 						$php->appendCustomCode(" * @uses $methodToUse");
-					if(array_key_exists($lmethodParam,$structs) || array_key_exists($umethodParam,$structs))
-						$php->appendCustomCode(" * @param " . $PackageName . "Type$methodParam $methodParam");
-					else
-						$php->appendCustomCode(" * @param $methodParam $methodParam");
-					$php->appendCustomCode(" * @return " . $PackageName . "Type$methodReturn\r\n */");
-					$php->appendCustomCode("public function $methodName(" . $PackageName . "Type$methodParam \$_" . $_packageName . "Type$methodParam)");
+					$php->appendCustomCode(" * @param $cleanParameterName \$_" . lcfirst($cleanParameterName) . " $methodParam");
+					$php->appendCustomCode(" * @return " . (self::structIsKnown($methodInfos['return'])?$cleanReturnName:$methodInfos['return']) . "\r\n */");
+					$php->appendCustomCode("public function $methodName(" . (self::structIsKnown($methodInfos['parameter'])?"$cleanParameterName ":'') . '$_' . lcfirst($cleanParameterName) . ')');
 					$php->appendCustomCode("{");
 					$php->indentLevel++;
 					$php->appendCustomCode("try");
 					$php->appendCustomCode("{");
 					$php->indentLevel++;
-					$php->appendCustomCode("\$this->setResult(" . ($this->getOptionResponseAsWsdlObject()?'new ' . $PackageName . "Type$methodReturn(":'') . "self::getSoapClient()->$methodName(" . ($this->getOptionSendParametersAsArray()?'array(\'parameters\'=>':'') . ($this->getOptionSendArrayAsParameter()?'array(':'') . implode(',',$methodsToCall) . ($this->getOptionSendArrayAsParameter()?")":'') . ($this->getOptionSendParametersAsArray()?')':'') . ")" . ($this->getOptionSendParametersAsArray()?'->parameters':'') . ($this->getOptionResponseAsWsdlObject()?')':'') . ");");
+					$php->appendCustomCode("\$this->setResult(" . (($this->getOptionResponseAsWsdlObject() && self::structIsKnown($methodInfos['return']))?"new $cleanReturnName(":'') . "self::getSoapClient()->$methodName(" . ($this->getOptionSendParametersAsArray()?'array(\'parameters\'=>':'') . ($this->getOptionSendArrayAsParameter()?'array(':'') . implode(',',$methodsToCall) . ($this->getOptionSendArrayAsParameter()?")":'') . ($this->getOptionSendParametersAsArray()?')':'') . ")" . ($this->getOptionSendParametersAsArray()?'->parameters':'') . (($this->getOptionResponseAsWsdlObject() && self::structIsKnown($methodInfos['return']))?')':'') . ");");
 					$php->indentLevel--;
 					$php->appendCustomCode("}");
 					$php->appendCustomCode("catch(SoapFault \$fault)");
@@ -1064,6 +1076,9 @@ class WsdlToPhp extends SoapClient
 	/**
 	 * Generate classMap class
 	 * @uses WsdlToPhp::getStructs()
+	 * @uses WsdlToPhp::structName()
+	 * @uses ezcPhpGenerator::appendCustomCode()
+	 * @uses ezcPhpGenerator::finish()
 	 * @param string $_packageName
 	 * @param string $_rootDirectory
 	 * @param bool $_rootDirectoryRights
@@ -1077,13 +1092,14 @@ class WsdlToPhp extends SoapClient
 		$php->appendCustomCode('class ' . ucfirst($_packageName) . 'ClassMap');
 		$php->appendCustomCode('{');
 		$php->indentLevel++;
+		$php->appendCustomCode("/**\r\n * Return the class map definition associating structs defined and structs generated. This array is sent to the SoapClient when calling the WS\r\n * @return array\r\n */");
 		$php->appendCustomCode('final public static function classMap()');
 		$php->appendCustomCode('{');
 		$php->indentLevel++;
 		$structs = $this->getStructs();
 		$classesToMap = array();
 		foreach($structs as $structName=>$structInfos)
-			$classesToMap[$structName] = ucfirst($_packageName) . 'Type' . ucFirst($structName);
+			$classesToMap[$structName] = self::structName($structName,$_packageName);
 		$php->appendCustomCode("return " . var_export($classesToMap,true) . ';');
 		$php->indentLevel--;
 		$php->appendCustomCode('}');
@@ -1387,7 +1403,17 @@ class WsdlToPhp extends SoapClient
 			$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'meta',array());
 		}
 		if(empty($paramTypeCleaned) && !empty($paramValueCleaned))
+		{
+			if(is_int($paramValueCleaned))
+				$paramValueCleaned = intval($paramValueCleaned);
+			elseif(is_float($paramValueCleaned))
+				$paramValueCleaned = floatval($paramValueCleaned);
+			elseif(is_numeric($paramValueCleaned))
+				$paramValueCleaned = intval($paramValueCleaned) == $paramValueCleaned?intval($paramValueCleaned):floatval($paramValueCleaned);
+			elseif(is_bool($paramValueCleaned))
+				$paramValueCleaned = $paramValueCleaned?true:false;
 			$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'values',$paramValueCleaned);
+		}
 		else
 			$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,$paramTypeCleaned,$paramValueCleaned);
 	}
@@ -1759,29 +1785,29 @@ class WsdlToPhp extends SoapClient
 	protected function manageWsdlNode($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '')
 	{
 		/**
-		 * Current node is type of "import" and contains the location
+		 * Current node is type of "import" or "include"
 		 */
-		if(strpos($_domNode->nodeName,'import') !== false)
+		if(stripos($_domNode->nodeName,'import') !== false || stripos($_domNode->nodeName,'include') !== false)
 			$this->manageWsdlNodeImport($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Enumeration's and restriction's
 		 */
-		elseif((strpos($_domNode->nodeName,'restriction') !== false || strpos($_domNode->nodeName,'enumeration') !== false))
+		elseif((stripos($_domNode->nodeName,'restriction') !== false || stripos($_domNode->nodeName,'enumeration') !== false))
 			$this->manageWsdlNodeRestriction($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Element's, part of a struct
 		 */
-		elseif((strpos($_domNode->nodeName,'element') !== false || strpos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
+		elseif((stripos($_domNode->nodeName,'element') !== false || stripos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
 			$this->manageWsdlNodeElement($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Documentation's
 		 */
-		elseif(strpos($_domNode->nodeName,'documentation') !== false && !empty($_domNode->nodeValue))
+		elseif(stripos($_domNode->nodeName,'documentation') !== false && !empty($_domNode->nodeValue))
 			$this->manageWsdlNodeDocumentation($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Extension of struct
 		 */
-		elseif(strpos($_domNode->nodeName,'extension') !== false && $_domNode->hasAttribute('base') && $_domNode->getAttribute('base') != '')
+		elseif(stripos($_domNode->nodeName,'extension') !== false && $_domNode->hasAttribute('base') && $_domNode->getAttribute('base') != '')
 			$this->manageWsdlNodeExtension($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 		/**
 		 * Undefined node
@@ -1874,10 +1900,10 @@ class WsdlToPhp extends SoapClient
 	 */
 	protected function manageWsdlNodeRestriction($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
 	{
-		$parentNode = strpos($_domNode->nodeName,'restriction') !== false?$_domNode->parentNode:$_domNode->parentNode->parentNode;
+		$parentNode = stripos($_domNode->nodeName,'restriction') !== false?$_domNode->parentNode:$_domNode->parentNode->parentNode;
 		if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 		{
-			if(strpos($_domNode->nodeName,'restriction') !== false)
+			if(stripos($_domNode->nodeName,'restriction') !== false)
 			{
 				$type = explode(':',$_domNode->getAttribute('base'));
 				$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'));
@@ -2037,6 +2063,35 @@ class WsdlToPhp extends SoapClient
 					$this->addStructInherits($parentNode->getAttribute('name'),$inheritsName);
 			}
 		}
+	}
+	/**
+	 * Indicates if structName is known or not
+	 * @uses WsdlToPhp::cleanClassName()
+	 * @uses WsdlToPhp::getStructs()
+	 * @param string $_structName
+	 * @return bool true|false
+	 */
+	protected function structIsKnown($_structName)
+	{
+		$uStructName = ucfirst($_structName);
+		$lStructName = lcfirst($_structName);
+		$structName = self::cleanClassName($_structName);
+		$uuStructName = ucfirst($structName);
+		$llStructName = lcfirst($structName);
+		return (is_array($this->getStructs()) && (array_key_exists($uStructName,$this->getStructs()) || array_key_exists($lStructName,$this->getStructs()) || array_key_exists($uuStructName,$this->getStructs()) || array_key_exists($llStructName,$this->getStructs())));
+	}
+	/**
+	 * Set the struct name to use
+	 * @uses WsdlToPhp::cleanClassName()
+	 * @uses WsdlToPhp::structIsKnown()
+	 * @param string $_structName
+	 * @param string $_packageName
+	 * @param bool $_force
+	 * @return string
+	 */
+	protected function structName($_structName,$_packageName,$_force = false)
+	{
+		return ($_force || self::structIsKnown($_structName))?ucfirst($_packageName) . 'Type' . ucfirst(self::cleanClassName($_structName)):$_structName;
 	}
 	/**
 	 * Return directory where to store class and create it if needed
