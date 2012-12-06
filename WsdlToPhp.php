@@ -831,7 +831,7 @@ class WsdlToPhp extends SoapClient
 						/**
 						 * Add method
 						 */
-						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
+						if(is_array($parameter) && array_key_exists($parameter['type'],$this->getStructs()) && is_array($this->structs[$parameter['type']]) && count($this->structs[$parameter['type']]) && array_key_exists(0,$this->structs[$parameter['type']]) && array_key_exists('isRestriction',$this->structs[$parameter['type']][0]) && $this->structs[$parameter['type']][0]['isRestriction'] == true && array_key_exists('values',$this->structs[$parameter['type']][0]) && count($this->structs[$parameter['type']][0]['values']))
 						{
 							$php->appendCustomCode("/**\r\n * Add element to array\r\n * @see " . $ClassType . "WsdlClass::add()\r\n * @uses " . $cleanType . "::valueIsValid()\r\n * @param " . $parametersType[0] . " \$_item\r\n * @return bool true|false\r\n */");
 							$php->appendCustomCode("public function add(\$_item)");
@@ -995,6 +995,8 @@ class WsdlToPhp extends SoapClient
 							}
 						}
 					}
+					else
+						$methodsToCall[] = ($this->getOptionSendArrayAsParameter()?'\'' . $methodInfos['parameter'] . '\'=>':'') . '$_' . lcfirst($cleanParameterName);
 					/**
 					 * Return name
 					 */
@@ -1046,7 +1048,8 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Result method
 				 */
-				$php->appendCustomCode("/**\r\n * Method returning the result content\r\n *\r\n * @return " . implode('|',$methodReturns) . "\r\n */");
+				$methodReturns = array_unique($methodReturns);
+				$php->appendCustomCode("/**\r\n * Method returning the result content\r\n * @return " . implode('|',$methodReturns) . "\r\n */");
 				$php->appendCustomCode("public function getResult()");
 				$php->appendCustomCode("{");
 				$php->indentLevel++;
@@ -1056,7 +1059,7 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Class name
 				 */
-				$php->appendCustomCode("/**\r\n * Method returning the class name\r\n *\r\n * @return string __CLASS__\r\n */");
+				$php->appendCustomCode("/**\r\n * Method returning the class name\r\n * @return string __CLASS__\r\n */");
 				$php->appendCustomCode("public function __toString()");
 				$php->appendCustomCode("{");
 				$php->indentLevel++;
@@ -1123,7 +1126,7 @@ class WsdlToPhp extends SoapClient
 		if(count($_classesFiles))
 		{
 			$php = new ezcPhpGenerator($_rootDirectory . '/' . ucfirst($_packageName) . 'Autoload.php',true,true);
-			$php->appendCustomCode("/**\r\n * AutoloadFile \r\n * @date " . date('d/m/Y') . "\r\n */\r\n/**\r\n * AutoloadFile\r\n * @date " . date('d/m/Y') . "\r\n */");
+			$php->appendCustomCode("/**\r\n * Autoload File \r\n * @date " . date('d/m/Y') . "\r\n */\r\n/**\r\n * Includes for all generated classes files\r\n * @date " . date('d/m/Y') . "\r\n */");
 			foreach($_classesFiles as $classFile)
 			{
 				if(is_file($classFile))
@@ -1206,19 +1209,20 @@ class WsdlToPhp extends SoapClient
 					}
 					if(count($classMethods))
 					{
+						$classNameVar = lcfirst($className);
 						$content .= "\r\n\r\n/**" . str_repeat('*',strlen("Example for $className")) . "\r\n * Example for $className\r\n */";
-						$content .= "\r\n\$$className = new $className(\$wsdl);";
+						$content .= "\r\n\$$classNameVar = new $className(\$wsdl);";
 						foreach($classMethods as $classMethod)
 						{
 							$content .= "\r\n// sample call for $className::" . $classMethod->getName() . '()';
 							$classParameters = $classMethod->getParameters();
 							$parameters = array();
 							foreach($classParameters as $classParameter)
-								array_push($parameters,'new ' . ucfirst(substr($classParameter->getName(),1)) . '(/*** update parameters list ***/)');
-							$content .= "\r\nif(\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
-							$content .= "\r\n\t" . 'print_r($' . $className . '->getResult());';
+								array_push($parameters,class_exists(ucfirst(substr($classParameter->getName(),1)))?'new ' . ucfirst(substr($classParameter->getName(),1)) . '(/*** update parameters list ***/)':'$' . lcfirst($classParameter->getName()));
+							$content .= "\r\nif(\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
+							$content .= "\r\n\t" . 'print_r($' . $classNameVar . '->getResult());';
 							$content .= "\r\nelse";
-							$content .= "\r\n\tprint_r($" . $className . "->getLastError());";
+							$content .= "\r\n\tprint_r($" . $classNameVar . "->getLastError());";
 						}
 					}
 				}
@@ -1861,33 +1865,43 @@ class WsdlToPhp extends SoapClient
 		/**
 		 * Define valid location
 		 */
+		$locations = array();
 		if(!empty($location) && strpos($location,'http://') === false && strpos($location,'https://') === false && (!empty($_wsdlLocation) || !empty($_fromWsdlLocation)))
 		{
-			$locationToParse = !empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation;
-			$fileParts = pathinfo($locationToParse);
-			$fileBasename = (is_array($fileParts) && array_key_exists('basename',$fileParts))?$fileParts['basename']:'';
-			$parts = parse_url(str_replace($fileBasename,'',$locationToParse));
-			$scheme = (is_array($parts) && array_key_exists('scheme',$parts))?$parts['scheme']:'';
-			$host = (is_array($parts) && array_key_exists('host',$parts))?$parts['host']:'';
-			$path = (is_array($parts) && array_key_exists('path',$parts))?$parts['path']:'';
-			$path = str_replace($fileBasename,'',$path);
-			$port = (is_array($parts) && array_key_exists('port',$parts))?$parts['port']:'';
-			if(!empty($scheme) && !empty($host))
-				$location = $scheme . '://' . $host . (!empty($port)?':' . $port:'') . (!empty($path)?$path:'/') . $location;
+			$locationsToParse = array();
+			array_push($locationsToParse,!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+			if($_domNode->hasAttribute('namespace') && strpos($_domNode->getAttribute('namespace'),'://'))
+				array_push($locationsToParse,$_domNode->getAttribute('namespace'));
+			foreach($locationsToParse as $locationToParse)
+			{
+				$fileParts = pathinfo($locationToParse);
+				$fileBasename = (is_array($fileParts) && array_key_exists('basename',$fileParts))?$fileParts['basename']:'';
+				$parts = parse_url(str_replace($fileBasename,'',$locationToParse));
+				$scheme = (is_array($parts) && array_key_exists('scheme',$parts))?$parts['scheme']:'';
+				$host = (is_array($parts) && array_key_exists('host',$parts))?$parts['host']:'';
+				$path = (is_array($parts) && array_key_exists('path',$parts))?$parts['path']:'';
+				$path = str_replace($fileBasename,'',$path);
+				$port = (is_array($parts) && array_key_exists('port',$parts))?$parts['port']:'';
+				if(!empty($scheme) && !empty($host))
+					array_push($locations,str_replace('urn','http',$scheme) . '://' . $host . (!empty($port)?':' . $port:'') . (!empty($path)?$path:'/') . $location);
+			}
 		}
 		/**
 		 * New WSDL
 		 */
-		if(!empty($location) && !array_key_exists($location,$this->getWsdls()))
+		foreach($locations as $location)
 		{
-			/**
-			 * Save Wsdl location
-			 */
-			$this->addWsdl($location);
-			/**
-			 * Load Wsdl
-			 */
-			$this->loadWsdls($location,null,$_wsdlLocation);
+			if(!empty($location) && !array_key_exists($location,$this->getWsdls()))
+			{
+				/**
+				 * Save Wsdl location
+				 */
+				$this->addWsdl($location);
+				/**
+				 * Load Wsdl
+				 */
+				$this->loadWsdls($location,null,$_wsdlLocation);
+			}
 		}
 	}
 	/**

@@ -501,11 +501,11 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @param array $_array
 	 * @param bool $_interCall
 	 */
-	public function initInternArrayToIterate(array $_array = array(),$_interCall = false)
+	public function initInternArrayToIterate($_array = array(),$_interCall = false)
 	{
 		if(strpos($this->__toString(),'ArrayOf') !== false)
 		{
-			if(count($_array))
+			if(is_array($_array) && count($_array))
 			{
 				$this->setInternArrayToIterate($_array);
 				$this->setInternArrayToIterateOffset(0);
