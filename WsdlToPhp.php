@@ -995,6 +995,8 @@ class WsdlToPhp extends SoapClient
 							}
 						}
 					}
+					else
+						$methodsToCall[] = ($this->getOptionSendArrayAsParameter()?'\'' . $methodInfos['parameter'] . '\'=>':'') . '$_' . lcfirst($cleanParameterName);
 					/**
 					 * Return name
 					 */
@@ -1046,7 +1048,8 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Result method
 				 */
-				$php->appendCustomCode("/**\r\n * Method returning the result content\r\n *\r\n * @return " . implode('|',$methodReturns) . "\r\n */");
+				$methodReturns = array_unique($methodReturns);
+				$php->appendCustomCode("/**\r\n * Method returning the result content\r\n * @return " . implode('|',$methodReturns) . "\r\n */");
 				$php->appendCustomCode("public function getResult()");
 				$php->appendCustomCode("{");
 				$php->indentLevel++;
@@ -1056,7 +1059,7 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Class name
 				 */
-				$php->appendCustomCode("/**\r\n * Method returning the class name\r\n *\r\n * @return string __CLASS__\r\n */");
+				$php->appendCustomCode("/**\r\n * Method returning the class name\r\n * @return string __CLASS__\r\n */");
 				$php->appendCustomCode("public function __toString()");
 				$php->appendCustomCode("{");
 				$php->indentLevel++;
@@ -1123,7 +1126,7 @@ class WsdlToPhp extends SoapClient
 		if(count($_classesFiles))
 		{
 			$php = new ezcPhpGenerator($_rootDirectory . '/' . ucfirst($_packageName) . 'Autoload.php',true,true);
-			$php->appendCustomCode("/**\r\n * AutoloadFile \r\n * @date " . date('d/m/Y') . "\r\n */\r\n/**\r\n * AutoloadFile\r\n * @date " . date('d/m/Y') . "\r\n */");
+			$php->appendCustomCode("/**\r\n * Autoload File \r\n * @date " . date('d/m/Y') . "\r\n */\r\n/**\r\n * Includes for all generated classes files\r\n * @date " . date('d/m/Y') . "\r\n */");
 			foreach($_classesFiles as $classFile)
 			{
 				if(is_file($classFile))
@@ -1206,19 +1209,20 @@ class WsdlToPhp extends SoapClient
 					}
 					if(count($classMethods))
 					{
+						$classNameVar = lcfirst($className);
 						$content .= "\r\n\r\n/**" . str_repeat('*',strlen("Example for $className")) . "\r\n * Example for $className\r\n */";
-						$content .= "\r\n\$$className = new $className(\$wsdl);";
+						$content .= "\r\n\$$classNameVar = new $className(\$wsdl);";
 						foreach($classMethods as $classMethod)
 						{
 							$content .= "\r\n// sample call for $className::" . $classMethod->getName() . '()';
 							$classParameters = $classMethod->getParameters();
 							$parameters = array();
 							foreach($classParameters as $classParameter)
-								array_push($parameters,'new ' . ucfirst(substr($classParameter->getName(),1)) . '(/*** update parameters list ***/)');
-							$content .= "\r\nif(\$$className->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
-							$content .= "\r\n\t" . 'print_r($' . $className . '->getResult());';
+								array_push($parameters,class_exists(ucfirst(substr($classParameter->getName(),1)))?'new ' . ucfirst(substr($classParameter->getName(),1)) . '(/*** update parameters list ***/)':'$' . lcfirst($classParameter->getName()));
+							$content .= "\r\nif(\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
+							$content .= "\r\n\t" . 'print_r($' . $classNameVar . '->getResult());';
 							$content .= "\r\nelse";
-							$content .= "\r\n\tprint_r($" . $className . "->getLastError());";
+							$content .= "\r\n\tprint_r($" . $classNameVar . "->getLastError());";
 						}
 					}
 				}
