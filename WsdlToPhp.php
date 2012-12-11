@@ -1390,8 +1390,10 @@ class WsdlToPhp extends SoapClient
 	 * @param string $_paramType
 	 * @param string $_paramValue
 	 * @param string $_restrictionName
+	 * @param bool $_isRestriction
+	 * @return void
 	 */
-	private function addRestriction($_paramType,$_paramValue,$_restrictionName)
+	private function addRestriction($_paramType,$_paramValue,$_restrictionName,$_isRestriction = true)
 	{
 		/**
 		 * Replace special characters
@@ -1402,9 +1404,12 @@ class WsdlToPhp extends SoapClient
 		if(!array_key_exists($restrictionNameCleaned,$this->structs) && !empty($paramTypeCleaned))
 		{
 			$this->addStruct($paramTypeCleaned,$restrictionNameCleaned,$restrictionNameCleaned);
-			$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'isRestriction',true);
-			$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'values',array());
 			$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'meta',array());
+			if($_isRestriction)
+			{
+				$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'isRestriction',$_isRestriction);
+				$this->addStructInfo($restrictionNameCleaned,$restrictionNameCleaned,'values',array());
+			}
 		}
 		if(empty($paramTypeCleaned) && !empty($paramValueCleaned))
 		{
@@ -1920,7 +1925,33 @@ class WsdlToPhp extends SoapClient
 			if(stripos($_domNode->nodeName,'restriction') !== false)
 			{
 				$type = explode(':',$_domNode->getAttribute('base'));
-				$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'));
+				if($_domNode->hasChildNodes())
+				{
+					$childNodes = $_domNode->childNodes;
+					$childNodesLength = $childNodes->length;
+					$firstValidNodePos = 0;
+					while(!(($childNodes->item($firstValidNodePos) instanceof DOMNode) && $childNodes->item($firstValidNodePos)->nodeType === XML_ELEMENT_NODE) && $firstValidNodePos++ < $childNodesLength);
+					if($childNodes->item($firstValidNodePos) && stripos($childNodes->item($firstValidNodePos)->nodeName,'enumeration') === false)
+					{
+						$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'),false);
+						for($i = 0;$i < $childNodesLength;$i++)
+						{
+							$childNode = $childNodes->item($i);
+							if($childNode && $childNode->hasAttributes())
+							{
+								$childNodeName = explode(':',$childNode->nodeName);
+								$childNodeName = $childNodeName[count($childNodeName) - 1];
+								$childNodeValue = $childNode->getAttribute('value');
+								$this->addStructInfo($parentNode->getAttribute('name'),$parentNode->getAttribute('name'),'meta',array(
+																																	$childNodeName=>$childNodeValue));
+							}
+						}
+					}
+					else
+						$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'));
+				}
+				else
+					$this->addRestriction($type[count($type) - 1],'',$parentNode->getAttribute('name'));
 			}
 			else
 				$this->addRestriction('',$_domNode->getAttribute('value'),$parentNode->getAttribute('name'));
