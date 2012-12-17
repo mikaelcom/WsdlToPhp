@@ -1891,6 +1891,8 @@ class WsdlToPhp extends SoapClient
 					array_push($locations,str_replace('urn','http',$scheme) . '://' . $host . (!empty($port)?':' . $port:'') . (!empty($path)?$path:'/') . $location);
 			}
 		}
+		elseif(!empty($location))
+			array_push($locations,$location);
 		/**
 		 * New WSDL
 		 */
@@ -1920,6 +1922,12 @@ class WsdlToPhp extends SoapClient
 	protected function manageWsdlNodeRestriction($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
 	{
 		$parentNode = stripos($_domNode->nodeName,'restriction') !== false?$_domNode->parentNode:$_domNode->parentNode->parentNode;
+		/**
+		 * Find parent node of this enumeration node
+		 */
+		$maxDeep = 5;
+		while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(strpos(strtolower($parentNode->nodeName),'element') !== false || (strpos(strtolower($parentNode->nodeName),'simpletype') !== false && $parentNode->hasAttribute('name'))))
+			$parentNode = $parentNode->parentNode;
 		if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 		{
 			if(stripos($_domNode->nodeName,'restriction') !== false)
