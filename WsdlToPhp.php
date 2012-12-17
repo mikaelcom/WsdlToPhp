@@ -1914,6 +1914,7 @@ class WsdlToPhp extends SoapClient
 	/**
 	 * Manage restriction method
 	 * @uses WsdlToPhp::addRestriction()
+	 * @uses WsdlToPhp::findSuitableParent()
 	 * @param string $_wsdlLocation
 	 * @param DOMNode $_domNode
 	 * @param string $_fromWsdlLocation
@@ -1925,9 +1926,7 @@ class WsdlToPhp extends SoapClient
 		/**
 		 * Find parent node of this enumeration node
 		 */
-		$maxDeep = 5;
-		while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(strpos(strtolower($parentNode->nodeName),'element') !== false || (strpos(strtolower($parentNode->nodeName),'simpletype') !== false && $parentNode->hasAttribute('name'))))
-			$parentNode = $parentNode->parentNode;
+		$parentNode = self::findSuitableParent($parentNode);
 		if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 		{
 			if(stripos($_domNode->nodeName,'restriction') !== false)
@@ -1968,6 +1967,7 @@ class WsdlToPhp extends SoapClient
 	/**
 	 * Manage element method
 	 * @uses WsdlToPhp::addStructInfo()
+	 * @uses WsdlToPhp::findSuitableParent()
 	 * @param string $_wsdlLocation
 	 * @param DOMNode $_domNode
 	 * @param string $_fromWsdlLocation
@@ -1978,11 +1978,8 @@ class WsdlToPhp extends SoapClient
 		/**
 		 * Find parent node of this element node
 		 */
-		$parentNode = $_domNode->parentNode;
-		$maxDeep = 5;
-		while($maxDeep-- > 0 && ($parentNode instanceof DOMNode) && $parentNode->nodeName && !(stripos($parentNode->nodeName,'element') !== false || (stripos($parentNode->nodeName,'complextype') !== false && $parentNode->hasAttribute('name'))))
-			$parentNode = $parentNode->parentNode;
-		if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+		$parentNode = self::findSuitableParent($_domNode->parentNode);
+		if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 		{
 			$attributes = $_domNode->attributes;
 			$attributesLength = $attributes->length;
@@ -1997,6 +1994,7 @@ class WsdlToPhp extends SoapClient
 	}
 	/**
 	 * Manage element method
+	 * @uses WsdlToPhp::findSuitableParent()
 	 * @uses WsdlToPhp::addStructInfo()
 	 * @uses WsdlToPhp::addRestriction()
 	 * @uses WsdlToPhp::addStructDocumentation()
@@ -2020,11 +2018,8 @@ class WsdlToPhp extends SoapClient
 		/**
 		 * Find parent node of this documentation node
 		 */
-		$parentNode = $_domNode->parentNode;
-		$maxDeep = 5;
-		while($maxDeep-- > 0 && $parentNode && ($parentNode instanceof DOMElement) && $parentNode->nodeName && stripos($parentNode->nodeName,'operation') === false && stripos($parentNode->nodeName,'element') === false && stripos($parentNode->nodeName,'simpletype') === false && stripos($parentNode->nodeName,'complextype') === false && stripos($parentNode->nodeName,'enumeration') === false && stripos($parentNode->nodeName,'definitions') === false)
-			$parentNode = $parentNode->parentNode;
-		if($parentNode && ($parentNode instanceof DOMElement))
+		$parentNode = self::findSuitableParent($_domNode->parentNode);
+		if($parentNode)
 		{
 			/**
 			 * is it an element ? part of a struct
@@ -2034,15 +2029,10 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Find parent node of this documentation node
 				 */
-				$upParentNode = $parentNode->parentNode;
-				$maxDeep = 5;
-				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos(strtolower($upParentNode->nodeName),'element') !== false || (strpos(strtolower($upParentNode->nodeName),'complextype') !== false && $upParentNode->hasAttribute('name'))))
-					$upParentNode = $upParentNode->parentNode;
-				if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
-				{
+				$upParentNode = self::findSuitableParent($parentNode->parentNode);
+				if($upParentNode && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
 					$this->addStructInfo($upParentNode->getAttribute('name'),$parentNode->getAttribute('name'),'meta',array(
 																															'documentation'=>$documentation));
-				}
 			}
 			/**
 			 * is it an enumeration
@@ -2052,11 +2042,8 @@ class WsdlToPhp extends SoapClient
 				/**
 				 * Find parent node of this enumeration node
 				 */
-				$upParentNode = $parentNode->parentNode;
-				$maxDeep = 5;
-				while($maxDeep-- > 0 && ($upParentNode instanceof DOMElement) && $upParentNode->nodeName && !(strpos(strtolower($upParentNode->nodeName),'element') !== false || (strpos(strtolower($upParentNode->nodeName),'simpletype') !== false && $upParentNode->hasAttribute('name'))))
-					$upParentNode = $upParentNode->parentNode;
-				if(($upParentNode instanceof DOMElement) && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
+				$upParentNode = self::findSuitableParent($parentNode->parentNode);
+				if($upParentNode && $upParentNode->hasAttribute('name') && $upParentNode->getAttribute('name') != '')
 					$this->addRestriction('meta',array(
 														$parentNode->getAttribute('value')=>array(
 																								'documentation'=>$documentation)),$upParentNode->getAttribute('name'));
@@ -2081,6 +2068,7 @@ class WsdlToPhp extends SoapClient
 	}
 	/**
 	 * Manage extension method
+	 * @uses WsdlToPhp::findSuitableParent()
 	 * @uses WsdlToPhp::addStructInherits()
 	 * @param string $_wsdlLocation
 	 * @param DOMNode $_domNode
@@ -2096,11 +2084,8 @@ class WsdlToPhp extends SoapClient
 			/**
 			 * Find parent node of this extension node
 			 */
-			$parentNode = $_domNode->parentNode;
-			$maxDeep = 5;
-			while($maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !(stripos($parentNode->nodeName,'element') !== false || (stripos($parentNode->nodeName,'complextype') !== false && $parentNode->hasAttribute('name'))))
-				$parentNode = $parentNode->parentNode;
-			if(($parentNode instanceof DOMElement) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+			$parentNode = self::findSuitableParent($_domNode->parentNode);
+			if($parentNode && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
 			{
 				/**
 				 * Avoid infinite loop on case like this when looping/managing inheritance :
@@ -2116,6 +2101,20 @@ class WsdlToPhp extends SoapClient
 					$this->addStructInherits($parentNode->getAttribute('name'),$inheritsName);
 			}
 		}
+	}
+	/**
+	 * Find the suitable parent node of the current node in maximum 5 parents
+	 * Centralize method to find a valid parent
+	 * @param DOMNode $_domNode
+	 * @param int $_maxDeep max deep of this current node
+	 * @return DOMElement|null
+	 */
+	final private function findSuitableParent(DOMNode $_domNode,$_maxDeep = 5)
+	{
+		$parentNode = $_domNode;
+		while($_maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && !((stripos($parentNode->nodeName,'element') !== false || stripos($parentNode->nodeName,'complextype') !== false || stripos($parentNode->nodeName,'simpletype') !== false) && $parentNode->hasAttribute('name')))
+			$parentNode = $parentNode->parentNode;
+		return ($parentNode instanceof DOMElement)?$parentNode:null;
 	}
 	/**
 	 * Indicates if structName is known or not
