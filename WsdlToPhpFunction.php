@@ -44,6 +44,8 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * @uses WsdlToPhpFunction::getParameterType()
 	 * @uses WsdlToPhpFunction::getReturnType()
 	 * @uses WsdlToPhpStruct::getAttributes()
+	 * @uses WsdlToPhpStruct::getIsStruct()
+	 * @uses WsdlToPhpStruct::getIsRestriction()
 	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::addMetaComment()
@@ -73,7 +75,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		if(is_string($this->getParameterType()))
 		{
 			$model = self::getModelByName($this->getParameterType());
-			if($model && $model->getIsStruct())
+			if($model && $model->getIsStruct() && !$model->getIsRestriction())
 			{
 				$attributes = $model->getAttributes(true);
 				if(count($attributes))
@@ -91,7 +93,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 			foreach($this->getParameterType() as $parameterName=>$parameterType)
 			{
 				$model = self::getModelByName($parameterType);
-				if($model && $model->getIsStruct())
+				if($model && $model->getIsStruct() && !$model->getIsRestriction())
 					array_push($comments,'@param ' . $model->getPackagedName() . ' $_' . lcfirst($model->getPackagedName()));
 				else
 					array_push($comments,'@param ' . $parameterType . ' $_' . lcfirst(self::cleanString($parameterName)));
@@ -101,7 +103,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		 * @Return
 		 */
 		$model = self::getModelByName($this->getReturnType());
-		if($model && $model->getIsStruct())
+		if($model && $model->getIsStruct() && !$model->getIsRestriction())
 			array_push($comments,'@return ' . $model->getPackagedName());
 		else
 			array_push($comments,'@return ' . $this->getReturnType());
@@ -130,9 +132,9 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	public function getBody(&$_body)
 	{
 		$parameterModel = self::getModelByName($this->getParameterType());
-		$parameterModel = ($parameterModel && $parameterModel->getIsStruct())?$parameterModel:null;
+		$parameterModel = ($parameterModel && $parameterModel->getIsStruct() && !$parameterModel->getIsRestriction())?$parameterModel:null;
 		$returnModel = self::getModelByName($this->getReturnType());
-		$returnModel = ($returnModel && $returnModel->getIsStruct())?$returnModel:null;
+		$returnModel = ($returnModel && $returnModel->getIsStruct() && !$returnModel->getIsRestriction())?$returnModel:null;
 		if($parameterModel)
 		{
 			if(count($parameterModel->getAttributes(true)))
@@ -151,11 +153,11 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 			foreach($this->getParameterType() as $parameterName=>$parameterType)
 			{
 				$model = self::getModelByName($parameterType);
-				if($model && $model->getIsStruct())
+				if($model && $model->getIsStruct() && !$model->getIsRestriction())
 					$parameterName = $model->getPackagedName();
 				else
 					$parameterName = self::cleanString($parameterName);
-				array_push($parameters,(($model && $model->getIsStruct())?$model->getPackagedName() . ' ':'') . '$_' . lcfirst($parameterName));
+				array_push($parameters,(($model && $model->getIsStruct() && !$model->getIsRestriction())?$model->getPackagedName() . ' ':'') . '$_' . lcfirst($parameterName));
 			}
 			$parameterName = $parameter = implode(',',$parameters);
 		}
@@ -204,7 +206,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 			foreach($this->getParameterType() as $parameterName=>$parameterType)
 			{
 				$model = self::getModelByName($parameterType);
-				if($model && $model->getIsStruct())
+				if($model && $model->getIsStruct() && !$model->getIsRestriction())
 					$paramName = $model->getPackagedName();
 				else
 					$paramName = self::cleanString($parameterName);
