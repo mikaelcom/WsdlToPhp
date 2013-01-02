@@ -1,11 +1,13 @@
 <?php
 /**
  * File for PackageNameWsdlClass to communicate with SOAP service
+ * @package PackageName
  * @date generation_date
  */
 /**
  * File for PackageNameWsdlClass to communicate with SOAP service
  * meta_informations
+ * @package PackageName
  * @date generation_date
  */
 class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Countable
@@ -166,6 +168,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * Method initiating SoapClient
 	 * @uses PackageNameWsdlClass::classMap()
 	 * @uses PackageNameWsdlClass::getDefaultWsdlOptions()
+	 * @uses PackageNameWsdlClass::setSoapClient()
 	 * @param array $_wsdlOptions WSDL options
 	 * @return void
 	 */
@@ -318,7 +321,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 */
 	public function add($_item)
 	{
-		if($this->getAttributeName() != '' && strpos($this->__toString(),'ArrayOf') !== false)
+		if($this->getAttributeName() != '' && stripos($this->__toString(),'array') !== false)
 		{
 			/**
 			 * init array
@@ -339,7 +342,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return false;
 	}
 	/**
-	 * Method to call when sending data to request for ArrayOf type class
+	 * Method to call when sending data to request for *array* type class
 	 * @uses PackageNameWsdlClass::getAttributeName()
 	 * @uses PackageNameWsdlClass::__toString()
 	 * @uses PackageNameWsdlClass::_get()
@@ -347,7 +350,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 */
 	public function toSend()
 	{
-		if($this->getAttributeName() != '' && strpos($this->__toString(),'ArrayOf') !== false)
+		if($this->getAttributeName() != '' && stripos($this->__toString(),'array') !== false)
 			return $this->_get($this->getAttributeName());
 		else
 			return null;
@@ -393,7 +396,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return $this->offsetExists($_offset)?$this->internArrayToIterate[$_offset]:null;
 	}
 	/**
-	 * Method useless but necessarly overriden, can't set
+	 * Method useless but necessarly overridden, can't set
 	 * @param mixed $_offset
 	 * @param mixed $_value
 	 * @return null
@@ -403,7 +406,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return null;
 	}
 	/**
-	 * Method useless but necessarly overriden, can't set
+	 * Method useless but necessarly overridden, can't unset
 	 * @param mixed $_offset
 	 * @return null
 	 */
@@ -412,7 +415,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return null;
 	}
 	/**
-	 * Method returnint current result from Soap call
+	 * Method returning current result from Soap call
 	 * @return mixed
 	 */
 	public function getResult()
@@ -467,7 +470,6 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	/**
 	 * Method returning intern array to iterate trough
 	 * @return array
-	 * @return void
 	 */
 	public function getInternArrayToIterate()
 	{
@@ -498,12 +500,13 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::getAttributeName()
 	 * @uses PackageNameWsdlClass::initInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::__toString()
-	 * @param array $_array
-	 * @param bool $_interCall
+	 * @param array the array to iterate trough
+	 * @param bool indicates that methods is calling itself
+	 * @return void
 	 */
-	public function initInternArrayToIterate($_array = array(),$_interCall = false)
+	public function initInternArrayToIterate($_array = array(),$_internCall = false)
 	{
-		if(strpos($this->__toString(),'ArrayOf') !== false)
+		if(stripos($this->__toString(),'array') !== false)
 		{
 			if(is_array($_array) && count($_array))
 			{
@@ -511,7 +514,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 				$this->setInternArrayToIterateOffset(0);
 				$this->setInternArrayToIterateIsArray(true);
 			}
-			elseif(!$_interCall && $this->getAttributeName() != '' && property_exists($this->__toString(),$this->getAttributeName()))
+			elseif(!$_internCall && $this->getAttributeName() != '' && property_exists($this->__toString(),$this->getAttributeName()))
 				$this->initInternArrayToIterate($this->_get($this->getAttributeName()),true);
 		}
 	}
@@ -572,7 +575,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 			return false;
 	}
 	/**
-	 * Method returning alone attribute name when class is ArrayOf type
+	 * Method returning alone attribute name when class is *array* type
 	 * @return string
 	 */
 	public function getAttributeName()

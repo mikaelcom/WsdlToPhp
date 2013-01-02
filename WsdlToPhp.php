@@ -1,10 +1,14 @@
 <?php
 /**
  * File for class WsdlToPhp
+ * @package WsdlToPhp
+ * @deprecated In favor to WsdlToPhpGenerator file
  * @date 25/06/2012
  */
 /**
  * Class WsdlToPhp
+ * @package WsdlToPhp
+ * @deprecated In favor to WsdlToPhpGenerator class
  * @date 25/06/2012
  */
 class WsdlToPhp extends SoapClient

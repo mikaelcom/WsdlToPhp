@@ -1,9 +1,12 @@
 <?php
 /**
- * Sample to show how to use WSdlToPhp class
+ * Sample to show how to use WsdlToPhp class
+ * @package WsdlToPhp
+ * @deprecated In favor to samples-generator.php
  * @date 01/07/2012
  */
 ini_set('display_errors',true);
+ini_set('memory_limit',-1);
 /**
  * In case function lcfirst doesn't exist 
  */
@@ -38,7 +41,7 @@ if(false)
  */
 if(false)
 {
-	$w = new WsdlToPhp('http://www.ovh.com/soapi/soapi-dlw-1.39.wsdl');
+	$w = new WsdlToPhp('http://www.ovh.com/soapi/soapi-dlw-1.52.wsdl');
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionResponseAsWsdlObject(true);
@@ -55,12 +58,10 @@ if(false)
 	$w->setOptionGenerateAutoloadFile(true);
 	$w->setOptionGenerateWsdlClassFile(true);
 	$w->setOptionSendParametersAsArray(true);
-	$w->setOptionGenericConstantsNames(true);
 	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
 	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->setOptionGenerateTutorialFile(true);
 	$w->generateClasses('bing',dirname(__FILE__) . '/samples/bing-search/');
-	$w->setOptionGenericConstantsNames(false);
-	$w->generateClasses('bing',dirname(__FILE__) . '/samples/bing-search_2/');
 }
 /**
  * BING Geocode API
@@ -1853,5 +1854,310 @@ if(false)
 	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
 	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
 	$w->generateClasses('ScienceGovSearch',dirname(__FILE__) . '/samples/science-gov-search/');
+}
+/**
+ * Magento : Axiom Telecom Staging
+ */
+if(false)
+{
+	$w = new WsdlToPhp(__DIR__ . '/axiomtelecomstaging.xml');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('AxiomTelecomStaging',dirname(__FILE__) . '/samples/axiom-telecom-staging/');
+}
+/**
+ * http://schemas.xmlsoap.org/soap/encoding/
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://schemas.xmlsoap.org/soap/encoding/');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Schemas',dirname(__FILE__) . '/samples/schemas/');
+}
+/**
+ * Konakart
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://www.konakart.com/konakart/services/KKWebServiceEng?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Konakart',dirname(__FILE__) . '/samples/Konakart/');
+}
+/**
+ * AmeriCommerce
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://americommerce.com/store/ws/AmeriCommerceDb.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('AmeriCommerce',dirname(__FILE__) . '/samples/ameri-commerce/');
+}
+/**
+ * Sushi
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://up2.in.revues.org/~durand/statsedito/sushi/counter_sushi.wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Sushi',dirname(__FILE__) . '/samples/sushi_/');
+}
+/**
+ * Sushi
+ */
+if(false)
+{
+	$w = new WsdlToPhp(__DIR__ . '/wsdl_01112012.xml');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Wsdl',dirname(__FILE__) . '/samples/wsdl/');
+}
+/**
+ * https://api.authorize.net/soap/v1/Service.asmx?WSDL
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://api.authorize.net/soap/v1/Service.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Authorize',dirname(__FILE__) . '/samples/authorize/');
+}
+/**
+ * https://moa.mazdaeur.com/mud-services/ws/PartnerService?wsdl 
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://moa.mazdaeur.com/mud-services/ws/PartnerService?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Mazda',dirname(__FILE__) . '/samples/mazda/');
+}
+/**
+ * https://www.mygate.co.za/enterprise/4x0x0/ePayService.cfc?wsdl
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://www.mygate.co.za/enterprise/4x0x0/ePayService.cfc?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionSendParametersAsArray(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('MyGate',dirname(__FILE__) . '/samples/mygate/');
+}
+/**
+ * Enumeratio with integers
+ * http://www.wsdltophp.com/var/wsdltophp.com/storage/wsdls/970208c6e378d60c44668e0851956443/wsdl.xml
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://www.wsdltophp.com/var/wsdltophp.com/storage/wsdls/970208c6e378d60c44668e0851956443/wsdl.xml');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionSendParametersAsArray(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('NeCom',dirname(__FILE__) . '/samples/necom/');
+}
+/**
+ * https://services.pwsdemo.com/CreditCardTransactionService.svc?wsdl
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://services.pwsdemo.com/CreditCardTransactionService.svc?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionSendParametersAsArray(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('CreditCardTransaction',dirname(__FILE__) . '/samples/CreditCardTransaction/');
+}
+/**
+ * 
+ */
+if(false)
+{
+	$w = new WsdlToPhp(__DIR__ . '/wsdl_14112012.xml');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionSendParametersAsArray(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Ip',dirname(__FILE__) . '/samples/ip/');
+}
+/**
+ * http://api.ean.com/ean-services/ws/hotel/v3?wsdl&apiKey=6qsezn6f5mjxw6k3zgv9msnu
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://api.ean.com/ean-services/ws/hotel/v3?wsdl&apiKey=6qsezn6f5mjxw6k3zgv9msnu');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionSendParametersAsArray(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('Hotel',dirname(__FILE__) . '/samples/Hotel/');
+}
+/**
+ * http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('a2zinc',dirname(__FILE__) . '/samples/a2zinc/');
+}
+/**
+ * http://www.kalaninformatique.fr/test/wsdl/books.wsdl
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://www.kalaninformatique.fr/test/wsdl/books.wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('books',dirname(__FILE__) . '/samples/books/');
+}
+/**
+ * http://www.joelhainley.com/examples/soap/scramble.wsdl
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://www.joelhainley.com/examples/soap/scramble.wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('scramble',dirname(__FILE__) . '/samples/scramble/');
+}
+/**
+ * http://api.temando.com/schema/2009_06/server.wsdl
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://api.temando.com/schema/2009_06/server.wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('temando',dirname(__FILE__) . '/samples/temando/');
+}
+/**
+ * http://api.myngp.com/Contact.svc?wsdl
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://api.myngp.com/Contact.svc?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('contact',dirname(__FILE__) . '/samples/contact/');
+}
+/**
+ * http://api.fromdoppler.com/Default.asmx?WSDL
+ */
+if(false)
+{
+	$w = new WsdlToPhp('http://api.fromdoppler.com/Default.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('doppler',dirname(__FILE__) . '/samples/doppler/');
+}
+/**
+ * https://apps.vinmanager.com/CarDashboard/services/DealService.asmx?WSDL
+ */
+if(false)
+{
+	$w = new WsdlToPhp('https://apps.vinmanager.com/CarDashboard/services/DealService.asmx?WSDL');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('DealService',dirname(__FILE__) . '/samples/DealService/');
+}
+/**
+ * http://secapp.euroconsumers.org/partnerservice/PartnerService.svc?wsdl
+ */
+if(true)
+{
+	$w = new WsdlToPhp('http://secapp.euroconsumers.org/partnerservice/PartnerService.svc?wsdl');
+	$w->setOptionGenerateAutoloadFile(true);
+	$w->setOptionGenerateWsdlClassFile(true);
+	$w->setOptionSendArrayAsParameter(true);
+	$w->setOptionGenerateTutorialFile(true);
+	$w->setOptionCategory(WsdlToPhp::OPT_CAT_START_NAME);
+	$w->setOptionSubCategory(WsdlToPhp::OPT_SUB_CAT_END_NAME);
+	$w->generateClasses('PartnerService',dirname(__FILE__) . '/samples/PartnerService/');
 }
 ?>
