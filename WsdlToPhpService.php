@@ -20,7 +20,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()
 	 * @uses WsdlToPhpService::setFunctions()
-	 * @param string the function name
+	 * @param string $_name the function name
 	 * @return WsdlToPhpService
 	 */
 	public function __construct($_name)
@@ -58,7 +58,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 	 * @uses WsdlToPhpFunction::getBody()
 	 * @uses WsdlToPhpGenerator::getPackageName()
 	 * @uses WsdlToPhpGenerator::getOptionGenerateWsdlClassFile()
-	 * @param array
+	 * @param array $_body
 	 * @return void
 	 */
 	public function getClassBody(&$_body)
@@ -114,7 +114,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 	}
 	/**
 	 * Set the functions
-	 * @param array
+	 * @param array $_functions
 	 * @return array
 	 */
 	private function setFunctions(array $_functions = array())
@@ -123,9 +123,9 @@ class WsdlToPhpService extends WsdlToPhpModel
 	}
 	/**
 	 * Add a function to the service
-	 * @param string original function name
-	 * @param string original parameter type/name
-	 * @param string original return type/name
+	 * @param string $_functionName original function name
+	 * @param string $_functionParameterType original parameter type/name
+	 * @param string $_functionReturnType original return type/name
 	 * @return WsdlToPhpFunction
 	 */
 	public function addFunction($_functionName,$_functionParameterType,$_functionReturnType)
@@ -135,7 +135,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 	/**
 	 * Returns the function by its original name
 	 * @uses WsdlToPhpService::getFunctions()
-	 * @param string the original function name
+	 * @param string $_functionName the original function name
 	 * @return WsdlToPhpFunction|null
 	 */
 	public function getFunction($_functionName)

@@ -20,8 +20,8 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()
 	 * @uses WsdlToPhpStructAttribute::setType()
-	 * @param string the original name
-	 * @param string the type
+	 * @param string $_name the original name
+	 * @param string $_type the type
 	 * @return WsdlToPhpStructAttribute
 	 */
 	public function __construct($_name,$_type)
@@ -38,7 +38,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::getPackagedName()
-	 * @param int comment part
+	 * @param int $_part comment part
 	 * @return array
 	 */
 	public function getComment($_part = '')
@@ -103,8 +103,8 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @uses WsdlToPhpStructAttribute::getGetterName()
-	 * @param array
-	 * @param WsdlToPhpStruct
+	 * @param array $_body
+	 * @param WsdlToPhpStruct $_struct
 	 * @return void
 	 */
 	public function getGetterDeclaration(&$_body,WsdlToPhpStruct $_struct)
@@ -173,8 +173,8 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpStruct::isArray()
 	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @uses WsdlToPhpStructAttribute::getSetterName()
-	 * @param array
-	 * @param WsdlToPhpStruct
+	 * @param array $_body
+	 * @param WsdlToPhpStruct $_struct
 	 * @return void
 	 */
 	public function getSetterDeclaration(&$_body,WsdlToPhpStruct $_struct)
@@ -236,7 +236,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	}
 	/**
 	 * Set the type value
-	 * @param string
+	 * @param string $_type
 	 * @return string
 	 */
 	public function setType($_type)
