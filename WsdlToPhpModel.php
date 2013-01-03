@@ -53,7 +53,7 @@ class WsdlToPhpModel
 	 * @uses WsdlToPhpModel::setMeta()
 	 * @uses WsdlToPhpModel::setName()
 	 * @uses WsdlToPhpModel::updateModels()
-	 * @param string the original name
+	 * @param string $_name the original name
 	 * @return WsdlToPhpModel
 	 */
 	public function __construct($_name)
@@ -70,7 +70,7 @@ class WsdlToPhpModel
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getDocSubPackages()
 	 * @uses WsdlToPhpGenerator::getPackageName()
-	 * @param int comment part
+	 * @param int $_part comment part
 	 * @return array
 	 */
 	public function getComment($_part = '')
@@ -198,9 +198,9 @@ class WsdlToPhpModel
 	 * @uses WsdlToPhpModel::META_DOCUMENTATION
 	 * @uses WsdlToPhpModel::getMeta()
 	 * @uses WsdlToPhpModel::cleanComment()
-	 * @param array array which meta are added to
-	 * @param bool add comments tags
-	 * @param bool ignore documentation info or not
+	 * @param array $_comments array which meta are added to
+	 * @param bool $_addStars add comments tags
+	 * @param bool $_ignoreDocumentation ignore documentation info or not
 	 * @return void
 	 */
 	protected function addMetaComment(array &$_comments = array(),$_addStars = false,$_ignoreDocumentation = false)
@@ -234,7 +234,8 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Set the meta
-	 * @param array
+	 * @param array $_meta
+     * @return array
 	 */
 	public function setMeta(array $_meta = array())
 	{
@@ -269,7 +270,7 @@ class WsdlToPhpModel
 	 * Set the documentation meta value
 	 * @uses WsdlToPhpModel::META_DOCUMENTATION
 	 * @uses WsdlToPhpModel::addMeta()
-	 * @param string the documentation from the WSDL
+	 * @param string $_documentation the documentation from the WSDL
 	 * @return string the documentation from the WSDL
 	 */
 	public function setDocumentation($_documentation)
@@ -290,8 +291,8 @@ class WsdlToPhpModel
 	/**
 	 * Return a meta value according to its name
 	 * @uses WsdlToPhpModel::getMeta()
-	 * @param string the meta information name
-	 * @param string the fallback value if unset
+	 * @param string $_metaName the meta information name
+	 * @param string $_fallback the fallback value if unset
 	 * @return mixed the meta information value
 	 */
 	public function getMetaValue($_metaName,$_fallback = null)
@@ -300,8 +301,8 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Return the value of the first meta value assigned to the name
-	 * @param array the meta names to check
-	 * @param string the fallback value if anyone is set
+	 * @param array $_names the meta names to check
+	 * @param string $_fallback the fallback value if anyone is set
 	 * @return mixed the meta information value
 	 */
 	public function getMetaValueFirstSet(array $_names,$_fallback = null)
@@ -379,7 +380,7 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Clean a string to make it valid as PHP variable
-	 * @param string the string to clean
+	 * @param string $_string the string to clean
 	 * @return string
 	 */
 	public static function cleanString($_string)
@@ -397,7 +398,7 @@ class WsdlToPhpModel
 	/**
 	 * Return the model by its name
 	 * @uses WsdlToPhpModel::getModels()
-	 * @param string the original WsdlToPhpStruct name
+	 * @param string $_modelName the original WsdlToPhpStruct name
 	 * @return WsdlToPhpStruct|null
 	 */
 	public static function getModelByName($_modelName)
@@ -408,7 +409,7 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Set models
-	 * @param array the WsdlToPhpStruct's defined
+	 * @param array $_models the WsdlToPhpStruct's defined
 	 * @return array the WsdlToPhpStruct's defined
 	 */
 	private static function setModels(array $_models = array())
@@ -420,7 +421,7 @@ class WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getModels()
 	 * @uses WsdlToPhpModel::setModels()
 	 * @uses WsdlToPhpModel::getName()
-	 * @param WsdlToPhpModel a WsdlToPhpModel object
+	 * @param WsdlToPhpModel $_model a WsdlToPhpModel object
 	 * @return WsdlToPhpStruct|bool
 	 */
 	private static function updateModels(WsdlToPhpModel $_model)
@@ -431,8 +432,8 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Returns a usable keyword for a original keyword
-	 * @param string the keyword
-	 * @param string the context
+	 * @param string $_keyword the keyword
+	 * @param string $_context the context
 	 * @return string
 	 */
 	public static function replaceReservedPhpKeyword($_keyword,$_context)
@@ -478,7 +479,7 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Clean comment
-	 * @param string the comment to clean
+	 * @param string $_comment the comment to clean
 	 * @return string
 	 */
 	public static function cleanComment($_comment)

@@ -22,8 +22,8 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpStructValue::constantSuffix()
 	 * @uses WsdlToPhpGenerator::getOptionGenericConstantsNames()
-	 * @param string the name of the struct which the value belongs to
-	 * @param int the index of the constant contained by the struct class
+	 * @param string $_structName the name of the struct which the value belongs to
+	 * @param int $_index the index of the constant contained by the struct class
 	 * @return string
 	 */
 	public function getCleanName($_structName,$_index = -1)
@@ -51,7 +51,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * @see WsdlToPhpModel::getComment()
 	 * @uses WsdlToPhpStructValue::getValue()
 	 * @uses WsdlToPhpModel::addMetaComment()
-	 * @param int comment part
+	 * @param int $_part comment part
 	 * @return array
 	 */
 	public function getComment($_part = '')
@@ -67,8 +67,8 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * Returns the declaration of the value
 	 * @see WsdlToPhpStructValue::getCleanName()
 	 * @see WsdlToPhpStructValue::getValue()
-	 * @param string the name of the struct which the value belongs to
-	 * @param int the index of the constant contained by the struct class
+	 * @param string $_structName the name of the struct which the value belongs to
+	 * @param int $_index the index of the constant contained by the struct class
 	 * @return string
 	 */
 	public function getDeclaration($_structName,$_index = -1)
@@ -78,9 +78,9 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	/**
 	 * Return the index which has to be added at the end of natural constant name defined with the value cleaned
 	 * Allows to avoid multiple constant name to be indentic
-	 * @param string the struct name
-	 * @param mixed the value
-	 * @param int the position of the value
+	 * @param string $_structName the struct name
+	 * @param mixed $_value the value
+	 * @param int $_index the position of the value
 	 * @return int
 	 */
 	private static function constantSuffix($_structName,$_value,$_index)

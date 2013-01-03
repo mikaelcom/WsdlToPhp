@@ -37,8 +37,8 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * @uses WsdlToPhpStruct::setIsStruct()
 	 * @uses WsdlToPhpStruct::setValues()
 	 * @uses WsdlToPhpStruct::setAttributes()
-	 * @param string the original name
-	 * @param bool defines if it's a real sruct or not
+	 * @param string $_name the original name
+	 * @param bool $_isStruct defines if it's a real sruct or not
 	 * @return WsdlToPhpStruct
 	 */
 	public function __construct($_name,$_isStruct = true)
@@ -70,7 +70,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * @uses WsdlToPhpStructAttribute::getSetterDeclaration()
 	 * @uses WsdlToPhpGenerator::getOptionGenerateWsdlClassFile()
 	 * @uses WsdlToPhpGenerator::getPackageName()
-	 * @param array the body which will be populated
+	 * @param array $_body the body which will be populated
 	 * @return array
 	 */
 	public function getClassBody(&$_body)
@@ -351,7 +351,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStruct::getAttributes()
-	 * @param bool include the attributes of parent class, default parent attributes are not included
+	 * @param bool $_includeInheritanceAttributes include the attributes of parent class, default parent attributes are not included
 	 * @return array
 	 */
 	public function getAttributes($_includeInheritanceAttributes = false)
@@ -384,6 +384,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	/**
 	 * set the attributes of the struct
 	 * @param array
+     * @return array
 	 */
 	public function setAttributes(array $_attributes = array())
 	{
@@ -391,8 +392,8 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Add attribute based on its original name
-	 * @param string the attribute name
-	 * @param string the attribute type
+	 * @param string $_attributeName the attribute name
+	 * @param string $_attributeType the attribute type
 	 * @return WsdlToPhpStructAttribute
 	 */
 	public function addAttribute($_attributeName,$_attributeType)
@@ -402,7 +403,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	/**
 	 * Return the attribute by its name, otherwise null
 	 * @uses WsdlToPhpStruct::getAttributes()
-	 * @param string the original attribute name
+	 * @param string $_attributeName the original attribute name
 	 * @return WsdlToPhpStructAttribute|null
 	 */
 	public function getAttribute($_attributeName)
@@ -419,7 +420,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Set the isRestriction value
-	 * @param bool
+	 * @param bool $_isRestriction
 	 * @return bool
 	 */
 	public function setIsRestriction($_isRestriction = true)
@@ -436,7 +437,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Set the isStruct value
-	 * @param bool
+	 * @param bool $_isStruct
 	 * @return bool
 	 */
 	public function setIsStruct($_isStruct = true)
@@ -453,7 +454,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Set the values for an enumeration
-	 * @param array
+	 * @param array $_values
 	 * @return array
 	 */
 	private function setValues(array $_values = array())
@@ -463,7 +464,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	/**
 	 * Add value to values array
 	 * @uses WsdlToPhpStruct::getValue()
-	 * @param mixed the value
+	 * @param mixed $_value the value
 	 */
 	public function addValue($_value)
 	{
@@ -474,7 +475,8 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * Get the value object for the given value
 	 * @uses WsdlToPhpStruct::getValues()
 	 * @uses WsdlToPhpModel::getName()
-	 * @param WsdlToPhpStructValue|null
+     * @param string $_value Value name
+	 * @return WsdlToPhpStructValue|null
 	 */
 	public function getValue($_value)
 	{

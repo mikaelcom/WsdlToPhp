@@ -26,9 +26,9 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * @see WsdlToPhpModel::__construct()
 	 * @uses WsdlToPhpFunction::setParameterType()
 	 * @uses WsdlToPhpFunction::setReturnType()
-	 * @param string the function name
-	 * @param string the type/name of the parameter
-	 * @param string the type/name of the return value
+	 * @param string $_name the function name
+	 * @param string $_parameterType the type/name of the parameter
+	 * @param string $_returnType the type/name of the return value
 	 * @return WsdlToPhpFunction
 	 */
 	public function __construct($_name,$_parameterType,$_returnType)
@@ -52,7 +52,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getDocumentation()
 	 * @uses WsdlToPhpModel::getGenericWsdlClassName()
 	 * @uses WsdlToPhpModel::cleanString()
-	 * @param int comment part
+	 * @param int $_part comment part
 	 * @return array
 	 */
 	public function getComment($_part = '')

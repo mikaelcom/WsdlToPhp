@@ -124,7 +124,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::initInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::_set()
 	 * @param array $_arrayOfValues values
-	 * @return Lists
+	 * @return void
 	 */
 	public function __construct($_arrayOfValues = array())
 	{
@@ -300,7 +300,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * Method alias to offsetGet
 	 * @see PackageNameWsdlClass::offsetGet()
 	 * @uses PackageNameWsdlClass::offsetGet()
-	 * @param int
+	 * @param int $_index
 	 * @return mixed
 	 */
 	public function item($_index)
@@ -378,7 +378,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * Method testing index in item
 	 * @uses PackageNameWsdlClass::getInternArrayToIterateIsArray()
 	 * @uses PackageNameWsdlClass::getInternArrayToIterate()
-	 * @param int
+	 * @param int $_offset
 	 * @return bool true|false
 	 */
 	public function offsetExists($_offset)
@@ -388,7 +388,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	/**
 	 * Method returning the item at "index" value
 	 * @uses PackageNameWsdlClass::offsetExists()
-	 * @param int
+	 * @param int $_offset
 	 * @return mixed
 	 */
 	public function offsetGet($_offset)
@@ -460,7 +460,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	}
 	/**
 	 * Method getting the last error for a certain method
-	 * @param string method name to get error from
+	 * @param string $_methoName method name to get error from
 	 * @return SoapFault|null
 	 */
 	public function getLastErrorForMethod($_methoName)
@@ -500,8 +500,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::getAttributeName()
 	 * @uses PackageNameWsdlClass::initInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::__toString()
-	 * @param array the array to iterate trough
-	 * @param bool indicates that methods is calling itself
+	 * @param array $_array the array to iterate trough
+	 * @param bool $_internCall indicates that methods is calling itself
 	 * @return void
 	 */
 	public function initInternArrayToIterate($_array = array(),$_internCall = false)
