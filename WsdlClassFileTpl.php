@@ -124,7 +124,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::initInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::_set()
 	 * @param array $_arrayOfValues values
-	 * @return void
+	 * @return PackageNameWsdlClass
 	 */
 	public function __construct($_arrayOfValues = array())
 	{
