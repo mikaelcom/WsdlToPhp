@@ -58,7 +58,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	public function getComment($_part = '')
 	{
 		$comments = array();
-		array_push($comments,'Method to call the operation named ' . $this->getName());
+		array_push($comments,'Method to call the operation originally named ' . $this->getName());
 		if($this->getDocumentation() != '')
 			array_push($comments,'Documentation : ' . $this->getDocumentation());
 		$this->addMetaComment($comments,false,true);
@@ -173,11 +173,6 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		$responseAsObjStart = ((WsdlToPhpGenerator::getOptionResponseAsWsdlObject() && $returnModel)?'new ' . $returnModel->getPackagedName() . '(':'');
 		$responseAsObjEnd = ((WsdlToPhpGenerator::getOptionResponseAsWsdlObject() && $returnModel)?')':'');
 		/**
-		 * Soap call
-		 */
-		$soapCallStart = 'self::getSoapClient()->' . ($this->nameIsClean()?$this->getName() . '(':'__soapCall(' . $this->getName() . ',');
-		$soapCallEnd = ')' . (WsdlToPhpGenerator::getOptionSendParametersAsArray()?'->parameters':'');
-		/**
 		 * Soap parameters
 		 */
 		if($parameterModel)
@@ -218,9 +213,14 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		else
 			$soapParametersStart = $soapParametersEnd = '';
 		/**
+		 * Soap call
+		 */
+		$soapCallStart = 'self::getSoapClient()->' . ($this->nameIsClean()?$this->getName() . '(':'__soapCall(\'' . $this->getName() . '\'' . ((!empty($soapParametersStart) || !empty($soapParametersEnd))?',array(':''));
+		$soapCallEnd = ((!$this->nameIsClean() && (!empty($soapParametersStart) || !empty($soapParametersEnd)))?')':'') . ')' . (WsdlToPhpGenerator::getOptionSendParametersAsArray()?'->parameters':'');
+		/**
 		 * Send parameters in parameters array
 		 */
-		if(!empty($soapParametersStart))
+		if(!empty($soapParametersStart) && $this->nameIsClean())
 		{
 			$sendParametersAsArrayStart = (WsdlToPhpGenerator::getOptionSendParametersAsArray()?'array(\'parameters\'=>':'');
 			$sendParametersAsArrayEnd = (WsdlToPhpGenerator::getOptionSendParametersAsArray()?')':'');
@@ -230,7 +230,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		/**
 		 * Send an array
 		 */
-		if(!empty($soapParametersStart))
+		if(!empty($soapParametersStart) && $this->nameIsClean())
 		{
 			$sendArrayAsParameterStart = (WsdlToPhpGenerator::getOptionSendArrayAsParameter()?'array(':'');
 			$sendArrayAsParameterEnd = (WsdlToPhpGenerator::getOptionSendArrayAsParameter()?')':'');
