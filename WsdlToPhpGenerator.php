@@ -93,6 +93,8 @@
  * A method without any parameter :
  * -	http://verkopen.marktplaats.nl/soap/mpplt.php?wsdl (GetCategoryList, GetCategoryListRevision, GetPriceTypeList, GetPriceTypeListRevision, GetAttributeListRevision, GetSystemTimestamp)
  * -	https://gateway2.pagosonline.net/ws/WebServicesClientesUT?wsdl (doInit(), TestServiceGet, TestServiceLeer)
+ * Operation name with illegal characters :
+ * -	https://raw.github.com/Sn3b/Omniture-API/master/Solution%20Items/OmnitureAdminServices.wsdl (. in the operation name, so __soapCall method is used)
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
  */
@@ -632,7 +634,7 @@ class WsdlToPhpGenerator extends SoapClient
 			unset($structTmp,$structsToGenerateDone);
 			foreach($structs as $structName=>$struct)
 			{
-				if(!$struct->getIsStruct() || (count($struct->getAttributes()) === 0 && $struct->getInheritance() == ''))
+				if(!$struct->getIsStruct() || (count($struct->getAttributes()) ===0 && $struct->getInheritance() == ''))
 					continue;
 				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$struct->getCleanName());
 				$structsClassesFiles[] = $structClassFileName = $elementFolder . $struct->getPackagedName() . '.php';
@@ -2144,8 +2146,8 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Get gather name class
-	 * @param string $_string element name
-	 * @return string
+     * @param string $_string element name
+     * @return string
 	 */
 	private function getGather($_string)
 	{
