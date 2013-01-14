@@ -634,7 +634,7 @@ class WsdlToPhpGenerator extends SoapClient
 			unset($structTmp,$structsToGenerateDone);
 			foreach($structs as $structName=>$struct)
 			{
-				if(!$struct->getIsStruct() || (count($struct->getAttributes()) ===0 && $struct->getInheritance() == ''))
+				if(!$struct->getIsStruct())
 					continue;
 				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$struct->getCleanName());
 				$structsClassesFiles[] = $structClassFileName = $elementFolder . $struct->getPackagedName() . '.php';
@@ -2146,8 +2146,8 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Get gather name class
-     * @param string $_string element name
-     * @return string
+	 * @param string $_string element name
+	 * @return string
 	 */
 	private function getGather($_string)
 	{
