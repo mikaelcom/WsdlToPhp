@@ -8,6 +8,8 @@ It uses eZ Components, ezcPhpGenerator, in order to generate php files.
 
 Test this library online here : http://www.wsdltophp.com/
 
+Read the PHPDoc online here : http://phpdoc.wsdltophp.com/
+
 Tutorial
 ========
 
