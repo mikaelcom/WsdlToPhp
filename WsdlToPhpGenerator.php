@@ -1889,23 +1889,23 @@ class WsdlToPhpGenerator extends SoapClient
 				$childNodesLength = $childNodes->length;
 				$firstValidNodePos = 0;
 				while(!(($childNodes->item($firstValidNodePos) instanceof DOMNode) && $childNodes->item($firstValidNodePos)->nodeType === XML_ELEMENT_NODE) && $firstValidNodePos++ < $childNodesLength);
-				/**
-				 * Not an enumeration restriction :
-				 * <xs:simpleType name="duration">
-				 * -<xs:restriction base="xs:duration">
-				 * --<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
-				 * --<xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
-				 * --<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
-				 * -</xs:restriction>
-				 * </xs:simpleType>
-				 */
-				if($childNodes->item($firstValidNodePos) && stripos($childNodes->item($firstValidNodePos)->nodeName,'enumeration') === false)
+				if($childNodes->item($firstValidNodePos))
 				{
 					$this->addVirtualStruct($parentNode->getAttribute('name'));
 					for($i = 0;$i < $childNodesLength;$i++)
 					{
 						$childNode = $childNodes->item($i);
-						if($childNode && $childNode->hasAttributes())
+						/**
+						 * Not an enumeration restriction :
+						 * <xs:simpleType name="duration">
+						 * -<xs:restriction base="xs:duration">
+						 * --<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
+						 * --<xs:minInclusive value="-P10675199DT2H48M5.4775808S"/>
+						 * --<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
+						 * -</xs:restriction>
+						 * </xs:simpleType>
+						 */
+						if($childNode && stripos($childNode->nodeName,'enumeration') === false && $childNode->hasAttributes())
 						{
 							$childNodeName = explode(':',$childNode->nodeName);
 							$childNodeName = $childNodeName[count($childNodeName) - 1];
