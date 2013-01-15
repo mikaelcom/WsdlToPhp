@@ -32,6 +32,11 @@ class WsdlToPhpModel
 	 */
 	private $inheritance;
 	/**
+	 * Store the object which owns the current model
+	 * @var WsdlToPhpModel
+	 */
+	private $owner;
+	/**
 	 * Store all the models generated
 	 * @var array
 	 */
@@ -47,6 +52,11 @@ class WsdlToPhpModel
 	 * @var array
 	 */
 	private static $replacedReservedPhpKeywords = array();
+	/**
+	 * Unique name generated in order to ensure unique naming (for struct constructor and setters/getters even for different case attribute name whith same value)
+	 * @var array
+	 */
+	private static $uniqueNames = array();
 	/**
 	 * Main constructor
 	 * @uses WsdlToPhpModel::setInheritance()
@@ -235,7 +245,7 @@ class WsdlToPhpModel
 	/**
 	 * Set the meta
 	 * @param array $_meta
-     * @return array
+	 * @return array
 	 */
 	public function setMeta(array $_meta = array())
 	{
@@ -339,6 +349,21 @@ class WsdlToPhpModel
 	public function getCleanName()
 	{
 		return self::cleanString($this->getName());
+	}
+	/**
+	 * @return WsdlToPhpModel
+	 */
+	public function getOwner()
+	{
+		return $this->owner;
+	}
+	/**
+	 * @param WsdlToPhpModel $_owner object the owner of the current model
+	 * @return WsdlToPhpModel
+	 */
+	public function setOwner(WsdlToPhpModel $_owner)
+	{
+		return ($this->owner = $_owner);
 	}
 	/**
 	 * Returns true if the original name is safe to use as a PHP property, variable name or class name
@@ -460,6 +485,27 @@ class WsdlToPhpModel
 			return $_keyword;
 	}
 	/**
+	 * Static method wich returns a unique name case sensitively
+	 * Useful to name methods case sensitively distinct, see http://the-echoplex.net/log/php-case-sensitivity
+	 * @param string $_name the original name
+	 * @param string $_structName the name of owner
+	 * @return string
+	 */
+	protected static function uniqueName($_name,$_ownerName)
+	{
+		$insensitiveKey = strtolower($_name . '_' . $_ownerName);
+		$sensitiveKey = $_name . '_' . $_ownerName;
+		if(array_key_exists($sensitiveKey,self::$uniqueNames))
+			return self::$uniqueNames[$sensitiveKey];
+		elseif(!array_key_exists($insensitiveKey,self::$uniqueNames))
+			self::$uniqueNames[$insensitiveKey] = 0;
+		else
+			self::$uniqueNames[$insensitiveKey]++;
+		$uniqueName = $_name . (self::$uniqueNames[$insensitiveKey]?'_' . self::$uniqueNames[$insensitiveKey]:'');
+		self::$uniqueNames[$sensitiveKey] = $uniqueName;
+		return $uniqueName;
+	}
+	/**
 	 * Return the value with good type
 	 * @param mixed
 	 * @return mixed
@@ -471,7 +517,7 @@ class WsdlToPhpModel
 		elseif(is_float($_value))
 			return floatval($_value);
 		elseif(is_numeric($_value))
-			return intval($_value) === $_value?intval($_value):floatval($_value);
+			return intval($_value) == $_value?intval($_value):floatval($_value);
 		elseif(is_bool($_value))
 			return $_value?true:false;
 		else

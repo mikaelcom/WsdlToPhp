@@ -83,6 +83,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 			if(count($returnTypes) && WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
 			{
 				$returnTypes = array_unique($returnTypes);
+				natcasesort($returnTypes);
 				/**
 				 * getResult() method comments
 				 */
@@ -130,7 +131,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 	 */
 	public function addFunction($_functionName,$_functionParameterType,$_functionReturnType)
 	{
-		return ($this->functions[$_functionName] = new WsdlToPhpFunction($_functionName,$_functionParameterType,$_functionReturnType));
+		return ($this->functions[$_functionName] = new WsdlToPhpFunction($_functionName,$_functionParameterType,$_functionReturnType,$this));
 	}
 	/**
 	 * Returns the function by its original name

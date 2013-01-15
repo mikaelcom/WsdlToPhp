@@ -95,6 +95,9 @@
  * -	https://gateway2.pagosonline.net/ws/WebServicesClientesUT?wsdl (doInit(), TestServiceGet, TestServiceLeer)
  * Operation name with illegal characters :
  * -	https://raw.github.com/Sn3b/Omniture-API/master/Solution%20Items/OmnitureAdminServices.wsdl (. in the operation name, so __soapCall method is used)
+ * Struct attributes with same but different case (ProcStat and Procstat) should have distinct method to set and get (getProcStat/setProcStat and getProcstat_1/setProcstat_1) the value. 
+ * The contruct method must also define the key in the associative array with the corresponding method name.
+ * Plus, the operation/function which use ths attribute must call the distinct method (getProcStat and getProcstat_1). See http://the-echoplex.net/log/php-case-sensitivity
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
  */
@@ -867,7 +870,8 @@ class WsdlToPhpGenerator extends SoapClient
 					$filename);
 	}
 	/**
-	 * Generate autoload file for all classes
+	 * Generate autoload file for all classes. 
+	 * The classes are loaded automatically in order of their dependency regarding their inheritance (defined in WsdlToPhpGenerate::generateStructsClasses() method).
 	 * @uses WsdlToPhpGenerator::getPackageName()
 	 * @uses WsdlToPhpGenerator::populateFile()
 	 * @param string $_rootDirectory the directory

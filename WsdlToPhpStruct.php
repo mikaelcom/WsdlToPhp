@@ -131,20 +131,20 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 					if($model->getIsStruct())
 					{
 						if($model->isArray())
-							array_push($constructParameters,'\'' . $attribute->getCleanName() . '\'=>new ' . $model->getPackagedName() . '($_' . lcfirst($attribute->getCleanName()) . ')');
+							array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>new ' . $model->getPackagedName() . '($_' . lcfirst($attribute->getCleanName()) . ')');
 						else
-							array_push($constructParameters,'\'' . $attribute->getCleanName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
+							array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
 						$paramType = $model->getPackagedName();
 					}
 					else
 					{
-						array_push($constructParameters,'\'' . $attribute->getCleanName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
+						array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
 						$paramType = $model->getInheritance()?$model->getInheritance():$attribute->getType();
 					}
 				}
 				else
 				{
-					array_push($constructParameters,'\'' . $attribute->getCleanName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
+					array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
 					$paramType = $attribute->getType();
 				}
 				array_push($bodyParams,$paramType . ' $_' . lcfirst($attribute->getCleanName()));
@@ -384,7 +384,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	/**
 	 * set the attributes of the struct
 	 * @param array
-     * @return array
+	 * @return array
 	 */
 	public function setAttributes(array $_attributes = array())
 	{
@@ -398,7 +398,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 */
 	public function addAttribute($_attributeName,$_attributeType)
 	{
-		return ($this->attributes[$_attributeName] = new WsdlToPhpStructAttribute($_attributeName,$_attributeType));
+		return ($this->attributes[$_attributeName] = new WsdlToPhpStructAttribute($_attributeName,$_attributeType,$this));
 	}
 	/**
 	 * Return the attribute by its name, otherwise null
@@ -464,18 +464,19 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	/**
 	 * Add value to values array
 	 * @uses WsdlToPhpStruct::getValue()
-	 * @param mixed $_value the value
+	 * @uses WsdlToPhpStruct::getValues()
+	 * @param mixed $_value the original value
 	 */
 	public function addValue($_value)
 	{
 		if(!$this->getValue($_value))
-			array_push($this->values,new WsdlToPhpStructValue($_value));
+			array_push($this->values,new WsdlToPhpStructValue($_value,count($this->getValues()),$this));
 	}
 	/**
 	 * Get the value object for the given value
 	 * @uses WsdlToPhpStruct::getValues()
 	 * @uses WsdlToPhpModel::getName()
-     * @param string $_value Value name
+	 * @param string $_value Value name
 	 * @return WsdlToPhpStructValue|null
 	 */
 	public function getValue($_value)

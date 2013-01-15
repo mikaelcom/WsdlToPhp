@@ -17,22 +17,44 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 */
 	private static $uniqueConstants = array();
 	/**
+	 * The index of the value in the enumeration struct
+	 * @var int
+	 */
+	private $index;
+	/**
+	 * Main constructor
+	 * @see WsdlToPhpModel::__construct()
+	 * @uses WsdlToPhpModel::setOwner()
+	 * @uses WsdlToPhpStructValue::setIndex()
+	 * @param string $_name the original name
+	 * @param string $_index the index of the value in the enumeration struct
+	 * @param WsdlToPhpStruct $_wsdlToPhpStruct defines the struct which owns this value
+	 * @return WsdlToPhpStructValue
+	 */
+	public function __construct($_name,$_index,WsdlToPhpStruct $_wsdlToPhpStruct)
+	{
+		parent::__construct($_name);
+		$this->setIndex($_index);
+		$this->setOwner($_wsdlToPhpStruct);
+	}
+	/**
 	 * Method to return the name of the value as constant
 	 * @see WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getCleanName()
+	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpStructValue::constantSuffix()
+	 * @uses WsdlToPhpStructValue::getIndex()
+	 * @uses WsdlToPhpStructValue::getOwner()
 	 * @uses WsdlToPhpGenerator::getOptionGenericConstantsNames()
-	 * @param string $_structName the name of the struct which the value belongs to
-	 * @param int $_index the index of the constant contained by the struct class
 	 * @return string
 	 */
-	public function getCleanName($_structName,$_index = -1)
+	public function getCleanName()
 	{
-		if(WsdlToPhpGenerator::getOptionGenericConstantsNames() && is_numeric($_index) && $_index >= 0)
-			return 'ENUM_VALUE_' . $_index;
+		if(WsdlToPhpGenerator::getOptionGenericConstantsNames() && is_numeric($this->getIndex()) && $this->getIndex() >= 0)
+			return 'ENUM_VALUE_' . $this->getIndex();
 		else
 		{
-			$key = self::constantSuffix($_structName,parent::getCleanName(),$_index);
+			$key = self::constantSuffix($this->getOwner()->getName(),parent::getCleanName(),$this->getIndex());
 			return 'VALUE_' . strtoupper(parent::getCleanName()) . ($key?'_' . $key:'');
 		}
 	}
@@ -45,6 +67,21 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	public function getValue()
 	{
 		return self::getValueWithinItsType($this->getName());
+	}
+	/**
+	 * @return int
+	 */
+	public function getIndex()
+	{
+		return $this->index;
+	}
+	/**
+	 * @param int
+	 * @return int $_index
+	 */
+	public function setIndex($_index)
+	{
+		return ($this->index = $_index);
 	}
 	/**
 	 * Returns the commment lines for this value

@@ -20,14 +20,17 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()
 	 * @uses WsdlToPhpStructAttribute::setType()
+	 * @uses WsdlToPhpModel::setOwner()
 	 * @param string $_name the original name
 	 * @param string $_type the type
+	 * @param WsdlToPhpStruct $_wsdlToPhpStruct defines the struct which owns this value
 	 * @return WsdlToPhpStructAttribute
 	 */
-	public function __construct($_name,$_type)
+	public function __construct($_name,$_type,WsdlToPhpStruct $_wsdlToPhpStruct)
 	{
 		parent::__construct($_name);
 		$this->setType($_type);
+		$this->setOwner($_wsdlToPhpStruct);
 	}
 	/**
 	 * Returns the commment lines for this attribute
@@ -66,6 +69,18 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		return $comments;
 	}
 	/**
+	 * Method returning the unique name in the current struct (for setters/getters and struct contrusctor array)
+	 * @uses WsdlToPhpModel::getCleanName()
+	 * @uses WsdlToPhpModel::getOwner()
+	 * @uses WsdlToPhpModel::getName()
+	 * @uses WsdlToPhpModel::uniqueName()
+	 * @return string
+	 */
+	public function getUniqueName()
+	{
+		return self::uniqueName($this->getCleanName(),$this->getOwner()->getName());
+	}
+	/**
 	 * Returns the declaration of the attribute
 	 * @see WsdlToPhpModel::getDeclaration()
 	 * @uses WsdlToPhpModel::getCleanName()
@@ -77,21 +92,21 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	}
 	/**
 	 * Returns the getter name for this attribute
-	 * @see WsdlToPhpModel::getCleanName()
+	 * @uses WsdlToPhpStructAttribute::getUniqueName()
 	 * @return string
 	 */
 	public function getGetterName()
 	{
-		return 'get' . ucfirst($this->getCleanName());
+		return 'get' . ucfirst(self::getUniqueName());
 	}
 	/**
 	 * Returns the getter name for this attribute
-	 * @see WsdlToPhpModel::getCleanName()
+	 * @uses WsdlToPhpStructAttribute::getUniqueName()
 	 * @return string
 	 */
 	public function getSetterName()
 	{
-		return 'set' . ucfirst($this->getCleanName());
+		return 'set' . ucfirst(self::getUniqueName());
 	}
 	/**
 	 * Returns the array of lines to declare the getter

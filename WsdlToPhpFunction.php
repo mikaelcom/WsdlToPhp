@@ -26,16 +26,19 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * @see WsdlToPhpModel::__construct()
 	 * @uses WsdlToPhpFunction::setParameterType()
 	 * @uses WsdlToPhpFunction::setReturnType()
+	 * @uses WsdlToPhpModel::setOwner()
 	 * @param string $_name the function name
 	 * @param string $_parameterType the type/name of the parameter
 	 * @param string $_returnType the type/name of the return value
+	 * @param WsdlToPhpService $_wsdlToPhpService defines the struct which owns this value
 	 * @return WsdlToPhpFunction
 	 */
-	public function __construct($_name,$_parameterType,$_returnType)
+	public function __construct($_name,$_parameterType,$_returnType,WsdlToPhpService $_wsdlToPhpService)
 	{
 		parent::__construct($_name);
 		$this->setParameterType($_parameterType);
 		$this->setReturnType($_returnType);
+		$this->setOwner($_wsdlToPhpService);
 	}
 	/**
 	 * Returns the commment lines for this function
@@ -117,6 +120,8 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::nameIsClean()
 	 * @uses WsdlToPhpModel::cleanString()
+	 * @uses WsdlToPhpModel::uniqueName()
+	 * @uses WsdlToPhpModel::getOwner()
 	 * @uses WsdlToPhpModel::replaceReservedPhpKeyword()
 	 * @uses WsdlToPhpFunction::getParameterType()
 	 * @uses WsdlToPhpStruct::getAttributes()
@@ -163,7 +168,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		}
 		else
 			$parameterName = $parameter = '';
-		array_push($_body,'public function ' . self::replaceReservedPhpKeyword($this->getCleanName(),$this->getName()) . '(' . $parameter . ')');
+		array_push($_body,'public function ' . self::uniqueName(self::replaceReservedPhpKeyword($this->getCleanName(),$this->getName()),$this->getOwner()->getName()) . '(' . $parameter . ')');
 		array_push($_body,'{');
 		array_push($_body,'try');
 		array_push($_body,'{');
