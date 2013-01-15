@@ -149,7 +149,7 @@ class WsdlToPhpModel
 		}
 		elseif(class_exists($this->getInheritance()))
 			$extends = $this->getInheritance();
-		elseif(WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
+		if(empty($extends) && WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
 			$extends = self::getGenericWsdlClassName();
 		array_push($class,'class ' . $this->getPackagedName() . (!empty($extends)?' extends ' . $extends:''));
 		/**
