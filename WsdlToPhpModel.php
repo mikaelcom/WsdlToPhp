@@ -220,9 +220,10 @@ class WsdlToPhpModel
 		{
 			foreach($this->getMeta() as $metaName=>$metaValue)
 			{
-				if($_ignoreDocumentation && $metaName == self::META_DOCUMENTATION)
+				$cleanedMetaValue = self::cleanComment($metaValue);
+				if(($_ignoreDocumentation && $metaName == self::META_DOCUMENTATION) || $cleanedMetaValue === '')
 					continue;
-				array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : " . self::cleanComment($metaValue));
+				array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : $cleanedMetaValue");
 			}
 		}
 		if(count($metaComments))
@@ -261,7 +262,9 @@ class WsdlToPhpModel
 	 */
 	public function addMeta($_metaName,$_metaValue)
 	{
-		$metaValue = trim($_metaValue);
+		if(!is_scalar($_metaName) || (!is_scalar($_metaValue) && !is_array($_metaValue)))
+			return '';
+		$metaValue = is_scalar($_metaValue)?trim($_metaValue):$_metaValue;
 		if(is_scalar($metaValue) && $metaValue === '')
 			return false;
 		if(!array_key_exists($_metaName,$this->getMeta()))
@@ -334,7 +337,8 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Set the original name extracted from the WSDL
-	 * @param string
+	 * @param string $_name
+	 * @return string
 	 */
 	public function setName($_name)
 	{
@@ -488,7 +492,7 @@ class WsdlToPhpModel
 	 * Static method wich returns a unique name case sensitively
 	 * Useful to name methods case sensitively distinct, see http://the-echoplex.net/log/php-case-sensitivity
 	 * @param string $_name the original name
-	 * @param string $_structName the name of owner
+	 * @param string $_ownerName the name of owner
 	 * @return string
 	 */
 	protected static function uniqueName($_name,$_ownerName)
@@ -507,7 +511,7 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Return the value with good type
-	 * @param mixed
+	 * @param mixed $_value the value
 	 * @return mixed
 	 */
 	public static function getValueWithinItsType($_value)
@@ -530,7 +534,9 @@ class WsdlToPhpModel
 	 */
 	public static function cleanComment($_comment)
 	{
-		return str_replace('*/','*[:slash:]',$_comment);
+		if(!is_scalar($_comment) && !is_array($_comment))
+			return '';
+		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode(', ',array_unique($_comment))));
 	}
 	/**
 	 * Returns the generic name of the WsdlClass

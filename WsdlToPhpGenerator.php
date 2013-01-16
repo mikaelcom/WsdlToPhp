@@ -26,6 +26,7 @@
  * Operations or struct attributes with an illegal character (ex : ., -) : 
  * -	http://api.fromdoppler.com/Default.asmx?WSDL
  * -	https://webapi.aukro.cz/uploader.php?wsdl
+ * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
  * Simple function parameter (not a struct) : 
  * -	http://traveltek-importer.planetcruiseluxury.co.uk/region.wsdl
  * Enumerations with two similar values (ex : y and Y in RecurringFlagType) :
@@ -48,6 +49,7 @@
  * -	http://mobile.esseginformatica.com:8704/?wsdl
  * -	https://api.bullhornstaffing.com/webservices-2.5/?wsdl
  * -	http://46.31.56.162/abertis/Sos.asmx?WSDL (real deep inheritance from AbstractGMLType)
+ * -	http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl
  * Multiple service operations returns the same response type (getResult() doc comment must return one type of each) :
  * - 	https://secure.dev.logalty.es/lgt/logteca/emisor/services/IncomingServiceWSI?wsdl
  * -	http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL
@@ -98,6 +100,13 @@
  * Struct attributes with same but different case (ProcStat and Procstat) should have distinct method to set and get (getProcStat/setProcStat and getProcstat_1/setProcstat_1) the value. 
  * The contruct method must also define the key in the associative array with the corresponding method name.
  * Plus, the operation/function which use ths attribute must call the distinct method (getProcStat and getProcstat_1). See http://the-echoplex.net/log/php-case-sensitivity
+ * Catch SOAPHeader definitions :
+ * -	http://164.9.104.198/dhlexpress4youservice/Express4YouService.svc?wsdl
+ * -	http://api.atinternet-solutions.com/toolbox/reporting.asmx?WSDL
+ * -	http://developer.ebay.com/webservices/latest/ebaySvc.wsdl
+ * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
+ * -	https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl
+ * -	http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
  */
@@ -280,6 +289,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	private static $optionGenerateTutorialFile;
 	/**
+	 * List of Wsdl location loaded as DOMDocument to optimize performance
+	 * @var array
+	 */
+	private static $wsdlLocationsToDomDocument = array();
+	/**
 	 * Constructor
 	 * @uses SoapClient::__construct()
 	 * @uses WsdlToPhpGenerator::setStructs()
@@ -425,6 +439,10 @@ class WsdlToPhpGenerator extends SoapClient
 				$this->initServices();
 			if(!$init && count($this->wsdls))
 				$this->loadWsdls(implode('',array_slice(array_keys($this->wsdls),0,1)));
+			/**
+			 * Initialize specific elements when all wsdls are loaded
+			 */
+			$this->wsdlsLoaded();
 			/**
 			 * Generate Wsdl Class ?
 			 */
@@ -856,7 +874,10 @@ class WsdlToPhpGenerator extends SoapClient
 		$structs = $this->getStructs();
 		$classesToMap = array();
 		foreach($structs as $structName=>$struct)
-			$classesToMap[$struct->getName()] = $struct->getPackagedName();
+		{
+			if($struct->getIsStruct())
+				$classesToMap[$struct->getName()] = $struct->getPackagedName();
+		}
 		ksort($classesToMap);
 		array_push($classMapDeclaration,'return ' . var_export($classesToMap,true) . ';');
 		array_push($classMapDeclaration,'}');
@@ -906,6 +927,7 @@ class WsdlToPhpGenerator extends SoapClient
 	/**
 	 * Generate Wsdl Class file
 	 * @uses WsdlToPhpGenerator::getPackageName()
+	 * @uses WsdlToPhpModel::cleanComment()
 	 * @param string $_rootDirectory the directory
 	 * @return array the absolute path to the generated file
 	 */
@@ -918,7 +940,12 @@ class WsdlToPhpGenerator extends SoapClient
 			foreach($this->wsdls as $wsdlLocation=>$wsdlinfos)
 			{
 				foreach($wsdlinfos['meta'] as $metaName=>$metaValue)
-					$metaInformation .= (!empty($metaInformation)?"\r\n * ":'') . ucfirst($metaName) . " : $metaValue";
+				{
+					$metaValueCleaned = WsdlToPhpModel::cleanComment($metaValue);
+					if($metaValueCleaned === '')
+						continue;
+					$metaInformation .= (!empty($metaInformation)?"\r\n * ":'') . ucfirst($metaName) . " : $metaValueCleaned";
+				}
 			}
 			$content = str_replace(array(
 										'packageName',
@@ -1645,55 +1672,64 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @param string $_wsdlLocation wsdl location to load
 	 * @param DOMNode $_domNode DOMNode to browse
 	 * @param string $_fromWsdlLocation wsdl location where the current $_domNode or $_wsdlLocation is from
+	 * @param string $_nodeNameMatch the name the node name must match, only when it's necessary to match a certain type of nodes
 	 * @return void
 	 */
-	private function loadWsdls($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '')
+	private function loadWsdls($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '',$_nodeNameMatch = null)
 	{
 		/**
 		 * Not empty location
 		 */
 		if(!empty($_wsdlLocation))
-			$this->manageWsdlLocation($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			$this->manageWsdlLocation($_wsdlLocation,$_domNode,$_fromWsdlLocation,$_nodeNameMatch);
 		/**
 		 * New node to browse
 		 */
 		elseif($_domNode instanceof DOMElement)
-			$this->manageWsdlNode($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			$this->manageWsdlNode($_wsdlLocation,$_domNode,$_fromWsdlLocation,$_nodeNameMatch);
+	}
+	/**
+	 * Method called when wsdls are loaded and all the structs/operations are loaded
+	 * Then we can manage some features which can be dependent of all the wsdls linked to the main WSDL
+	 * @uses WsdlToPhpGenerator::getWsdls()
+	 * @uses WsdlToPhpGenerator::manageWsdlLocation()
+	 * @return void
+	 */
+	protected function wsdlsLoaded()
+	{
+		if(count($this->getWsdls()))
+		{
+			$wsdlLocation = implode('',array_slice(array_keys($this->getWsdls()),0,1));
+			if(is_string($wsdlLocation) && !empty($wsdlLocation))
+				$this->manageWsdlLocation($wsdlLocation,null,'','header');
+		}
 	}
 	/**
 	 * Default manage method for a location
-	 * @uses DOMDocument::load()
-	 * @uses DOMDocument::loadXML()
-	 * @uses DOMDocument::saveXML()
-	 * @uses DOMNode::item()
+	 * @uses WsdlToPhpGenerator::wsdlLocationToDomDocument()
+	 * @uses DOMNodeList::item()
 	 * @uses DOMNode::hasChildNodes()
 	 * @param string $_wsdlLocation the wsdl location
 	 * @param DOMNode $_domNode the node
 	 * @param string $_fromWsdlLocation the wsdl location imported
+	 * @param string $_nodeNameMatch the name the node name must match, only when it's necessary to match a certain type of nodes
+	 * @return void
 	 */
-	protected function manageWsdlLocation($_wsdlLocation,$_domNode,$_fromWsdlLocation)
+	protected function manageWsdlLocation($_wsdlLocation,$_domNode,$_fromWsdlLocation,$_nodeNameMatch = null)
 	{
-		$wsdlLocationContent = '';
-		$dom = new DOMDocument('1.0','UTF-8');
-		if(@$dom->load($_wsdlLocation))
-			$wsdlLocationContent = trim($dom->saveXML());
-		/**
-		 * Comments tag on the beginning block parsing the DOMDocument
-		 */
-		if(empty($wsdlLocationContent) || trim($wsdlLocationContent) == '<?xml version="1.0" encoding="UTF-8"?>')
+		$domDocument = self::wsdlLocationToDomDocument($_wsdlLocation);
+		if($domDocument && $domDocument->hasChildNodes())
 		{
-			$wsdlLocationContent = @file_get_contents($_wsdlLocation);
-			$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
-		}
-		if(!empty($wsdlLocationContent) && $dom->loadXML($wsdlLocationContent) && $dom->hasChildNodes())
-		{
-			$childNodes = $dom->childNodes;
+			$childNodes = $domDocument->childNodes;
 			$childNodesLength = $childNodes->length;
+			/**
+			 * Find first valid element (avoid comments for example)
+			 */
 			for($i = 0;$i < $childNodesLength;$i++)
 			{
 				if($childNodes->item($i) instanceof DOMElement)
 				{
-					$this->loadWsdls('',$childNodes->item($i),$_wsdlLocation);
+					$this->loadWsdls('',$childNodes->item($i),$_wsdlLocation,$_nodeNameMatch);
 					break;
 				}
 			}
@@ -1716,44 +1752,55 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @param string $_wsdlLocation the wsdl location
 	 * @param DOMNode $_domNode the node
 	 * @param string $_fromWsdlLocation the wsdl location imported
+	 * @param string $_nodeNameMatch the name the node name must match, only when it's necessary to match a certain type of nodes
+	 * @return void
 	 */
-	protected function manageWsdlNode($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '')
+	protected function manageWsdlNode($_wsdlLocation = '',$_domNode = null,$_fromWsdlLocation = '',$_nodeNameMatch = null)
 	{
-		/**
-		 * Current node is type of "import" or "include"
-		 */
-		if(stripos($_domNode->nodeName,'import') !== false || stripos($_domNode->nodeName,'include') !== false)
-			$this->manageWsdlNodeImport($_wsdlLocation,$_domNode,$_fromWsdlLocation);
-		/**
-		 * Restriction
-		 */
-		elseif(stripos($_domNode->nodeName,'restriction') !== false)
-			$this->manageWsdlNodeRestriction($_wsdlLocation,$_domNode,$_fromWsdlLocation);
-		/**
-		 * Enumeration value
-		 */
-		elseif(stripos($_domNode->nodeName,'enumeration') !== false)
-			$this->manageWsdlNodeEnumeration($_wsdlLocation,$_domNode,$_fromWsdlLocation);
-		/**
-		 * Element's, part of a struct
-		 */
-		elseif((stripos($_domNode->nodeName,'element') !== false || stripos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
-			$this->manageWsdlNodeElement($_wsdlLocation,$_domNode,$_fromWsdlLocation);
-		/**
-		 * Documentation's
-		 */
-		elseif(stripos($_domNode->nodeName,'documentation') !== false && !empty($_domNode->nodeValue))
-			$this->manageWsdlNodeDocumentation($_wsdlLocation,$_domNode,$_fromWsdlLocation);
-		/**
-		 * Extension of struct
-		 */
-		elseif(stripos($_domNode->nodeName,'extension') !== false && $_domNode->hasAttribute('base') && $_domNode->getAttribute('base') != '')
-			$this->manageWsdlNodeExtension($_wsdlLocation,$_domNode,$_fromWsdlLocation);
-		/**
-		 * Undefined node
-		 */
-		else
-			$this->manageWsdlNodeUndefined($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		if(empty($_nodeNameMatch))
+		{
+			/**
+			 * Current node is type of "import" or "include"
+			 */
+			if(stripos($_domNode->nodeName,'import') !== false || stripos($_domNode->nodeName,'include') !== false)
+				$this->manageWsdlNodeImport($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Restriction
+			 */
+			elseif(stripos($_domNode->nodeName,'restriction') !== false)
+				$this->manageWsdlNodeRestriction($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Enumeration value
+			 */
+			elseif(stripos($_domNode->nodeName,'enumeration') !== false)
+				$this->manageWsdlNodeEnumeration($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Element's, part of a struct
+			 */
+			elseif((stripos($_domNode->nodeName,'element') !== false || stripos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
+				$this->manageWsdlNodeElement($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Documentation's
+			 */
+			elseif(stripos($_domNode->nodeName,'documentation') !== false && !empty($_domNode->nodeValue))
+				$this->manageWsdlNodeDocumentation($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Extension of struct
+			 */
+			elseif(stripos($_domNode->nodeName,'extension') !== false && $_domNode->hasAttribute('base') && $_domNode->getAttribute('base') != '')
+				$this->manageWsdlNodeExtension($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Undefined node
+			 */
+			else
+				$this->manageWsdlNodeUndefined($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+		}
+		elseif(is_string($_nodeNameMatch) && stripos($_domNode->nodeName,$_nodeNameMatch) !== false)
+		{
+			$manageWsdlNodeMethodName = 'manageWsdlNode' . ucfirst($_nodeNameMatch);
+			if(method_exists($this,$manageWsdlNodeMethodName))
+				$this->$manageWsdlNodeMethodName($_wsdlLocation,$_domNode,$_fromWsdlLocation,$_nodeNameMatch);
+		}
 		/**
 		 * other child nodes
 		 */
@@ -1764,7 +1811,7 @@ class WsdlToPhpGenerator extends SoapClient
 			for($i = 0;$i < $childNodesLength;$i++)
 			{
 				if($childNodes->item($i))
-					$this->loadWsdls('',$childNodes->item($i),!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+					$this->loadWsdls('',$childNodes->item($i),!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation,$_nodeNameMatch);
 			}
 		}
 	}
@@ -1853,7 +1900,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::setStructInheritance()
 	 * @uses WsdlToPhpGenerator::addVirtualStruct()
 	 * @uses WsdlToPhpGenerator::addStructMeta()
-	 * @uses DOMNode::item()
+	 * @uses DOMNodeList::item()
 	 * @uses DOMNode::hasChildNodes()
 	 * @uses DOMNode::hasAttributes()
 	 * @uses DOMElement::hasAttribute()
@@ -2080,6 +2127,91 @@ class WsdlToPhpGenerator extends SoapClient
 		}
 	}
 	/**
+	 * Manage header node to extract informations about header types
+	 * @uses WsdlToPhpGenerator::findSuitableParent()
+	 * @uses WsdlToPhpGenerator::addServiceFunctionMeta()
+	 * @uses WsdlToPhpGenerator::wsdlLocationToDomDocument()
+	 * @uses WsdlToPhpGenerator::getStruct()
+	 * @uses WsdlToPhpModel::getPackagedName()
+	 * @uses DOMElement::getAttribute()
+	 * @uses DOMElement::hasAttribute()
+	 * @uses DOMXPath::query()
+	 * @uses DOMNodeList::item()
+	 * @param string $_wsdlLocation the wsdl location
+	 * @param DOMNode $_domNode the node
+	 * @param string $_fromWsdlLocation the wsdl location imported
+	 * @param string $_nodeNameMatch the name the node name must match, only when it's necessary to match a certain type of nodes
+	 * @return void
+	 */
+	protected function manageWsdlNodeHeader($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '',$_nodeNameMatch = null)
+	{
+		/**
+		 * Ensure current node is defined as the operation input
+		 */
+		$parentNode = self::findSuitableParent($_domNode,false,array(
+																	'input'));
+		if($parentNode && stripos($parentNode->nodeName,'input') !== false)
+		{
+			/**
+			 * Find operation node
+			 */
+			$parentNode = self::findSuitableParent($parentNode,true,array(
+																		'operation'));
+			if($parentNode)
+			{
+				/**
+				 * Indicate that header is required for this operation
+				 */
+				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeader','required');
+				$headerType = '';
+				$headerName = $_domNode->getAttribute('part');
+				/**
+				 * Indicate the required header name
+				 */
+				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNames',array(
+																										$headerName));
+				/**
+				 * Type known
+				 */
+				if($this->getStruct($headerName) && $this->getStruct($headerName)->getIsStruct())
+					$headerType = $this->getStruct($headerName)->getPackagedName();
+				/**
+				 * Find it in the wsdls
+				 */
+				else
+				{
+					foreach($this->getWsdls() as $wsdlLocation=>$meta)
+					{
+						$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
+						if($domDocument instanceof DOMDocument)
+						{
+							$domXPath = new DOMXPath($domDocument);
+							$nodes = $domXPath->query("//*[@name='" . $headerName . "']");
+							$nodesLength = $nodes->length;
+							for($i = 0;$i < $nodesLength;$i++)
+							{
+								$node = $nodes->item($i);
+								if(($node instanceof DOMElement) && $node->hasAttribute('type') && $node->getAttribute('type') != '')
+								{
+									$headerType = explode(':',$node->getAttribute('type'));
+									$headerType = $headerType[count($headerType) - 1];
+									if($this->getStruct($headerType) && $this->getStruct($headerType)->getIsStruct())
+										$headerType = $this->getStruct($headerType)->getPackagedName();
+									break;
+								}
+							}
+						}
+					}
+				}
+				/**
+				 * Indicate the required header type
+				 */
+				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderTypes',array(
+																										$headerType));
+			}
+		}
+	}
+	/**
 	 * Find the suitable parent node of the current node in maximum 5 parents
 	 * Centralize method to find a valid parent
 	 * @uses DOMElement::getAttribute()
@@ -2090,7 +2222,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @param int $_maxDeep max deep of this current node
 	 * @return DOMElement|null
 	 */
-	final private function findSuitableParent(DOMNode $_domNode,$_checkName = true,array $_parentTags = array(),$_maxDeep = 5)
+	final private static function findSuitableParent(DOMNode $_domNode,$_checkName = true,array $_parentTags = array(),$_maxDeep = 5)
 	{
 		$parentTags = array_merge(array(
 										'element',
@@ -2101,6 +2233,40 @@ class WsdlToPhpGenerator extends SoapClient
 		while($_maxDeep-- > 0 && ($parentNode instanceof DOMElement) && $parentNode->nodeName && (!preg_match('/' . implode('|',$parentTags) . '/i',$parentNode->nodeName) || ($_checkName && preg_match('/' . implode('|',$parentTags) . '/i',$parentNode->nodeName) && (!$parentNode->hasAttribute('name') || $parentNode->getAttribute('name') == ''))))
 			$parentNode = $parentNode->parentNode;
 		return ($parentNode instanceof DOMElement)?$parentNode:null;
+	}
+	/**
+	 * Returns the DOMDocument object for a wsdl location
+	 * @uses DOMDocument::load()
+	 * @uses DOMDocument::saveXML()
+	 * @uses DOMDocument::loadXML()
+	 * @param string $_wsdlLocation the wsdl location
+	 * @return DOMDocument|null
+	 */
+	final private static function wsdlLocationToDomDocument($_wsdlLocation)
+	{
+		if(!array_key_exists($_wsdlLocation,self::$wsdlLocationsToDomDocument))
+		{
+			$wsdlLocationContent = '';
+			$dom = new DOMDocument('1.0','UTF-8');
+			if(@$dom->load($_wsdlLocation))
+				$wsdlLocationContent = trim($dom->saveXML());
+			/**
+			 * Comments tag on the beginning block parsing the DOMDocument
+			 */
+			if(empty($wsdlLocationContent) || trim($wsdlLocationContent) == '<?xml version="1.0" encoding="UTF-8"?>')
+			{
+				$wsdlLocationContent = @file_get_contents($_wsdlLocation);
+				$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
+			}
+			if(!empty($wsdlLocationContent))
+				$dom->loadXML($wsdlLocationContent);
+			else
+				$dom = null;
+			self::$wsdlLocationsToDomDocument[$_wsdlLocation] = $dom;
+		}
+		else
+			$dom = self::$wsdlLocationsToDomDocument[$_wsdlLocation];
+		return $dom;
 	}
 	/**
 	 * Return directory where to store class and create it if needed
