@@ -9,104 +9,168 @@
  * This class replaces the original WsdlToPhp class.
  * It uses the WsdlToPhpModel's classes (WsdlToPhpStruct, WsdlToPhpService, WsdlToPhpFunction, WsdlToPhpStructAttribute, WsdlToPhpStructValue) in order to rationalize informations.
  * From now, each class is clearly identified depending on its behaviour :
- * - {PackageName}Service* : class which gathers the operations/functions (based on their name)
- * - {PackageName}Struct* : class which represents a struct type which can be used either for requesting or catching response
- * - {PackageName}Enum* : class which represents an enumeration of values. Each value is defined with a constant
- * - {PackageName}WsdlClass : mother class of all generated class if enabled. This class defines all the generic methods and the needed configurations/methods to call the SOAP WS
- * - {PackageName}ClassMap : class that constains one final public static method which returns the array to map structs/enums to generated classes
+ * <ul>
+ * <li>{PackageName}Service* : class which gathers the operations/functions (based on their name)</li>
+ * <li>{PackageName}Struct* : class which represents a struct type which can be used either for requesting or catching response</li>
+ * <li>{PackageName}Enum* : class which represents an enumeration of values. Each value is defined with a constant</li>
+ * <li>{PackageName}WsdlClass : mother class of all generated class if enabled. This class defines all the generic methods and the needed configurations/methods to call the SOAP WS</li>
+ * <li>{PackageName}ClassMap : class that constains one final public static method which returns the array to map structs/enums to generated classes</li>
+ * </ul>
  * Test case examples
- * "Full" documentation (functions, structs, enumerations, values) with "virual" structs inheritance documentation : 
- * -	http://developer.ebay.com/webservices/latest/ebaySvc.wsdl
- * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
- * -	http://queue.amazonaws.com/doc/2012-11-05/QueueService.wsdl
- * Restriction on struct attributes : 
- * -	https://services.pwsdemo.com/WSDL/PwsDemo_creditcardtransactionservice.xml
- * -	http://api.temando.com/schema/2009_06/server.wsdl
- * -	http://info.portaldasfinancas.gov.pt/NR/rdonlyres/02357996-29FC-4F11-9F1D-6EA2B9210D60/0/factemiws.wsdl
- * Operations or struct attributes with an illegal character (ex : ., -) : 
- * -	http://api.fromdoppler.com/Default.asmx?WSDL
- * -	https://webapi.aukro.cz/uploader.php?wsdl
- * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
- * Simple function parameter (not a struct) : 
- * -	http://traveltek-importer.planetcruiseluxury.co.uk/region.wsdl
- * Enumerations with two similar values (ex : y and Y in RecurringFlagType) :
- * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
- * Enumerations embedded in an element :
- * -	http://92.70.240.139/webservices_test/?WSDL
- * Lots of import tags :
- * -	http://secapp.euroconsumers.org/partnerservice/PartnerService.svc?wsdl
- * -	https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl
- * -	http://mobile.esseginformatica.com:8704/?wsdl
- * -	https://api.bullhornstaffing.com/webservices-2.5/?wsdl
- * -	http://46.31.56.162/abertis/Sos.asmx?WSDL
- * "Deep", numerous inheritance in struct classes :
- * -	https://moa.mazdaeur.com/mud-services/ws/PartnerService?wsdl
- * - 	http://developer.ebay.com/webservices/latest/ebaySvc.wsdl
- * -	https://www.tipsport.cz/webtip/CommonBettingWS?WSDL
- * -	https://www.tipsport.cz/webtip/LiveBettingWS?WSDL
- * -	https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl
- * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
- * -	http://mobile.esseginformatica.com:8704/?wsdl
- * -	https://api.bullhornstaffing.com/webservices-2.5/?wsdl
- * -	http://46.31.56.162/abertis/Sos.asmx?WSDL (real deep inheritance from AbstractGMLType)
- * -	http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl
- * Multiple service operations returns the same response type (getResult() doc comment must return one type of each) :
- * - 	https://secure.dev.logalty.es/lgt/logteca/emisor/services/IncomingServiceWSI?wsdl
- * -	http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL
- * Documentation on WSDL (must be found in the generated *WsdlClass) doc comment :
- * -	http://iplaypen.globelabs.com.ph:1881/axis2/services/Platform?wsdl
- * -	https://oivs.mvtrip.alabama.gov/service/XMLExchangeServiceCore.asmx?WSDL
- * PHP reserved keyword in operation name (ex : list), replaced by _{keyword} : 
- * -	https://api5.successfactors.eu/sfapi/v1/soap12?wsdl
- * Send ArrayAsParameter and ParametersAsArray case :
- * - 	http://api.bing.net/search.wsdl
- * Send parameters separately :
- * - 	http://www.ovh.com/soapi/soapi-dlw-1.54.wsdl
- * Struct attribute named _ :
- * - 	http://46.31.56.162/abertis/Sos.asmx?WSDL (DirectPositionType, StringOrRefType, AreaType, etc.)
- * From now, it can generate service function from RPC style SOAP WS
- * RPC style :
- * -	http://www.ovh.com/soapi/soapi-re-1.54.wsdl
- * -	http://postlinks.com/api/soap/v1.1/postlinks.wsdl
- * -	http://psgsa.dyndns.org:8020/gana/crm/service/v4_1/soap.php?wsdl
- * -	http://www.electre.com/WebService/search.asmx?WSDL
- * -	http://www.mobilefish.com/services/web_service/countries.php?wsdl
- * -	http://webservices.seek.com.au/FastLanePlus.asmx?WSDL
- * -	https://webapi.aukro.cz/uploader.php?wsdl
- * -	http://castonclients.com/fuelcircle/api/member.php?wsdl
- * -	https://www.fieldnation.com/api/v3.5/fieldnation.wsdl
- * -	https://gateway2.pagosonline.net/ws/WebServicesClientesUT?wsdl
- * -	http://webservices.seek.com.au/webserviceauthenticator.asmx?WSDL
- * -	http://webservices.seek.com.au/fastlaneplus.asmx?WSDL
- * -	https://80.77.87.229:2443/soap?wsdl
- * -	http://www.mantisbt.org/demo/api/soap/mantisconnect.php?wsdl
- * -	http://mira.16.1.t1.connectivegames.com/axis/services/RemoteAffiliateService?wsdl
- * -	http://graphical.weather.gov/xml/DWMLgen/wsdl/ndfdXML.wsdl
- * -	https://www.mygate.co.za/enterprise/4x0x0/ePayService.cfc?wsdl
- * -	http://59.162.33.102/HotelXML_V1.2/services/HotelAvailSearch?wsdl
- * -	http://api.4shared.com/jax2/DesktopApp?wsdl
- * -	http://www.eaglepictures.com/services.php/Eagle.wsdl
- * -	http://online.axiomtelecom.com/staging/api/v2_soap/?wsdl
- * -	http://www.konakart.com/konakart/services/KKWebServiceEng?wsdl
- * -	http://soamoa.org:9292/artistRegistry?WSDL
- * -	http://pgw-dev.aora.tv/trio/index.php?wsdl
- * -	http://npg.dl.ac.uk/MIDAS/MIDASWebServices/MIDASWebServices/VMEAccessServer.wsdl
- * From now, method without any parameter are generated well
- * A method without any parameter :
- * -	http://verkopen.marktplaats.nl/soap/mpplt.php?wsdl (GetCategoryList, GetCategoryListRevision, GetPriceTypeList, GetPriceTypeListRevision, GetAttributeListRevision, GetSystemTimestamp)
- * -	https://gateway2.pagosonline.net/ws/WebServicesClientesUT?wsdl (doInit(), TestServiceGet, TestServiceLeer)
- * Operation name with illegal characters :
- * -	https://raw.github.com/Sn3b/Omniture-API/master/Solution%20Items/OmnitureAdminServices.wsdl (. in the operation name, so __soapCall method is used)
- * Struct attributes with same but different case (ProcStat and Procstat) should have distinct method to set and get (getProcStat/setProcStat and getProcstat_1/setProcstat_1) the value. 
- * The contruct method must also define the key in the associative array with the corresponding method name.
- * Plus, the operation/function which use ths attribute must call the distinct method (getProcStat and getProcstat_1). See http://the-echoplex.net/log/php-case-sensitivity
- * Catch SOAPHeader definitions :
- * -	http://164.9.104.198/dhlexpress4youservice/Express4YouService.svc?wsdl
- * -	http://api.atinternet-solutions.com/toolbox/reporting.asmx?WSDL
- * -	http://developer.ebay.com/webservices/latest/ebaySvc.wsdl
- * -	https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl
- * -	https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl
- * -	http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl
+ * <ul>
+ * <li>
+ * "Full" documentation (functions, structs, enumerations, values) with "virual" structs inheritance documentation :
+ * <ul>
+ * <li>{@link http://developer.ebay.com/webservices/latest/ebaySvc.wsdl}</li>
+ * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
+ * <li>{@link http://queue.amazonaws.com/doc/2012-11-05/QueueService.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Restriction on struct attributes :
+ * <ul>
+ * <li>{@link https://services.pwsdemo.com/WSDL/PwsDemo_creditcardtransactionservice.xml}</li>
+ * <li>{@link http://api.temando.com/schema/2009_06/server.wsdl}</li>
+ * <li>{@link http://info.portaldasfinancas.gov.pt/NR/rdonlyres/02357996-29FC-4F11-9F1D-6EA2B9210D60/0/factemiws.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Operations or struct attributes with an illegal character (ex : ., -) :
+ * <ul>
+ * <li>{@link http://api.fromdoppler.com/Default.asmx?WSDL}</li>
+ * <li>{@link https://webapi.aukro.cz/uploader.php?wsdl}</li>
+ * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Simple function parameter (not a struct) :
+ * <ul>
+ * <li>{@link http://traveltek-importer.planetcruiseluxury.co.uk/region.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Enumerations with two similar values (ex : y and Y in RecurringFlagType) :
+ * <ul>
+ * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Enumerations embedded in an element :
+ * <ul>
+ * <li>{@link http://92.70.240.139/webservices_test/?WSDL}</li>
+ * </ul>
+ * </li>
+ * <li>Lots of import tags :
+ * <ul>
+ * <li>{@link http://secapp.euroconsumers.org/partnerservice/PartnerService.svc?wsdl}</li>
+ * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
+ * <li>{@link http://mobile.esseginformatica.com:8704/?wsdl}</li>
+ * <li>{@link https://api.bullhornstaffing.com/webservices-2.5/?wsdl}</li>
+ * <li>{@link http://46.31.56.162/abertis/Sos.asmx?WSDL}</li>
+ * </ul>
+ * </li>
+ * <li>"Deep", numerous inheritance in struct classes :
+ * <ul>
+ * <li>{@link https://moa.mazdaeur.com/mud-services/ws/PartnerService?wsdl}</li>
+ * <li>{@link http://developer.ebay.com/webservices/latest/ebaySvc.wsdl}</li>
+ * <li>{@link https://www.tipsport.cz/webtip/CommonBettingWS?WSDL}</li>
+ * <li>{@link https://www.tipsport.cz/webtip/LiveBettingWS?WSDL}</li>
+ * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
+ * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
+ * <li>{@link http://mobile.esseginformatica.com:8704/?wsdl}</li>
+ * <li>{@link https://api.bullhornstaffing.com/webservices-2.5/?wsdl}</li>
+ * <li>{@link http://46.31.56.162/abertis/Sos.asmx?WSDL} (real deep inheritance from AbstractGMLType)</li>
+ * <li>{@link http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl}</li>
+ * <li>{@link https://raw.github.com/jkinred/psphere/master/psphere/wsdl/vimService.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Multiple service operations returns the same response type (getResult() doc comment must return one type of each) :
+ * <ul>
+ * <li>{@link https://secure.dev.logalty.es/lgt/logteca/emisor/services/IncomingServiceWSI?wsdl}</li>
+ * <li>{@link http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL}</li>
+ * </ul>
+ * </li>
+ * <li>Documentation on WSDL (must be found in the generated *WsdlClass) doc comment :
+ * <ul>
+ * <li>{@link http://iplaypen.globelabs.com.ph:1881/axis2/services/Platform?wsdl}</li>
+ * <li>{@link https://oivs.mvtrip.alabama.gov/service/XMLExchangeServiceCore.asmx?WSDL}</li>
+ * </ul>
+ * </li>
+ * <li>PHP reserved keyword in operation name (ex : list), replaced by _{keyword} :
+ * <ul>
+ * <li>{@link https://api5.successfactors.eu/sfapi/v1/soap12?wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Send ArrayAsParameter and ParametersAsArray case :
+ * <ul>
+ * <li>{@link http://api.bing.net/search.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Send parameters separately :
+ * <ul>
+ * <li>{@link http://www.ovh.com/soapi/soapi-dlw-1.54.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Struct attribute named _ :
+ * <ul>
+ * <li>{@link http://46.31.56.162/abertis/Sos.asmx?WSDL} (DirectPositionType, StringOrRefType, AreaType, etc.)</li>
+ * </ul>
+ * </li>
+ * <li>From now, it can generate service function from RPC style SOAP WS. RPC style :
+ * <ul>
+ * <li>{@link http://www.ovh.com/soapi/soapi-re-1.54.wsdl}</li>
+ * <li>{@link http://postlinks.com/api/soap/v1.1/postlinks.wsdl}</li>
+ * <li>{@link http://psgsa.dyndns.org:8020/gana/crm/service/v4_1/soap.php?wsdl}</li>
+ * <li>{@link http://www.electre.com/WebService/search.asmx?WSDL}</li>
+ * <li>{@link http://www.mobilefish.com/services/web_service/countries.php?wsdl}</li>
+ * <li>{@link http://webservices.seek.com.au/FastLanePlus.asmx?WSDL}</li>
+ * <li>{@link https://webapi.aukro.cz/uploader.php?wsdl}</li>
+ * <li>{@link http://castonclients.com/fuelcircle/api/member.php?wsdl}</li>
+ * <li>{@link https://www.fieldnation.com/api/v3.5/fieldnation.wsdl}</li>
+ * <li>{@link https://gateway2.pagosonline.net/ws/WebServicesClientesUT?wsdl}</li>
+ * <li>{@link http://webservices.seek.com.au/webserviceauthenticator.asmx?WSDL}</li>
+ * <li>{@link http://webservices.seek.com.au/fastlaneplus.asmx?WSDL}</li>
+ * <li>{@link https://80.77.87.229:2443/soap?wsdl}</li>
+ * <li>{@link http://www.mantisbt.org/demo/api/soap/mantisconnect.php?wsdl}</li>
+ * <li>{@link http://mira.16.1.t1.connectivegames.com/axis/services/RemoteAffiliateService?wsdl}</li>
+ * <li>{@link http://graphical.weather.gov/xml/DWMLgen/wsdl/ndfdXML.wsdl}</li>
+ * <li>{@link https://www.mygate.co.za/enterprise/4x0x0/ePayService.cfc?wsdl}</li>
+ * <li>{@link http://59.162.33.102/HotelXML_V1.2/services/HotelAvailSearch?wsdl}</li>
+ * <li>{@link http://api.4shared.com/jax2/DesktopApp?wsdl}</li>
+ * <li>{@link http://www.eaglepictures.com/services.php/Eagle.wsdl}</li>
+ * <li>{@link http://online.axiomtelecom.com/staging/api/v2_soap/?wsdl}</li>
+ * <li>{@link http://www.konakart.com/konakart/services/KKWebServiceEng?wsdl}</li>
+ * <li>{@link http://soamoa.org:9292/artistRegistry?WSDL}</li>
+ * <li>{@link http://pgw-dev.aora.tv/trio/index.php?wsdl}</li>
+ * <li>{@link http://npg.dl.ac.uk/MIDAS/MIDASWebServices/MIDASWebServices/VMEAccessServer.wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>From now, method without any parameter are generated well. A method without any parameter :
+ * <ul>
+ * <li>{@link http://verkopen.marktplaats.nl/soap/mpplt.php?wsdl} (GetCategoryList, GetCategoryListRevision, GetPriceTypeList, GetPriceTypeListRevision, GetAttributeListRevision, GetSystemTimestamp)</li>
+ * <li>{@link https://gateway2.pagosonline.net/ws/WebServicesClientesUT?wsdl} (doInit(), TestServiceGet, TestServiceLeer)</li>
+ * </ul>
+ * </li>
+ * <li>Operation name with illegal characters :
+ * <ul>
+ * <li>{@link https://raw.github.com/Sn3b/Omniture-API/master/Solution%20Items/OmnitureAdminServices.wsdl} (. in the operation name, so __soapCall method is used)</li>
+ * </ul>
+ * </li>
+ * <li>Struct attributes with same but different case (ProcStat and Procstat) should have distinct method to set and get (getProcStat/setProcStat and getProcstat_1/setProcstat_1) the value.</li>
+ * <li>The contruct method must also define the key in the associative array with the corresponding method name. Plus, the operation/function which use ths attribute must call the distinct method (getProcStat and getProcstat_1). See {@link http://the-echoplex.net/log/php-case-sensitivity}</li>
+ * <li>Catch SOAPHeader definitions :
+ * <ul>
+ * <li>{@link http://164.9.104.198/dhlexpress4youservice/Express4YouService.svc?wsdl}</li>
+ * <li>{@link http://api.atinternet-solutions.com/toolbox/reporting.asmx?WSDL}</li>
+ * <li>{@link http://developer.ebay.com/webservices/latest/ebaySvc.wsdl}</li>
+ * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
+ * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
+ * <li>{@link http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl}</li>
+ * <li>{@link http://api.actonsoftware.com/soap/services/ActonService2?wsdl}</li>
+ * </ul>
+ * </li>
+ * <li>Biggest Packages generated :
+ * <ul>
+ * <li>{@link https://raw.github.com/jkinred/psphere/master/psphere/wsdl/vimService.wsdl}</li>
+ * <li>{@link http://www.ovh.com/soapi/soapi-dlw-1.54.wsdl}</li>
+ * </ul>
+ * </li>
+ * </ul>
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
  */
@@ -2036,18 +2100,16 @@ class WsdlToPhpGenerator extends SoapClient
 													' '),$documentation);
 		$documentation = preg_replace('[\s+]',' ',$documentation);
 		/**
-		 * Find parent node of this documentation node
+		 * Find parent node of this documentation node with the name attribute defined
 		 */
-		$parentNode = self::findSuitableParent($_domNode,false,array(
-																	'enumeration',
-																	'definitions',
+		$parentNode = self::findSuitableParent($_domNode,true,array(
 																	'operation'));
 		if($parentNode)
 		{
 			/**
 			 * is it an element ? part of a struct
 			 */
-			if(stripos($parentNode->nodeName,'element') !== false && $parentNode->hasAttribute('type') && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+			if(stripos($parentNode->nodeName,'element') !== false && $parentNode->hasAttribute('type'))
 			{
 				/**
 				 * Find parent node of this documentation node
@@ -2057,32 +2119,44 @@ class WsdlToPhpGenerator extends SoapClient
 					$this->setStructAttributeDocumentation($upParentNode->getAttribute('name'),$parentNode->getAttribute('name'),$documentation);
 			}
 			/**
-			 * is it an enumeration
-			 */
-			elseif(stripos($parentNode->nodeName,'enumeration') !== false)
-			{
-				/**
-				 * Find parent node of this enumeration node
-				 */
-				$upParentNode = self::findSuitableParent($parentNode);
-				if($upParentNode)
-					$this->setStructValueDocumentation($upParentNode->getAttribute('name'),$parentNode->getAttribute('value'),$documentation);
-			}
-			/**
 			 * is it a struct ?
 			 */
-			elseif((stripos($parentNode->nodeName,'element') !== false || stripos($parentNode->nodeName,'complextype') !== false || stripos($parentNode->nodeName,'simpletype') !== false) && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+			elseif(stripos($parentNode->nodeName,'element') !== false || stripos($parentNode->nodeName,'complextype') !== false || stripos($parentNode->nodeName,'simpletype') !== false)
 				$this->setStructDocumentation($parentNode->getAttribute('name'),$documentation);
 			/**
 			 * is it an operation ?
 			 */
-			elseif(stripos($parentNode->nodeName,'operation') !== false && $parentNode->hasAttribute('name') && $parentNode->getAttribute('name') != '')
+			elseif(stripos($parentNode->nodeName,'operation') !== false)
 				$this->setServiceFunctionDocumentation($parentNode->getAttribute('name'),$documentation);
+		}
+		else
+		{
 			/**
-			 * is it a definitions ?
+			 * Find parent node of this documentation node without taking care of the name attribute
 			 */
-			elseif(stripos($parentNode->nodeName,'definitions') !== false)
-				$this->addWsdlMeta('documentation',$documentation);
+			$parentNode = self::findSuitableParent($_domNode,false,array(
+																		'enumeration',
+																		'definitions'));
+			if($parentNode)
+			{
+				/**
+				 * is it an enumeration
+				 */
+				if(stripos($parentNode->nodeName,'enumeration') !== false)
+				{
+					/**
+					 * Find parent node of this enumeration node
+					 */
+					$upParentNode = self::findSuitableParent($parentNode);
+					if($upParentNode)
+						$this->setStructValueDocumentation($upParentNode->getAttribute('name'),$parentNode->getAttribute('value'),$documentation);
+				}
+				/**
+				 * is it a definitions ?
+				 */
+				elseif(stripos($parentNode->nodeName,'definitions') !== false)
+					$this->addWsdlMeta('documentation',$documentation);
+			}
 		}
 	}
 	/**
