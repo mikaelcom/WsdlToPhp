@@ -83,8 +83,8 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 				$attributes = $model->getAttributes(true);
 				if(count($attributes))
 				{
-					foreach($attributes as $attribute)
-						array_push($comments,'@uses ' . $model->getPackagedName() . '::' . $attribute->getGetterName() . '()');
+					foreach($attributes as $attributeData)
+						array_push($comments,'@uses ' . $attributeData['model']->getPackagedName() . '::' . $attributeData['attribute']->getGetterName() . '()');
 					array_push($comments,'@param ' . $model->getPackagedName() . ' $_' . lcfirst($model->getPackagedName()));
 				}
 			}
@@ -186,8 +186,8 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 			$attributes = $parameterModel->getAttributes(true);
 			if(count($attributes))
 			{
-				foreach($attributes as $attribute)
-					array_push($soapParametersEnd,(WsdlToPhpGenerator::getOptionSendArrayAsParameter()?'\'' . addslashes($attribute->getName()) . '\'=>':'') . $parameterName . '->' . $attribute->getGetterName() . '()');
+				foreach($attributes as $attributeData)
+					array_push($soapParametersEnd,(WsdlToPhpGenerator::getOptionSendArrayAsParameter()?'\'' . addslashes($attributeData['attribute']->getName()) . '\'=>':'') . $parameterName . '->' . $attributeData['attribute']->getGetterName() . '()');
 				$soapParametersStart = implode(',',$soapParametersEnd);
 				$soapParametersEnd = '';
 			}

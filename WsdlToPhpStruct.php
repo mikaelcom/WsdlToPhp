@@ -351,30 +351,37 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStruct::getAttributes()
-	 * @param bool $_includeInheritanceAttributes include the attributes of parent class, default parent attributes are not included
+	 * @param bool $_includeInheritanceAttributes include the attributes of parent class, default parent attributes are not included. If true, then the array is an associative array containing and index "attribute" for the WsdlToPhpStructAttribute object and an index "model" for the WsdlToPhpStruct object.
 	 * @return array
 	 */
 	public function getAttributes($_includeInheritanceAttributes = false)
 	{
-		if($_includeInheritanceAttributes && $this->getInheritance() != '')
+		if($_includeInheritanceAttributes)
 		{
 			$attributes = array();
-			$model = WsdlToPhpModel::getModelByName($this->getInheritance());
-			while($model && $model->getIsStruct())
+			if($this->getInheritance() != '')
 			{
-				$modelAttributes = $model->getAttributes();
-				if(count($modelAttributes))
+				$model = WsdlToPhpModel::getModelByName($this->getInheritance());
+				while($model && $model->getIsStruct())
 				{
-					foreach($modelAttributes as $attribute)
-						array_push($attributes,$attribute);
+					$modelAttributes = $model->getAttributes();
+					if(count($modelAttributes))
+					{
+						foreach($modelAttributes as $attribute)
+							array_push($attributes,array(
+														'attribute'=>$attribute,
+														'model'=>$model));
+					}
+					$model = WsdlToPhpModel::getModelByName($model->getInheritance());
 				}
-				$model = WsdlToPhpModel::getModelByName($model->getInheritance());
 			}
 			$thisAttributes = $this->getAttributes();
 			if(count($thisAttributes))
 			{
 				foreach($thisAttributes as $attribute)
-					array_push($attributes,$attribute);
+					array_push($attributes,array(
+												'attribute'=>$attribute,
+												'model'=>$this));
 			}
 			return $attributes;
 		}

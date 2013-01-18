@@ -162,12 +162,88 @@
  * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
  * <li>{@link http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl}</li>
  * <li>{@link http://api.actonsoftware.com/soap/services/ActonService2?wsdl}</li>
+ * <li>{@link http://webservices.eurotaxglass.com/wsdl/forecast.wsdl}</li>
+ * <li>{@link http://s7ips1.scene7.com/scene7/webservice/IpsApi.wsdl}</li>
+ * <li>{@link https://ewus.nfz.gov.pl/ws-broker-server-ewus/services/ServiceBroker?wsdl}</li>
+ * <li>{@link http://webservices.micros.com/ows/5.1/Security.wsdl}</li>
+ * <li>{@link https://oivs.mvtrip.alabama.gov/service/XMLExchangeServiceCore.asmx?WSDL}</li>
+ * <li>{@link http://91.93.143.3/bbmvoice/VoiceRecService.asmx?WSDL}</li>
+ * <li>{@link http://92.45.22.83/CLZMobileWebService/MobileWebService.asmx?WSDL}</li>
+ * <li>{@link http://87.106.12.100:9090/schemas/order-service.wsdl}</li>
+ * <li>{@link http://destservices.touricoholidays.com/DestinationsService.svc?wsdl}</li>
+ * <li>{@link http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL}</li>
+ * <li>{@link http://sharepoint-wsdl.googlecode.com/svn/trunk/WSDL/dspsts.asmx.xml}</li>
+ * <li>{@link http://eit.ebscohost.com/Services/SearchService.asmx?WSDL}</li>
+ * <li>{@link http://drachenklasse.hosted-application.de/WebService.asmx?WSDL}</li>
+ * <li>{@link https://api.cvent.com/soap/V200611.asmx?WSDL&debug=1}</li>
+ * <li>{@link http://www.xignite.com/xIndices.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xCurrencies.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xInsider.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xCompensation.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xGlobalHistorical.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xRealTime.asmx?WSDL}</li>
+ * <li>{@link https://adwords.google.com/api/adwords/cm/v201209/CampaignService?wsdl}</li>
+ * <li>{@link https://americommerce.com/store/ws/AmeriCommerceDb.asmx?wsdl}</li>
+ * <li>{@link http://www.relaiscolis.com/wsInfoRelaisTest/wsInfoRelais.asmx?WSDL}</li>
+ * <li>{@link https://api.channeladvisor.com/ChannelAdvisorAPI/v3/MarketplaceAdService.asmx?WSDL}</li>
+ * <li>{@link http://ws1.ems6.net/subscribers.asmx?WSDL}</li>
+ * <li>{@link http://www.webxml.com.cn/WebServices/WeatherWebService.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xVWAP.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xScreener.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xChart.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xStatistics.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xHousing.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xExchanges.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xCalendar.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xIndexComponents.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xMetals.asmx?WSDL}</li>
+ * <li>{@link http://globalrealtimeoptions.xignite.com/xglobalrealtimeoptions.asmx?WSDL}</li>
+ * <li>{@link http://globaloptions.xignite.com/xglobaloptions.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xEnergy.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xFutures.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xMoneyMarkets.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xInterBanks.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xRates.asmx?WSDL}</li>
+ * <li>{@link http://bondsrealtime.xignite.com/xBondsRealTime.asmx?WSDL}</li>
+ * <li>{@link http://bonds.xignite.com/xBonds.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xFundHoldings.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xFundData.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xFunds.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xNews.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xOFAC.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xTranscripts.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xReleases.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xLogos.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xHoldings.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xEarningsCalendar.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xEstimates.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xEdgar.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xAnalysts.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xGlobalFundamentals.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xFundamentals.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xFinancials.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xHistorical.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xNASDAQLastSale.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xBATSLastSale.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xBATSRealTime.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xQuotes.asmx?WSDL}</li>
+ * <li>{@link http://globalquotes.xignite.com/xglobalquotes.asmx?WSDL}</li>
+ * <li>{@link http://globalrealtime.xignite.com/xglobalrealtime.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xWatchLists.asmx?WSDL}</li>
+ * <li>{@link http://www.xignite.com/xSecurity.asmx?WSDL}</li>
+ * <li>{@link http://globalbondmaster.xignite.com/xGlobalBondMaster.asmx?WSDL}</li>
+ * <li>{@link http://globalmaster.xignite.com/xglobalmaster.asmx?WSDL}</li>
+ * <li>{@link http://bondmaster.xignite.com/xBondMaster.asmx?WSDL}</li>
+ * <li>{@link http://radiopilatusadmin.showare.sta.v-1.ch/WebServices/MemberDataServiceProvider.asmx?WSDL}</li>
+ * <li>{@link http://mail.yahooapis.com/ws/mail/v1.1/wsdl}</li>
  * </ul>
  * </li>
  * <li>Biggest Packages generated :
  * <ul>
  * <li>{@link https://raw.github.com/jkinred/psphere/master/psphere/wsdl/vimService.wsdl}</li>
+ * <li>{@link https://americommerce.com/store/ws/AmeriCommerceDb.asmx?wsdl}</li>
  * <li>{@link http://www.ovh.com/soapi/soapi-dlw-1.54.wsdl}</li>
+ * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
  * </ul>
  * </li>
  * </ul>
@@ -176,6 +252,11 @@
  */
 class WsdlToPhpGenerator extends SoapClient
 {
+	/**
+	 * Index where global values are stored in orde to unset them once when it's necessary and to clean GLOBALS
+	 * @var string
+	 */
+	const WSDL_TO_PHP_GENERATOR_GLOBAL_KEY = '__WsdlToPhpGeneratorGlobalKey__';
 	/**
 	 * Set categorization of classes based on the end of the name of the struct or the function
 	 * The catagory set the tree folders
@@ -353,11 +434,6 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	private static $optionGenerateTutorialFile;
 	/**
-	 * List of Wsdl location loaded as DOMDocument to optimize performance
-	 * @var array
-	 */
-	private static $wsdlLocationsToDomDocument = array();
-	/**
 	 * Constructor
 	 * @uses SoapClient::__construct()
 	 * @uses WsdlToPhpGenerator::setStructs()
@@ -375,6 +451,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::setOptionGenericConstantsNames()
 	 * @uses WsdlToPhpGenerator::setOptionInheritsClassIdentifier()
 	 * @uses WsdlToPhpGenerator::setOptionSendParametersAsArray()
+	 * @uses WsdlToPhpGenerator::initGlobals()
 	 * @uses WsdlToPhpGenerator::OPT_CAT_KEY
 	 * @uses WsdlToPhpGenerator::OPT_CAT_START_NAME
 	 * @uses WsdlToPhpGenerator::OPT_GEN_AUTOLOAD_KEY
@@ -450,6 +527,7 @@ class WsdlToPhpGenerator extends SoapClient
 		self::setOptionGenericConstantsNames(array_key_exists(self::OPT_GENERIC_CONSTANTS_NAMES_KEY,$_options)?$_options[self::OPT_GENERIC_CONSTANTS_NAMES_KEY]:false);
 		self::setOptionInheritsClassIdentifier(array_key_exists(self::OPT_INHERITS_FROM_IDENTIFIER_KEY,$_options)?$_options[self::OPT_INHERITS_FROM_IDENTIFIER_KEY]:'');
 		self::setOptionSendParametersAsArray(array_key_exists(self::OPT_SEND_PARAMETERS_AS_ARRAY_KEY,$_options)?$_options[self::OPT_SEND_PARAMETERS_AS_ARRAY_KEY]:false);
+		self::initGlobals();
 	}
 	/**
 	 * Generate all classes based on options
@@ -469,6 +547,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::generateAutoloadFile()
 	 * @uses WsdlToPhpGenerator::getOptionGenerateTutorialFile()
 	 * @uses WsdlToPhpGenerator::generateTutorialFile()
+	 * @uses WsdlToPhpGenerator::unsetGlobals()
 	 * @param string $_packageName the string used to prefix all generate classes
 	 * @param string $_rootDirectory path where classes should be generated
 	 * @param int $_rootDirectoryRights system rights to apply on folder
@@ -532,10 +611,10 @@ class WsdlToPhpGenerator extends SoapClient
 			 */
 			if(self::getOptionGenerateTutorialFile())
 				$this->generateTutorialFile($rootDirectory,$servicesClassesFiles);
-			return true;
+			return self::unsetGlobals();
 		}
 		else
-			return false;
+			return !self::unsetGlobals();
 	}
 	/**
 	 * Initialize structs defined in WSDL :
@@ -1463,7 +1542,11 @@ class WsdlToPhpGenerator extends SoapClient
 		return self::$optionCategory;
 	}
 	/**
-	 * Value must be @see self::OPT_CAT_END_NAME or @see self::OPT_CAT_START_NAME or @see self::OPT_CAT_NONE_NAME
+	 * Set the optionCategory value
+	 * Value must be {@link WsdlToPhpGenerator::OPT_CAT_END_NAME} or {@link WsdlToPhpGenerator::OPT_CAT_START_NAME} or {@link WsdlToPhpGenerator::OPT_CAT_NONE_NAME}
+	 * @uses WsdlToPhpGenerator::OPT_CAT_END_NAME
+	 * @uses WsdlToPhpGenerator::OPT_CAT_START_NAME
+	 * @uses WsdlToPhpGenerator::OPT_CAT_NONE_NAME
 	 * @param int
 	 * @return bool
 	 */
@@ -1489,7 +1572,11 @@ class WsdlToPhpGenerator extends SoapClient
 		return self::$optionSubCategory;
 	}
 	/**
-	 * Value must be @see self::OPT_SUB_CAT_END_NAME or @see self::OPT_SUB_CAT_START_NAME or @see self::OPT_SUB_CAT_NONE_NAME
+	 * Set the optionSubCategory value
+	 * Value must be {@link WsdlToPhpGenerator::OPT_SUB_CAT_END_NAME} or {@link WsdlToPhpGenerator::OPT_SUB_CAT_START_NAME} or {@link WsdlToPhpGenerator::OPT_SUB_CAT_NONE_NAME}
+	 * @uses WsdlToPhpGenerator::OPT_SUB_CAT_END_NAME
+	 * @uses WsdlToPhpGenerator::OPT_SUB_CAT_START_NAME
+	 * @uses WsdlToPhpGenerator::OPT_SUB_CAT_NONE_NAME
 	 * @param int
 	 * @return bool
 	 */
@@ -1516,6 +1603,7 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Set the optionGatherMethods value
+	 * Value must be {@link WsdlToPhpGenerator::OPT_GATH_METH_START_NAME} or {@link WsdlToPhpGenerator::OPT_GATH_METH_END_NAME}
 	 * @uses WsdlToPhpGenerator::OPT_GATH_METH_START_NAME
 	 * @uses WsdlToPhpGenerator::OPT_GATH_METH_END_NAME
 	 * @param int
@@ -2206,6 +2294,8 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::addServiceFunctionMeta()
 	 * @uses WsdlToPhpGenerator::wsdlLocationToDomDocument()
 	 * @uses WsdlToPhpGenerator::getStruct()
+	 * @uses WsdlToPhpGenerator::getGlobal()
+	 * @uses WsdlToPhpGenerator::setGlobal()
 	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses DOMElement::getAttribute()
 	 * @uses DOMElement::hasAttribute()
@@ -2238,41 +2328,76 @@ class WsdlToPhpGenerator extends SoapClient
 				 */
 				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeader','required');
 				$headerType = '';
-				$headerName = $_domNode->getAttribute('part');
+				$headerName = $_domNode->hasAttribute('part')?$_domNode->getAttribute('part'):'';
+				$headerMessage = explode(':',$_domNode->hasAttribute('message')?$_domNode->getAttribute('message'):'');
+				$headerMessage = count($headerMessage)?$headerMessage[count($headerMessage) - 1]:'';
 				/**
-				 * Indicate the required header name
+				 * Find it in the wsdls and avoid mutliple searches for the same message part
 				 */
-				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNames',array(
-																										$headerName));
-				/**
-				 * Type known
-				 */
-				if($this->getStruct($headerName) && $this->getStruct($headerName)->getIsStruct())
-					$headerType = $this->getStruct($headerName)->getPackagedName();
-				/**
-				 * Find it in the wsdls
-				 */
-				else
+				if(!empty($headerName) && !empty($headerMessage))
 				{
-					foreach($this->getWsdls() as $wsdlLocation=>$meta)
+					/**
+					 * Indicate the required header name
+					 */
+					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNames',array(
+																											$headerName));
+					$globalHeaderKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName;
+					/**
+					 * header name for the current message already known ?
+					 */
+					$headerType = self::getGlobal($globalHeaderKey,'');
+					if(empty($headerType))
 					{
-						$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
-						if($domDocument instanceof DOMDocument)
+						foreach($this->getWsdls() as $wsdlLocation=>$meta)
 						{
-							$domXPath = new DOMXPath($domDocument);
-							$nodes = $domXPath->query("//*[@name='" . $headerName . "']");
-							$nodesLength = $nodes->length;
-							for($i = 0;$i < $nodesLength;$i++)
+							$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
+							if($domDocument instanceof DOMDocument)
 							{
-								$node = $nodes->item($i);
-								if(($node instanceof DOMElement) && $node->hasAttribute('type') && $node->getAttribute('type') != '')
+								$domXPath = new DOMXPath($domDocument);
+								/**
+								 * Get part element
+								 */
+								$nodes = $domXPath->query("//*[@name='$headerMessage']/*[@name='$headerName']");
+								$nodesLength = $nodes->length;
+								if($nodesLength == 1 && ($nodes->item(0) instanceof DOMNode) && stripos($nodes->item(0)->nodeName,'part') !== false)
 								{
-									$headerType = explode(':',$node->getAttribute('type'));
-									$headerType = $headerType[count($headerType) - 1];
-									if($this->getStruct($headerType) && $this->getStruct($headerType)->getIsStruct())
-										$headerType = $this->getStruct($headerType)->getPackagedName();
-									break;
+									$part = $nodes->item(0);
+									$partElement = explode(':',$part->hasAttribute('element')?$part->getAttribute('element'):'');
+									$partElement = count($partElement)?$partElement[count($partElement) - 1]:'';
+									/**
+									 * Find element part in the WSDLs
+									 */
+									foreach($this->getWsdls() as $wsdlLocation=>$meta)
+									{
+										$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
+										if($domDocument instanceof DOMDocument)
+										{
+											$domXPath = new DOMXPath($domDocument);
+											$nodes = $domXPath->query("//*[@name='$partElement']");
+											$nodesLength = $nodes->length;
+											$nodeIndex = 0;
+											while($nodeIndex < $nodesLength && (!($nodes->item($nodeIndex) instanceof DOMElement) || (($nodes->item($nodeIndex) instanceof DOMElement) && (!$nodes->item($nodeIndex)->hasAttribute('type') || ($nodes->item($nodeIndex)->hasAttribute('type') && $nodes->item($nodeIndex)->getAttribute('type') === '')))) && $nodeIndex++);
+											if($nodeIndex <= $nodesLength && ($nodes->item($nodeIndex) instanceof DOMElement) && $nodes->item($nodeIndex)->hasAttribute('type') && $nodes->item($nodeIndex)->getAttribute('type') != '')
+											{
+												$headerType = explode(':',$nodes->item($nodeIndex)->getAttribute('type'));
+												$headerType = $headerType[count($headerType) - 1];
+												if($this->getStruct($headerType) && $this->getStruct($headerType)->getIsStruct())
+													$headerType = '{@link ' . $this->getStruct($headerType)->getPackagedName() . '}';
+												break;
+											}
+										}
+									}
+									/**
+									 * Element type not found, then it's maybe an already known struct ?
+									 */
+									if(empty($headerType) && $this->getStruct($partElement) && $this->getStruct($partElement)->getIsStruct())
+										$headerType = '{@link ' . $this->getStruct($partElement)->getPackagedName() . '}';
 								}
+							}
+							if(!empty($headerType))
+							{
+								self::setGlobal($globalHeaderKey,$headerType);
+								break;
 							}
 						}
 					}
@@ -2310,6 +2435,8 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Returns the DOMDocument object for a wsdl location
+	 * @uses WsdlToPhpGenerator::getGlobal()
+	 * @uses WsdlToPhpGenerator::setGlobal()
 	 * @uses DOMDocument::load()
 	 * @uses DOMDocument::saveXML()
 	 * @uses DOMDocument::loadXML()
@@ -2318,7 +2445,9 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	final private static function wsdlLocationToDomDocument($_wsdlLocation)
 	{
-		if(!array_key_exists($_wsdlLocation,self::$wsdlLocationsToDomDocument))
+		$globalKey = __METHOD__ . '_' . $_wsdlLocation;
+		$dom = self::getGlobal($globalKey);
+		if(!($dom instanceof DOMDocument))
 		{
 			$wsdlLocationContent = '';
 			$dom = new DOMDocument('1.0','UTF-8');
@@ -2336,10 +2465,8 @@ class WsdlToPhpGenerator extends SoapClient
 				$dom->loadXML($wsdlLocationContent);
 			else
 				$dom = null;
-			self::$wsdlLocationsToDomDocument[$_wsdlLocation] = $dom;
+			self::setGlobal($globalKey,$dom);
 		}
-		else
-			$dom = self::$wsdlLocationsToDomDocument[$_wsdlLocation];
 		return $dom;
 	}
 	/**
@@ -2517,6 +2644,57 @@ class WsdlToPhpGenerator extends SoapClient
 			}
 		}
 		return $elementType;
+	}
+	/**
+	 * Init global array dedicated to the class
+	 * @uses WsdlToPhpGenerator::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY
+	 * @return bool true
+	 */
+	private static function initGlobals()
+	{
+		$GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY] = array();
+		return true;
+	}
+	/**
+	 * Clear the global array dedicated the the class
+	 * @uses WsdlToPhpGenerator::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY
+	 * @return bool true
+	 */
+	private static function unsetGlobals()
+	{
+		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,$GLOBALS))
+			unset($GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY]);
+		return true;
+	}
+	/**
+	 * Set a global value
+	 * @param scalar $_globalKey the index where to store the data in the global array dedicated the the class
+	 * @param mixed $_globalValue the value to store
+	 * @return mixed
+	 */
+	private static function setGlobal($_globalKey,$_globalValue)
+	{
+		if(!is_scalar($_globalKey))
+			return null;
+		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,$GLOBALS))
+			return ($GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY][$_globalKey] = $_globalValue);
+		else
+			return null;
+	}
+	/**
+	 * Get a global value
+	 * @param scalar $_globalKey the index where to store the data in the global array dedicated the the class
+	 * @param mixed $_globalFallback the fallback value
+	 * @return mixed
+	 */
+	private static function getGlobal($_globalKey,$_globalFallback = null)
+	{
+		if(!is_scalar($_globalKey))
+			return $_globalFallback;
+		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,$GLOBALS) && array_key_exists($_globalKey,$GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY]))
+			return $GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY][$_globalKey];
+		else
+			return $_globalFallback;
 	}
 	/**
 	 * Return current class name

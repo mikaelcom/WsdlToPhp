@@ -536,7 +536,7 @@ class WsdlToPhpModel
 	{
 		if(!is_scalar($_comment) && !is_array($_comment))
 			return '';
-		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode(', ',array_unique($_comment))));
+		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode(',',array_unique($_comment))));
 	}
 	/**
 	 * Returns the generic name of the WsdlClass
