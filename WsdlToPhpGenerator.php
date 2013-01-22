@@ -24,6 +24,7 @@
  * <li>{@link http://developer.ebay.com/webservices/latest/ebaySvc.wsdl}</li>
  * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
  * <li>{@link http://queue.amazonaws.com/doc/2012-11-05/QueueService.wsdl}</li>
+ * <li>{@link https://xhi.venere.com/xhi-1.0/services/OTA_ReadNotifReport.soap?wsdl}</li>
  * </ul>
  * </li>
  * <li>Restriction on struct attributes :
@@ -62,6 +63,7 @@
  * <li>{@link http://mobile.esseginformatica.com:8704/?wsdl}</li>
  * <li>{@link https://api.bullhornstaffing.com/webservices-2.5/?wsdl}</li>
  * <li>{@link http://46.31.56.162/abertis/Sos.asmx?WSDL}</li>
+ * <li>{@link http://www.reservationfactory.com/wsdls/air_v21_0/Air.wsdl} with relative paths like ../ which causes bugs</li>
  * </ul>
  * </li>
  * <li>"Deep", numerous inheritance in struct classes :
@@ -77,6 +79,8 @@
  * <li>{@link http://46.31.56.162/abertis/Sos.asmx?WSDL} (real deep inheritance from AbstractGMLType)</li>
  * <li>{@link http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl}</li>
  * <li>{@link https://raw.github.com/jkinred/psphere/master/psphere/wsdl/vimService.wsdl}</li>
+ * <li>{@link http://staging.timatic.aero/timaticwebservices/timatic3.WSDL}</li>
+ * <li>{@link http://www.reservationfactory.com/wsdls/air_v21_0/Air.wsdl}</li>
  * </ul>
  * </li>
  * <li>Multiple service operations returns the same response type (getResult() doc comment must return one type of each) :
@@ -91,9 +95,10 @@
  * <li>{@link https://oivs.mvtrip.alabama.gov/service/XMLExchangeServiceCore.asmx?WSDL}</li>
  * </ul>
  * </li>
- * <li>PHP reserved keyword in operation name (ex : list), replaced by _{keyword} :
+ * <li>PHP reserved keyword in operation name (ex : list, add), replaced by _{keyword} :
  * <ul>
  * <li>{@link https://api5.successfactors.eu/sfapi/v1/soap12?wsdl}</li>
+ * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl]</li>
  * </ul>
  * </li>
  * <li>Send ArrayAsParameter and ParametersAsArray case :
@@ -236,6 +241,14 @@
  * <li>{@link http://bondmaster.xignite.com/xBondMaster.asmx?WSDL}</li>
  * <li>{@link http://radiopilatusadmin.showare.sta.v-1.ch/WebServices/MemberDataServiceProvider.asmx?WSDL}</li>
  * <li>{@link http://mail.yahooapis.com/ws/mail/v1.1/wsdl}</li>
+ * <li>{@link https://xhi.venere.com/xhi-1.0/services/OTA_ReadNotifReport.soap?wsdl}</li>
+ * <li>{@link http://demo.braingroup.ch/financial-kernel-ws/b2c/1?wsdl}</li>
+ * <li>{@link http://demo.braingroup.ch/financial-kernel-ws/tax/1?wsdl}</li>
+ * <li>{@link http://commonwebservices.saralee-de.com/mcdb2g/Services.asmx?WSDL}</li>
+ * <li>{@link http://staging.timatic.aero/timaticwebservices/timatic3.WSDL} sessionID for processLogin has a header with required="false"</li>
+ * <li>{@link http://www.reservationfactory.com/wsdls/air_v21_0/Air.wsdl}</li>
+ * <li>{@link http://unit4.detuinmachinecompany.com/wsdl.xml} WebID for operations is required with wsdl:required="true"</li>
+ * <li>{@link http://www.martonhouse.net/Invensys/InvensysAPI.asmx?WSDL}</li>
  * </ul>
  * </li>
  * <li>Biggest Packages generated :
@@ -2021,9 +2034,19 @@ class WsdlToPhpGenerator extends SoapClient
 				$host = (is_array($parts) && array_key_exists('host',$parts))?$parts['host']:'';
 				$path = (is_array($parts) && array_key_exists('path',$parts))?$parts['path']:'';
 				$path = str_replace($fileBasename,'',$path);
+				$cleanLocation = array();
+				$locationToParseParts = explode('/',$location);
+				$pathParts = explode('/',$path);
+				foreach($locationToParseParts as $locationPart)
+				{
+					if($locationPart == '..')
+						$pathParts = count($pathParts) >= 2?array_slice($pathParts,0,count($pathParts) - 2):$pathParts;
+					else
+						array_push($cleanLocation,$locationPart);
+				}
 				$port = (is_array($parts) && array_key_exists('port',$parts))?$parts['port']:'';
 				if(!empty($scheme) && !empty($host))
-					array_push($locations,str_replace('urn','http',$scheme) . '://' . $host . (!empty($port)?':' . $port:'') . (!empty($path)?$path:'/') . $location);
+					array_push($locations,str_replace('urn','http',$scheme) . '://' . $host . (!empty($port)?':' . $port:'') . (count($pathParts)?str_replace('//','/','/' . implode('/',$pathParts) . '/'):'/') . implode('/',$cleanLocation));
 			}
 		}
 		elseif(!empty($location))
@@ -2323,10 +2346,18 @@ class WsdlToPhpGenerator extends SoapClient
 																		'operation'));
 			if($parentNode)
 			{
+				$notRequired = false;
+				$attributes = $_domNode->attributes;
+				$attributesCount = $attributes->length;
+				for($i = 0;$i < $attributesCount;$i++)
+				{
+					if($attributes->item($i) && stripos($attributes->item($i)->nodeName,'required') !== false)
+						$notRequired |= ($attributes->item($i)->nodeValue === 0 || $attributes->item($i)->nodeValue === 'false' || $attributes->item($i)->nodeValue === false || $attributes->item($i)->nodeValue === 'non' || $attributes->item($i)->nodeValue === 'no');
+				}
 				/**
 				 * Indicate that header is required for this operation
 				 */
-				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeader','required');
+				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeader',$notRequired?'optional':'required');
 				/**
 				 * Header Namespace ?
 				 */
