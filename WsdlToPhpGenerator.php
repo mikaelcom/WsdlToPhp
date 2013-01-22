@@ -2327,6 +2327,21 @@ class WsdlToPhpGenerator extends SoapClient
 				 * Indicate that header is required for this operation
 				 */
 				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeader','required');
+				/**
+				 * Header Namespace ?
+				 */
+				if($_domNode->hasAttribute('namespace') && $_domNode->getAttribute('namespace') != '')
+					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNamespace',$_domNode->getAttribute('namespace'));
+				else
+				{
+					$definitions = self::findSuitableParent($parentNode,false,array(
+																					'definitions'));
+					if($definitions && $definitions->hasAttribute('targetNamespace') && $definitions->getAttribute('targetNamespace') != '')
+						$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNamespace',$definitions->getAttribute('targetNamespace'));
+				}
+				/**
+				 * Header types and names
+				 */
 				$headerType = '';
 				$headerName = $_domNode->hasAttribute('part')?$_domNode->getAttribute('part'):'';
 				$headerMessage = explode(':',$_domNode->hasAttribute('message')?$_domNode->getAttribute('message'):'');
