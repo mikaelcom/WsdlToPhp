@@ -2408,36 +2408,51 @@ class WsdlToPhpGenerator extends SoapClient
 								if($nodesLength == 1 && ($nodes->item(0) instanceof DOMNode) && stripos($nodes->item(0)->nodeName,'part') !== false)
 								{
 									$part = $nodes->item(0);
-									$partElement = explode(':',$part->hasAttribute('element')?$part->getAttribute('element'):'');
-									$partElement = count($partElement)?$partElement[count($partElement) - 1]:'';
-									/**
-									 * Find element part in the WSDLs
-									 */
-									foreach($this->getWsdls() as $wsdlLocation=>$meta)
+									$partElement = '';
+									$partAttributes = array(
+															'element',
+															'type');
+									foreach($partAttributes as $partAttributeName)
 									{
-										$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
-										if($domDocument instanceof DOMDocument)
+										if($part->hasAttribute($partAttributeName))
 										{
-											$domXPath = new DOMXPath($domDocument);
-											$nodes = $domXPath->query("//*[@name='$partElement']");
-											$nodesLength = $nodes->length;
-											$nodeIndex = 0;
-											while($nodeIndex < $nodesLength && (!($nodes->item($nodeIndex) instanceof DOMElement) || (($nodes->item($nodeIndex) instanceof DOMElement) && (!$nodes->item($nodeIndex)->hasAttribute('type') || ($nodes->item($nodeIndex)->hasAttribute('type') && $nodes->item($nodeIndex)->getAttribute('type') === '')))) && $nodeIndex++);
-											if($nodeIndex <= $nodesLength && ($nodes->item($nodeIndex) instanceof DOMElement) && $nodes->item($nodeIndex)->hasAttribute('type') && $nodes->item($nodeIndex)->getAttribute('type') != '')
-											{
-												$headerType = explode(':',$nodes->item($nodeIndex)->getAttribute('type'));
-												$headerType = $headerType[count($headerType) - 1];
-												if($this->getStruct($headerType) && $this->getStruct($headerType)->getIsStruct())
-													$headerType = '{@link ' . $this->getStruct($headerType)->getPackagedName() . '}';
+											$partElements = explode(':',$part->getAttribute($partAttributeName));
+											$partElement = count($partElements)?$partElements[count($partElements) - 1]:'';
+											if(!empty($partElement))
 												break;
-											}
 										}
 									}
-									/**
-									 * Element type not found, then it's maybe an already known struct ?
-									 */
-									if(empty($headerType) && $this->getStruct($partElement) && $this->getStruct($partElement)->getIsStruct())
-										$headerType = '{@link ' . $this->getStruct($partElement)->getPackagedName() . '}';
+									if(!empty($partElement))
+									{
+										/**
+										 * Find element part in the WSDLs
+										 */
+										foreach($this->getWsdls() as $wsdlLocation=>$meta)
+										{
+											$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
+											if($domDocument instanceof DOMDocument)
+											{
+												$domXPath = new DOMXPath($domDocument);
+												$nodes = $domXPath->query("//*[@name='$partElement']");
+												$nodesLength = $nodes->length;
+												$nodeIndex = 0;
+												while($nodeIndex < $nodesLength && (!($nodes->item($nodeIndex) instanceof DOMElement) || (($nodes->item($nodeIndex) instanceof DOMElement) && (!$nodes->item($nodeIndex)->hasAttribute('type') || ($nodes->item($nodeIndex)->hasAttribute('type') && $nodes->item($nodeIndex)->getAttribute('type') === '')))) && $nodeIndex++);
+												if($nodeIndex <= $nodesLength && ($nodes->item($nodeIndex) instanceof DOMElement) && $nodes->item($nodeIndex)->hasAttribute('type') && $nodes->item($nodeIndex)->getAttribute('type') != '')
+												{
+													$headerType = explode(':',$nodes->item($nodeIndex)->getAttribute('type'));
+													$headerType = $headerType[count($headerType) - 1];
+													if($this->getStruct($headerType) && $this->getStruct($headerType)->getIsStruct())
+														$headerType = '{@link ' . $this->getStruct($headerType)->getPackagedName() . '}';
+													break;
+												}
+											}
+										}
+										/**
+										 * Element type not found, then it's maybe an already known struct ?
+										 */
+										if(empty($headerType) && $this->getStruct($partElement) && $this->getStruct($partElement)->getIsStruct())
+											$headerType = '{@link ' . $this->getStruct($partElement)->getPackagedName() . '}';
+									}
 								}
 							}
 							if(!empty($headerType))
