@@ -90,7 +90,7 @@ class WsdlToPhpModel
 		{
 			case 1:
 				array_push($comments,'File for class ' . $this->getPackagedName());
-				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName()); // . (count($this->getDocSubPackages())?'\\':'') . implode('\\',$this->getDocSubPackages()));
+				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
 				array_push($comments,'@date ' . date('Y-m-d'));
@@ -100,7 +100,7 @@ class WsdlToPhpModel
 				if($this->getDocumentation() != '')
 					array_push($comments,'Documentation : ' . $this->getDocumentation());
 				$this->addMetaComment($comments,false,true);
-				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName()); // . (count($this->getDocSubPackages())?'\\':'') . implode('\\',$this->getDocSubPackages()));
+				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
 				array_push($comments,'@date ' . date('Y-m-d'));
@@ -384,11 +384,12 @@ class WsdlToPhpModel
 	 * @uses WsdlToPhpGenerator::getPackageName()
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getContextualPart()
+	 * @uses WsdlToPhpModel::uniqueName() to ensure unique naming of struct case sensitively
 	 * @return string
 	 */
 	public function getPackagedName()
 	{
-		return WsdlToPhpGenerator::getPackageName() . $this->getContextualPart() . ucfirst($this->getCleanName());
+		return WsdlToPhpGenerator::getPackageName() . $this->getContextualPart() . ucfirst(self::uniqueName($this->getCleanName(),$this->getContextualPart()));
 	}
 	/**
 	 * Allows to define the contextual part of the class name for the package
@@ -492,13 +493,13 @@ class WsdlToPhpModel
 	 * Static method wich returns a unique name case sensitively
 	 * Useful to name methods case sensitively distinct, see http://the-echoplex.net/log/php-case-sensitivity
 	 * @param string $_name the original name
-	 * @param string $_ownerName the name of owner
+	 * @param string $_context the context where the name is needed unique
 	 * @return string
 	 */
-	protected static function uniqueName($_name,$_ownerName)
+	protected static function uniqueName($_name,$_context)
 	{
-		$insensitiveKey = strtolower($_name . '_' . $_ownerName);
-		$sensitiveKey = $_name . '_' . $_ownerName;
+		$insensitiveKey = strtolower($_name . '_' . $_context);
+		$sensitiveKey = $_name . '_' . $_context;
 		if(array_key_exists($sensitiveKey,self::$uniqueNames))
 			return self::$uniqueNames[$sensitiveKey];
 		elseif(!array_key_exists($insensitiveKey,self::$uniqueNames))

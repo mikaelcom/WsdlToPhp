@@ -86,7 +86,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 				array_push($_body,array(
 										'comment'=>$value->getComment()));
 				array_push($_body,$value->getDeclaration($this->getName(),$index));
-				array_push($constantsDefined,$this->getPackagedName() . '::' . $value->getCleanName($this->getName(),$index));
+				array_push($constantsDefined,$this->getPackagedName() . '::' . $value->getCleanName());
 			}
 			/**
 			 * valueIsValid() method comments

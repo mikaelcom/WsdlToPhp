@@ -81,6 +81,7 @@
  * <li>{@link https://raw.github.com/jkinred/psphere/master/psphere/wsdl/vimService.wsdl}</li>
  * <li>{@link http://staging.timatic.aero/timaticwebservices/timatic3.WSDL}</li>
  * <li>{@link http://www.reservationfactory.com/wsdls/air_v21_0/Air.wsdl}</li>
+ * <li>{@link http://voipnow2demo.4psa.com//soap2/schema/3.0.0/voipnowservice.wsdl}</li>
  * </ul>
  * </li>
  * <li>Multiple service operations returns the same response type (getResult() doc comment must return one type of each) :
@@ -98,7 +99,7 @@
  * <li>PHP reserved keyword in operation name (ex : list, add), replaced by _{keyword} :
  * <ul>
  * <li>{@link https://api5.successfactors.eu/sfapi/v1/soap12?wsdl}</li>
- * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl]</li>
+ * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
  * </ul>
  * </li>
  * <li>Send ArrayAsParameter and ParametersAsArray case :
@@ -249,6 +250,11 @@
  * <li>{@link http://www.reservationfactory.com/wsdls/air_v21_0/Air.wsdl}</li>
  * <li>{@link http://unit4.detuinmachinecompany.com/wsdl.xml} WebID for operations is required with wsdl:required="true"</li>
  * <li>{@link http://www.martonhouse.net/Invensys/InvensysAPI.asmx?WSDL}</li>
+ * </ul>
+ * </li>
+ * <li>Similar struct name:
+ * <ul>
+ * <li>{@link http://voipnow2demo.4psa.com//soap2/schema/3.0.0/voipnowservice.wsdl} timeInterval/TimeInterval, recharge/Recharge</li>
  * </ul>
  * </li>
  * <li>Biggest Packages generated :
@@ -1864,9 +1870,11 @@ class WsdlToPhpGenerator extends SoapClient
 	{
 		if(count($this->getWsdls()))
 		{
-			$wsdlLocation = implode('',array_slice(array_keys($this->getWsdls()),0,1));
-			if(is_string($wsdlLocation) && !empty($wsdlLocation))
-				$this->manageWsdlLocation($wsdlLocation,null,'','header');
+			foreach($this->getWsdls() as $wsdlLocation=>$wsdlData)
+			{
+				if(is_string($wsdlLocation) && !empty($wsdlLocation))
+					$this->manageWsdlLocation($wsdlLocation,null,'','header');
+			}
 		}
 	}
 	/**
@@ -2523,7 +2531,7 @@ class WsdlToPhpGenerator extends SoapClient
 				$wsdlLocationContent = preg_replace('(<!--.*-->)','',$wsdlLocationContent);
 			}
 			if(!empty($wsdlLocationContent))
-				$dom->loadXML($wsdlLocationContent);
+				@$dom->loadXML($wsdlLocationContent);
 			else
 				$dom = null;
 			self::setGlobal($globalKey,$dom);
