@@ -15,12 +15,12 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * Type of the parameter for the operation
 	 * @var string
 	 */
-	private $parameterType;
+	private $parameterType = '';
 	/**
 	 * Type of the return value for the operation
 	 * @var string
 	 */
-	private $returnType;
+	private $returnType = '';
 	/**
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()

@@ -20,7 +20,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * The index of the value in the enumeration struct
 	 * @var int
 	 */
-	private $index;
+	private $index = 0;
 	/**
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()

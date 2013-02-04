@@ -20,22 +20,22 @@ class WsdlToPhpModel
 	 * Original name od the element
 	 * @var string
 	 */
-	private $name;
+	private $name = '';
 	/**
 	 * Values associated to the operation
 	 * @var array
 	 */
-	private $meta;
+	private $meta = array();
 	/**
 	 * Define the inheritance of a struct by the name of the parent struct or type
 	 * @var string
 	 */
-	private $inheritance;
+	private $inheritance = '';
 	/**
 	 * Store the object which owns the current model
 	 * @var WsdlToPhpModel
 	 */
-	private $owner;
+	private $owner = null;
 	/**
 	 * Store all the models generated
 	 * @var array
@@ -68,8 +68,6 @@ class WsdlToPhpModel
 	 */
 	public function __construct($_name)
 	{
-		$this->setInheritance();
-		$this->setMeta();
 		$this->setName($_name);
 		self::updateModels($this);
 	}
@@ -79,6 +77,7 @@ class WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getDocumentation()
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getDocSubPackages()
+	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpGenerator::getPackageName()
 	 * @param int $_part comment part
 	 * @return array
@@ -100,6 +99,16 @@ class WsdlToPhpModel
 				if($this->getDocumentation() != '')
 					array_push($comments,'Documentation : ' . $this->getDocumentation());
 				$this->addMetaComment($comments,false,true);
+				if($this->getInheritance() != '')
+				{
+					$inheritedModel = self::getModelByName($this->getInheritance());
+					/**
+					 * A virtual struct exists only to store meta informations about itself
+					 * So don't add meta informations about a valid struct
+					 */
+					if($inheritedModel && !$inheritedModel->getIsStruct())
+						$inheritedModel->addMetaComment($comments,false,false);
+				}
 				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
@@ -197,11 +206,14 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Set the name of the class the current class inherits from
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @param string
 	 */
 	public function setInheritance($_inheritance = '')
 	{
-		return ($this->inheritance = $_inheritance);
+		$this->inheritance = $_inheritance;
+		self::updateModels($this);
+		return $_inheritance;
 	}
 	/**
 	 * Add meta informations to comment array
@@ -280,7 +292,8 @@ class WsdlToPhpModel
 		return $metaValue;
 	}
 	/**
-	 * Set the documentation meta value
+	 * Set the documentation meta value.
+	 * Documentation is set as an array so if multiple documentation nodes are set for an unique element, it will gather them.
 	 * @uses WsdlToPhpModel::META_DOCUMENTATION
 	 * @uses WsdlToPhpModel::addMeta()
 	 * @param string $_documentation the documentation from the WSDL
@@ -288,7 +301,8 @@ class WsdlToPhpModel
 	 */
 	public function setDocumentation($_documentation)
 	{
-		return $this->addMeta(self::META_DOCUMENTATION,$_documentation);
+		return $this->addMeta(self::META_DOCUMENTATION,is_array($_documentation)?$_documentation:array(
+																										$_documentation));
 	}
 	/**
 	 * Get the documentation meta value
@@ -299,7 +313,7 @@ class WsdlToPhpModel
 	 */
 	public function getDocumentation()
 	{
-		return self::cleanComment($this->getMetaValue(self::META_DOCUMENTATION,''));
+		return self::cleanComment($this->getMetaValue(self::META_DOCUMENTATION,''),' ');
 	}
 	/**
 	 * Return a meta value according to its name
@@ -363,11 +377,14 @@ class WsdlToPhpModel
 	}
 	/**
 	 * @param WsdlToPhpModel $_owner object the owner of the current model
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @return WsdlToPhpModel
 	 */
 	public function setOwner(WsdlToPhpModel $_owner)
 	{
-		return ($this->owner = $_owner);
+		$this->owner = $_owner;
+		self::updateModels($this);
+		return $_owner;
 	}
 	/**
 	 * Returns true if the original name is safe to use as a PHP property, variable name or class name
@@ -454,9 +471,9 @@ class WsdlToPhpModel
 	 * @param WsdlToPhpModel $_model a WsdlToPhpModel object
 	 * @return WsdlToPhpStruct|bool
 	 */
-	private static function updateModels(WsdlToPhpModel $_model)
+	protected static function updateModels(WsdlToPhpModel $_model)
 	{
-		if($_model->__toString() != 'WsdlToPhpStruct')
+		if($_model->__toString() != 'WsdlToPhpStruct' || !$_model->getName())
 			return false;
 		return (self::$models['_' . $_model->getName() . '_'] = $_model);
 	}
@@ -531,13 +548,14 @@ class WsdlToPhpModel
 	/**
 	 * Clean comment
 	 * @param string $_comment the comment to clean
+	 * @param string $_glueSeparator ths string to use when gathering values
 	 * @return string
 	 */
-	public static function cleanComment($_comment)
+	public static function cleanComment($_comment,$_glueSeparator = ',')
 	{
 		if(!is_scalar($_comment) && !is_array($_comment))
 			return '';
-		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode(',',array_unique($_comment))));
+		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode($_glueSeparator,array_unique($_comment))));
 	}
 	/**
 	 * Returns the generic name of the WsdlClass

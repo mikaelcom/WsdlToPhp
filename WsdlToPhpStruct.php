@@ -15,22 +15,22 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * Attributes of the struct
 	 * @var array
 	 */
-	private $attributes;
+	private $attributes = array();
 	/**
 	 * Is the struct a restriction with defined values ?
 	 * @var bool
 	 */
-	private $isRestriction;
+	private $isRestriction = false;
 	/**
 	 * If the struct is a restriction with values, then store values
 	 * @var array
 	 */
-	private $values;
+	private $values = array();
 	/**
 	 * Define if the urrent struct is a concrete struct or just a virtual struct to store meta informations
 	 * @var bool
 	 */
-	private $isStruct;
+	private $isStruct = false;
 	/**
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()
@@ -45,8 +45,6 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	{
 		parent::__construct($_name);
 		$this->setIsStruct($_isStruct);
-		$this->setValues();
-		$this->setAttributes();
 	}
 	/**
 	 * Returns the constructor method
@@ -399,13 +397,16 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Add attribute based on its original name
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @param string $_attributeName the attribute name
 	 * @param string $_attributeType the attribute type
 	 * @return WsdlToPhpStructAttribute
 	 */
 	public function addAttribute($_attributeName,$_attributeType)
 	{
-		return ($this->attributes[$_attributeName] = new WsdlToPhpStructAttribute($_attributeName,$_attributeType,$this));
+		$this->attributes[$_attributeName] = new WsdlToPhpStructAttribute($_attributeName,$_attributeType,$this);
+		self::updateModels($this);
+		return $this->attributes[$_attributeName];
 	}
 	/**
 	 * Return the attribute by its name, otherwise null
@@ -427,12 +428,15 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Set the isRestriction value
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @param bool $_isRestriction
 	 * @return bool
 	 */
 	public function setIsRestriction($_isRestriction = true)
 	{
-		return ($this->isRestriction = $_isRestriction);
+		$this->isRestriction = $_isRestriction;
+		self::updateModels($this);
+		return $_isRestriction;
 	}
 	/**
 	 * Returns the isStruct value
@@ -444,12 +448,15 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Set the isStruct value
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @param bool $_isStruct
 	 * @return bool
 	 */
 	public function setIsStruct($_isStruct = true)
 	{
-		return ($this->isStruct = $_isStruct);
+		$this->isStruct = $_isStruct;
+		self::updateModels($this);
+		return $_isStruct;
 	}
 	/**
 	 * Returns the values for an enumeration
@@ -461,15 +468,19 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	}
 	/**
 	 * Set the values for an enumeration
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @param array $_values
 	 * @return array
 	 */
 	private function setValues(array $_values = array())
 	{
-		return ($this->values = $_values);
+		$this->values = $_values;
+		self::updateModels($this);
+		return $_values;
 	}
 	/**
 	 * Add value to values array
+	 * @uses WsdlToPhpModel::updateModels()
 	 * @uses WsdlToPhpStruct::getValue()
 	 * @uses WsdlToPhpStruct::getValues()
 	 * @param mixed $_value the original value
@@ -478,6 +489,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	{
 		if(!$this->getValue($_value))
 			array_push($this->values,new WsdlToPhpStructValue($_value,count($this->getValues()),$this));
+		self::updateModels($this);
 	}
 	/**
 	 * Get the value object for the given value

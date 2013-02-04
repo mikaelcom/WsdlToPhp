@@ -15,7 +15,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 	 * Store the functions of the service
 	 * @var array
 	 */
-	private $functions;
+	private $functions = array();
 	/**
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()
@@ -26,7 +26,6 @@ class WsdlToPhpService extends WsdlToPhpModel
 	public function __construct($_name)
 	{
 		parent::__construct($_name);
-		$this->setFunctions();
 	}
 	/**
 	 * Allows to define the contextual part of the class name for the package

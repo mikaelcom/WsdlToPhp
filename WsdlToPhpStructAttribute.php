@@ -15,7 +15,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * Type of the struct attribute
 	 * @var string
 	 */
-	private $type;
+	private $type = '';
 	/**
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()

@@ -1,6 +1,6 @@
 <?php
 /**
- * Sample to show how to use WsdlToPhp class
+ * Sample to show how to use WsdlToPhpGenerator class
  * @package WsdlToPhpGenerator
  * @date 01/07/2012
  */
@@ -139,5 +139,6 @@ if(true)
 	exec('rm -rf ' . __DIR__ . '/docs/' . $name . '/* && clear && phpdoc --sourcecode on -d ' . __DIR__ . '/samples/' . $name . ' -t ' . __DIR__ . '/docs/' . $name . ' -pp -ti "' . ucfirst($name) . ' package documentation" -o HTML:frames:DOM/earthli;',$ouputs);
 	print_r($ouputs);
 	echo "\r\nGenerate doc end " . date('H:i:s');
+	print_r($w->getAudit());
 }
 ?>
