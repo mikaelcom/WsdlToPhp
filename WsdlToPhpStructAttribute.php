@@ -33,7 +33,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		$this->setOwner($_wsdlToPhpStruct);
 	}
 	/**
-	 * Returns the commment lines for this attribute
+	 * Returns the comment lines for this attribute
 	 * @see WsdlToPhpModel::getComment()
 	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpStruct::getIsStruct()
@@ -82,7 +82,6 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	}
 	/**
 	 * Returns the declaration of the attribute
-	 * @see WsdlToPhpModel::getDeclaration()
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @return string
 	 */

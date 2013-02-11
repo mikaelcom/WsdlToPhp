@@ -232,7 +232,7 @@ class WsdlToPhpModel
 		{
 			foreach($this->getMeta() as $metaName=>$metaValue)
 			{
-				$cleanedMetaValue = self::cleanComment($metaValue);
+				$cleanedMetaValue = self::cleanComment($metaValue,$metaName == self::META_DOCUMENTATION?' ':',',stripos($metaName,'SOAPHeader') !== false);
 				if(($_ignoreDocumentation && $metaName == self::META_DOCUMENTATION) || $cleanedMetaValue === '')
 					continue;
 				array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : $cleanedMetaValue");
@@ -549,13 +549,14 @@ class WsdlToPhpModel
 	 * Clean comment
 	 * @param string $_comment the comment to clean
 	 * @param string $_glueSeparator ths string to use when gathering values
+	 * @param bool $_uniqueValues indicates if comment values must be unique or not
 	 * @return string
 	 */
-	public static function cleanComment($_comment,$_glueSeparator = ',')
+	public static function cleanComment($_comment,$_glueSeparator = ',',$_uniqueValues = true)
 	{
 		if(!is_scalar($_comment) && !is_array($_comment))
 			return '';
-		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode($_glueSeparator,array_unique($_comment))));
+		return trim(str_replace('*/','*[:slash:]',is_scalar($_comment)?$_comment:implode($_glueSeparator,$_uniqueValues?array_unique($_comment):$_comment)));
 	}
 	/**
 	 * Returns the generic name of the WsdlClass

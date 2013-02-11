@@ -41,7 +41,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		$this->setOwner($_wsdlToPhpService);
 	}
 	/**
-	 * Returns the commment lines for this function
+	 * Returns the comment lines for this function
 	 * @see WsdlToPhpModel::getComment()
 	 * @uses WsdlToPhpStructAttribute::getGetterName()
 	 * @uses WsdlToPhpFunction::getParameterType()

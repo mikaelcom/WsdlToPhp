@@ -42,9 +42,9 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * @see WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getName()
+	 * @uses WsdlToPhpModel::getOwner()
 	 * @uses WsdlToPhpStructValue::constantSuffix()
 	 * @uses WsdlToPhpStructValue::getIndex()
-	 * @uses WsdlToPhpStructValue::getOwner()
 	 * @uses WsdlToPhpGenerator::getOptionGenericConstantsNames()
 	 * @return string
 	 */
@@ -84,7 +84,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return ($this->index = $_index);
 	}
 	/**
-	 * Returns the commment lines for this value
+	 * Returns the comment lines for this value
 	 * @see WsdlToPhpModel::getComment()
 	 * @uses WsdlToPhpStructValue::getValue()
 	 * @uses WsdlToPhpModel::addMetaComment()

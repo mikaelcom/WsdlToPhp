@@ -2034,9 +2034,14 @@ class WsdlToPhpGenerator extends SoapClient
 			elseif(stripos($_domNode->nodeName,'enumeration') !== false)
 				$this->manageWsdlNodeEnumeration($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 			/**
-			 * Element's, part of a struct
+			 * Element's, part of a struct called attribute
 			 */
-			elseif((stripos($_domNode->nodeName,'element') !== false || stripos($_domNode->nodeName,'attribute') !== false) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
+			elseif($_domNode->hasAttribute('name') && $_domNode->getAttribute('name') != '' && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type') != '')
+				$this->manageWsdlNodeAttribute($_wsdlLocation,$_domNode,$_fromWsdlLocation);
+			/**
+			 * Element
+			 */
+			elseif(stripos($_domNode->nodeName,'element') !== false)
 				$this->manageWsdlNodeElement($_wsdlLocation,$_domNode,$_fromWsdlLocation);
 			/**
 			 * Documentation's
@@ -2235,6 +2240,7 @@ class WsdlToPhpGenerator extends SoapClient
 						$childNode = $childNodes->item($i);
 						/**
 						 * Not an enumeration restriction :
+						 * <code>
 						 * <xs:simpleType name="duration">
 						 * -<xs:restriction base="xs:duration">
 						 * --<xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?"/>
@@ -2242,6 +2248,7 @@ class WsdlToPhpGenerator extends SoapClient
 						 * --<xs:maxInclusive value="P10675199DT2H48M5.4775807S"/>
 						 * -</xs:restriction>
 						 * </xs:simpleType>
+						 * </code>
 						 */
 						if($childNode && stripos($childNode->nodeName,'enumeration') === false && $childNode->hasAttributes())
 						{
@@ -2293,20 +2300,8 @@ class WsdlToPhpGenerator extends SoapClient
 	{
 		self::auditInit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 		/**
-		 * Find parent node of this element node
+		 * Nothing to do yet
 		 */
-		$parentNode = self::findSuitableParent($_domNode);
-		if($parentNode)
-		{
-			$attributes = $_domNode->attributes;
-			$attributesLength = $attributes->length;
-			for($i = 0;$i < $attributesLength;$i++)
-			{
-				$attribute = $attributes->item($i);
-				if($attribute && $attribute->nodeName != 'name' && $attribute->nodeName != 'type')
-					$this->addStructAttributeMeta($parentNode->getAttribute('name'),$_domNode->getAttribute('name'),$attribute->nodeName,$attribute->nodeValue);
-			}
-		}
 		self::audit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 	}
 	/**
@@ -2437,6 +2432,7 @@ class WsdlToPhpGenerator extends SoapClient
 				{
 					/**
 					 * Avoid infinite loop on case like this when looping/managing inheritance :
+					 * <code>
 					 * <xs:complexType name="duration">
 					 * -<xs:simpleContent>
 					 * --<xs:extension base="xs:duration">
@@ -2444,6 +2440,7 @@ class WsdlToPhpGenerator extends SoapClient
 					 * --</xs:extension>
 					 * -</xs:simpleContent>
 					 * </xs:complexType>
+					 * </code>
 					 */
 					if($inheritsName !== $parentNode->getAttribute('name'))
 						$this->setStructInheritance($parentNode->getAttribute('name'),$inheritsName);
@@ -2631,22 +2628,45 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	protected function manageWsdlNodeAttribute($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '',$_nodeNameMatch = null)
 	{
-		if(($_domNode instanceof DOMElement) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type'))
+		if($_nodeNameMatch === 'attribute')
 		{
+			if(($_domNode instanceof DOMElement) && $_domNode->hasAttribute('name') && $_domNode->getAttribute('name') && $_domNode->hasAttribute('type') && $_domNode->getAttribute('type'))
+			{
+				$parentNode = self::findSuitableParent($_domNode);
+				if($parentNode)
+				{
+					$attributeModel = $this->getStructAttribute($parentNode->getAttribute('name'),$_domNode->getAttribute('name'));
+					$type = explode(':',$_domNode->getAttribute('type'));
+					$typeModel = WsdlToPhpModel::getModelByName($type[count($type) - 1]);
+					if($attributeModel && (!$attributeModel->getType() || strtolower($attributeModel->getType()) == 'unknown') && $typeModel)
+					{
+						if($typeModel->getIsRestriction())
+							$attributeModel->setType($typeModel->getName());
+						elseif(!$typeModel->getIsStruct() && $typeModel->getInheritance())
+							$attributeModel->setType($typeModel->getInheritance());
+					}
+				}
+			}
+		}
+		else
+		{
+			self::auditInit('managewsdlnode_attribute',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+			/**
+			 * Find parent node of this element node
+			 */
 			$parentNode = self::findSuitableParent($_domNode);
 			if($parentNode)
 			{
-				$attributeModel = $this->getStructAttribute($parentNode->getAttribute('name'),$_domNode->getAttribute('name'));
-				$type = explode(':',$_domNode->getAttribute('type'));
-				$typeModel = WsdlToPhpModel::getModelByName($type[count($type) - 1]);
-				if($attributeModel && (!$attributeModel->getType() || strtolower($attributeModel->getType()) == 'unknown') && $typeModel)
+				$attributes = $_domNode->attributes;
+				$attributesLength = $attributes->length;
+				for($i = 0;$i < $attributesLength;$i++)
 				{
-					if($typeModel->getIsRestriction())
-						$attributeModel->setType($typeModel->getName());
-					elseif(!$typeModel->getIsStruct() && $typeModel->getInheritance())
-						$attributeModel->setType($typeModel->getInheritance());
+					$attribute = $attributes->item($i);
+					if($attribute && $attribute->nodeName != 'name' && $attribute->nodeName != 'type')
+						$this->addStructAttributeMeta($parentNode->getAttribute('name'),$_domNode->getAttribute('name'),$attribute->nodeName,$attribute->nodeValue);
 				}
 			}
+			self::audit('managewsdlnode_attribute',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 		}
 	}
 	/**
