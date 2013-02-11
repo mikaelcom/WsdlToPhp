@@ -10,7 +10,7 @@ Test this library online here : http://www.WsdlToPhpGenerator.com/
 
 Read the PHPDoc online here : http://phpdoc.WsdlToPhpGenerator.com/
 
-[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=KXBVCHP3UDQPL)
+[![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KXBVCHP3UDQPL)
 
 Tutorial
 ========
