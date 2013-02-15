@@ -80,7 +80,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 			$model = self::getModelByName($this->getParameterType());
 			if($model && $model->getIsStruct() && !$model->getIsRestriction())
 			{
-				$attributes = $model->getAttributes(true);
+				$attributes = $model->getAttributes(true,true);
 				if(count($attributes))
 				{
 					foreach($attributes as $attributeData)
@@ -116,6 +116,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	/**
 	 * Set the function body
 	 * @uses WsdlToPhpModel::getName()
+	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::nameIsClean()
@@ -142,7 +143,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		$returnModel = ($returnModel && $returnModel->getIsStruct() && !$returnModel->getIsRestriction())?$returnModel:null;
 		if($parameterModel)
 		{
-			if(count($parameterModel->getAttributes(true)))
+			if(count($parameterModel->getAttributes(true,true)))
 			{
 				$parameterName = '$_' . lcfirst($parameterModel->getPackagedName());
 				$parameter = $parameterModel->getPackagedName() . ' ' . $parameterName;
@@ -168,7 +169,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		}
 		else
 			$parameterName = $parameter = '';
-		array_push($_body,'public function ' . self::uniqueName(self::replaceReservedPhpKeyword($this->getCleanName(),$this->getName()),$this->getOwner()->getName()) . '(' . $parameter . ')');
+		array_push($_body,'public function ' . self::uniqueName(self::replaceReservedPhpKeyword($this->getCleanName(),$this->getOwner()->getPackagedName()),$this->getOwner()->getPackagedName()) . '(' . $parameter . ')');
 		array_push($_body,'{');
 		array_push($_body,'try');
 		array_push($_body,'{');
@@ -183,7 +184,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		if($parameterModel)
 		{
 			$soapParametersEnd = array();
-			$attributes = $parameterModel->getAttributes(true);
+			$attributes = $parameterModel->getAttributes(true,true);
 			if(count($attributes))
 			{
 				foreach($attributes as $attributeData)

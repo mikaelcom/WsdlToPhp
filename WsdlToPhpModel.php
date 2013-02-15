@@ -316,7 +316,7 @@ class WsdlToPhpModel
 		return self::cleanComment($this->getMetaValue(self::META_DOCUMENTATION,''),' ');
 	}
 	/**
-	 * Return a meta value according to its name
+	 * Returns a meta value according to its name
 	 * @uses WsdlToPhpModel::getMeta()
 	 * @param string $_metaName the meta information name
 	 * @param string $_fallback the fallback value if unset
@@ -327,7 +327,7 @@ class WsdlToPhpModel
 		return array_key_exists($_metaName,$this->getMeta())?$this->meta[$_metaName]:$_fallback;
 	}
 	/**
-	 * Return the value of the first meta value assigned to the name
+	 * Returns the value of the first meta value assigned to the name
 	 * @param array $_names the meta names to check
 	 * @param string $_fallback the fallback value if anyone is set
 	 * @return mixed the meta information value
@@ -359,16 +359,18 @@ class WsdlToPhpModel
 		return ($this->name = $_name);
 	}
 	/**
-	 * Return a valid clean name for PHP
+	 * Returns a valid clean name for PHP
 	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpModel::cleanString()
+	 * @param bool $_keepMultipleUnderscores optional, allows to keep the multiple consecutive underscores
 	 * @return string
 	 */
-	public function getCleanName()
+	public function getCleanName($_keepMultipleUnderscores = true)
 	{
-		return self::cleanString($this->getName());
+		return self::cleanString($this->getName(),$_keepMultipleUnderscores);
 	}
 	/**
+	 * Returns the owner model object
 	 * @return WsdlToPhpModel
 	 */
 	public function getOwner()
@@ -376,6 +378,7 @@ class WsdlToPhpModel
 		return $this->owner;
 	}
 	/**
+	 * Set the owner model object
 	 * @param WsdlToPhpModel $_owner object the owner of the current model
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @return WsdlToPhpModel
@@ -397,7 +400,7 @@ class WsdlToPhpModel
 		return ($this->getName() != '' && $this->getName() == $this->getCleanName());
 	}
 	/**
-	 * Return the packaged name
+	 * Returns the packaged name
 	 * @uses WsdlToPhpGenerator::getPackageName()
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getContextualPart()
@@ -428,11 +431,15 @@ class WsdlToPhpModel
 	/**
 	 * Clean a string to make it valid as PHP variable
 	 * @param string $_string the string to clean
+	 * @param bool $_keepMultipleUnderscores optional, allows to keep the multiple consecutive underscores
 	 * @return string
 	 */
-	public static function cleanString($_string)
+	public static function cleanString($_string,$_keepMultipleUnderscores = true)
 	{
-		return preg_replace('/[_]+/','_',preg_replace('/[^a-zA-Z0-9_]/','_',$_string));
+		$cleanedString = preg_replace('/[^a-zA-Z0-9_]/','_',$_string);
+		if(!$_keepMultipleUnderscores)
+			$cleanedString = preg_replace('/[_]+/','_',$cleanedString);
+		return $cleanedString;
 	}
 	/**
 	 * Get models
@@ -465,9 +472,8 @@ class WsdlToPhpModel
 	}
 	/**
 	 * Update models with model
-	 * @uses WsdlToPhpModel::getModels()
-	 * @uses WsdlToPhpModel::setModels()
 	 * @uses WsdlToPhpModel::getName()
+	 * @uses WsdlToPhpModel::__toString()
 	 * @param WsdlToPhpModel $_model a WsdlToPhpModel object
 	 * @return WsdlToPhpStruct|bool
 	 */

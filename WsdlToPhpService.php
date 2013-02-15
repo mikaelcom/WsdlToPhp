@@ -48,7 +48,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 					'Services');
 	}
 	/**
-	 * Returns the comment lines for this function
+	 * Returns the comment lines for this service
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses WsdlToPhpService::getFunctions()

@@ -5,7 +5,7 @@
  * @date 19/12/2012
  */
 /**
- * Class WsdlToPhpStructValue stands for an enumeratio value
+ * Class WsdlToPhpStructValue stands for an enumeration value
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
  */
@@ -46,20 +46,21 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * @uses WsdlToPhpStructValue::constantSuffix()
 	 * @uses WsdlToPhpStructValue::getIndex()
 	 * @uses WsdlToPhpGenerator::getOptionGenericConstantsNames()
+	 * @param bool $_keepMultipleUnderscores optional, allows to keep the multiple consecutive underscores
 	 * @return string
 	 */
-	public function getCleanName()
+	public function getCleanName($_keepMultipleUnderscores = false)
 	{
 		if(WsdlToPhpGenerator::getOptionGenericConstantsNames() && is_numeric($this->getIndex()) && $this->getIndex() >= 0)
 			return 'ENUM_VALUE_' . $this->getIndex();
 		else
 		{
-			$key = self::constantSuffix($this->getOwner()->getName(),parent::getCleanName(),$this->getIndex());
-			return 'VALUE_' . strtoupper(parent::getCleanName()) . ($key?'_' . $key:'');
+			$key = self::constantSuffix($this->getOwner()->getName(),parent::getCleanName($_keepMultipleUnderscores),$this->getIndex());
+			return 'VALUE_' . strtoupper(parent::getCleanName($_keepMultipleUnderscores)) . ($key?'_' . $key:'');
 		}
 	}
 	/**
-	 * Return the value with good type
+	 * Returns the value with good type
 	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpModel::getValueWithinItsType()
 	 * @return mixed
@@ -69,6 +70,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return self::getValueWithinItsType($this->getName());
 	}
 	/**
+	 * Get the index attribute value
 	 * @return int
 	 */
 	public function getIndex()
@@ -76,6 +78,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return $this->index;
 	}
 	/**
+	 * Set the index attribute value
 	 * @param int
 	 * @return int $_index
 	 */
@@ -110,7 +113,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 */
 	public function getDeclaration($_structName,$_index = -1)
 	{
-		return 'const ' . $this->getCleanName($_structName,$_index) . ' = ' . var_export($this->getValue(),true) . ';';
+		return 'const ' . $this->getCleanName() . ' = ' . var_export($this->getValue(),true) . ';';
 	}
 	/**
 	 * Return the index which has to be added at the end of natural constant name defined with the value cleaned

@@ -263,6 +263,12 @@
  * <li>{@link http://portaplusapi.icc-switch.com/soap12}</li>
  * </ul>
  * </li>
+ * <li>Operations calls own obect parameter methods and inherited methods (php code and php doc must take account of the inheritance) :
+ * <ul>
+ * <li>{@link http://voipnow2demo.4psa.com//soap2/schema/3.0.0/voipnowservice.wsdl}, ex : Add, AddUser, AddServiceProvider</li>
+ * <li>{@link http://www.reservationfactory.com/wsdls/air_v21_0/Air.wsdl}, ex : service</li>
+ * </ul>
+ * </li>
  * <li>Biggest Packages generated :
  * <ul>
  * <li>{@link https://raw.github.com/jkinred/psphere/master/psphere/wsdl/vimService.wsdl}</li>
@@ -2336,70 +2342,61 @@ class WsdlToPhpGenerator extends SoapClient
 		/**
 		 * Find parent node of this documentation node without taking care of the name attribute for enumeration and definitions
 		 * This case is managed first because enumeration are contained by elements and the method could climb ot its parent without stopping on the enumeration tag
+		 * Go from the deepest possible node to the highest possible node
+		 * Each case must treated on the same level, this is why we test the suitableParentNode at each case
 		 */
-		$parentNode = self::findSuitableParent($_domNode,false,array(
-																	'enumeration',
-																	'definitions'));
-		$parentNodeManaged = false;
-		if($parentNode)
+		$enumerationNode = self::findSuitableParent($_domNode,false,array(
+																		'enumeration'));
+		$definitionsNode = self::findSuitableParent($_domNode,false,array(
+																		'definitions'));
+		$attributeGroupNode = self::findSuitableParent($_domNode,false,array(
+																			'attributeGroup'));
+		$anyNode = self::findSuitableParent($_domNode,true,array(
+																'operation'));
+		/**
+		 * is it an enumeration' value
+		 */
+		if($enumerationNode && stripos($enumerationNode->nodeName,'enumeration') !== false)
 		{
 			/**
-			 * is it an enumeration
+			 * Find parent node of this enumeration node
 			 */
-			if(stripos($parentNode->nodeName,'enumeration') !== false)
-			{
-				/**
-				 * Find parent node of this enumeration node
-				 */
-				$upParentNode = self::findSuitableParent($parentNode);
-				if($upParentNode)
-				{
-					$this->setStructValueDocumentation($upParentNode->getAttribute('name'),$parentNode->getAttribute('value'),$documentation);
-					$parentNodeManaged = true;
-				}
-			}
-			/**
-			 * is it a definitions ?
-			 */
-			elseif(stripos($parentNode->nodeName,'definitions') !== false)
-			{
-				$this->addWsdlMeta('documentation',$documentation);
-				$parentNodeManaged = true;
-			}
+			$upParentNode = self::findSuitableParent($enumerationNode);
+			if($upParentNode)
+				$this->setStructValueDocumentation($upParentNode->getAttribute('name'),$enumerationNode->getAttribute('value'),$documentation);
 		}
-		if(!$parentNodeManaged)
+		/**
+		 * is it an attributeGroup element, nothing yet but need to be catched here
+		 */
+		elseif($attributeGroupNode && stripos($attributeGroupNode->nodeName,'attributeGroup') !== false)
+		{}
+		/**
+		 * is it an element ? part of a struct
+		 */
+		elseif($anyNode && (stripos($anyNode->nodeName,'element') !== false || stripos($anyNode->nodeName,'attribute') !== false) && $anyNode->hasAttribute('type'))
 		{
 			/**
-			 * Find parent node of this documentation node with the name attribute defined
+			 * Find parent node of this documentation node
 			 */
-			$parentNode = self::findSuitableParent($_domNode,true,array(
-																		'operation'));
-			if($parentNode)
-			{
-				/**
-				 * is it an element ? part of a struct
-				 */
-				if((stripos($parentNode->nodeName,'element') !== false || stripos($parentNode->nodeName,'attribute') !== false) && $parentNode->hasAttribute('type'))
-				{
-					/**
-					 * Find parent node of this documentation node
-					 */
-					$upParentNode = self::findSuitableParent($parentNode);
-					if($upParentNode)
-						$this->setStructAttributeDocumentation($upParentNode->getAttribute('name'),$parentNode->getAttribute('name'),$documentation);
-				}
-				/**
-				 * is it a struct ?
-				 */
-				elseif(stripos($parentNode->nodeName,'element') !== false || stripos($parentNode->nodeName,'complextype') !== false || stripos($parentNode->nodeName,'simpletype') !== false || stripos($parentNode->nodeName,'attribute') !== false)
-					$this->setStructDocumentation($parentNode->getAttribute('name'),$documentation);
-				/**
-				 * is it an operation ?
-				 */
-				elseif(stripos($parentNode->nodeName,'operation') !== false)
-					$this->setServiceFunctionDocumentation($parentNode->getAttribute('name'),$documentation);
-			}
+			$upParentNode = self::findSuitableParent($anyNode);
+			if($upParentNode)
+				$this->setStructAttributeDocumentation($upParentNode->getAttribute('name'),$anyNode->getAttribute('name'),$documentation);
 		}
+		/**
+		 * is it a struct ?
+		 */
+		elseif($anyNode && (stripos($anyNode->nodeName,'element') !== false || stripos($anyNode->nodeName,'complextype') !== false || stripos($anyNode->nodeName,'simpletype') !== false || stripos($anyNode->nodeName,'attribute') !== false))
+			$this->setStructDocumentation($anyNode->getAttribute('name'),$documentation);
+		/**
+		 * is it an operation ?
+		 */
+		elseif($anyNode && stripos($anyNode->nodeName,'operation') !== false)
+			$this->setServiceFunctionDocumentation($anyNode->getAttribute('name'),$documentation);
+		/**
+		 * is it the definitions node of the WSDL
+		 */
+		elseif($definitionsNode && stripos($definitionsNode->nodeName,'definitions') !== false)
+			$this->addWsdlMeta('documentation',$documentation);
 		self::audit('managewsdlnode_documentation',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 	}
 	/**

@@ -199,7 +199,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		 */
 		$comments = array();
 		array_push($comments,'Set ' . $this->getName() . ' value');
-		if($model && $model->getIsRestriction())
+		if($model && $model->getIsRestriction() && !$_struct->isArray())
 			array_push($comments,'@uses ' . $model->getPackagedName() . '::valueIsValid()');
 		if($model)
 		{
@@ -258,7 +258,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		return ($this->type = $_type);
 	}
 	/**
-	 * Return potential deefault value
+	 * Return potential default value
 	 * @uses WsdlToPhpModel::getMetaValueFirstSet()
 	 * @uses WsdlToPhpModel::getValueWithinItsType()
 	 * @return mixed
@@ -298,15 +298,6 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 												'Pattern',
 												'match',
 												'Match'),'');
-	}
-	/**
-	 * Allows to define the contextual part of the class name for the package
-	 * @see WsdlToPhpModel::getContextualPart()
-	 * @return string
-	 */
-	public function getContextualPart()
-	{
-		return '';
 	}
 	/**
 	 * Return class name

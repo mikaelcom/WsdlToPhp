@@ -54,15 +54,18 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getInheritance()
 	 * @uses WsdlToPhpModel::getGenericWsdlClassName()
+	 * @uses WsdlToPhpStruct::isArray()
 	 * @uses WsdlToPhpStruct::getIsRestriction()
 	 * @uses WsdlToPhpStruct::getValues()
 	 * @uses WsdlToPhpStruct::getAttributes()
+	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStructValue::getComment()
 	 * @uses WsdlToPhpStructValue::getDeclaration()
 	 * @uses WsdlToPhpStructValue::getCleanName()
 	 * @uses WsdlToPhpStructAttribute::getComment()
 	 * @uses WsdlToPhpStructAttribute::getDeclaration()
 	 * @uses WsdlToPhpStructAttribute::isRequired()
+	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @uses WsdlToPhpStructAttribute::getDefaultValue()
 	 * @uses WsdlToPhpStructAttribute::getGetterDeclaration()
 	 * @uses WsdlToPhpStructAttribute::getSetterDeclaration()
@@ -117,7 +120,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 			$bodyParameters = array();
 			$bodyParams = array();
 			$constructParameters = array();
-			foreach($this->getAttributes() as $attribute)
+			foreach($this->getAttributes(false,true) as $attribute)
 			{
 				array_push($_body,array(
 										'comment'=>$attribute->getComment()));
@@ -129,7 +132,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 					if($model->getIsStruct())
 					{
 						if($model->isArray())
-							array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>new ' . $model->getPackagedName() . '($_' . lcfirst($attribute->getCleanName()) . ')');
+							array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>($_' . lcfirst($attribute->getCleanName()) . ' instanceof ' . $model->getPackagedName() . ')?$_' . lcfirst($attribute->getCleanName()) . ':new ' . $model->getPackagedName() . '($_' . lcfirst($attribute->getCleanName()) . ')');
 						else
 							array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>$_' . lcfirst($attribute->getCleanName()));
 						$paramType = $model->getPackagedName();
@@ -170,7 +173,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 			/**
 			 * Setters and getters
 			 */
-			foreach($this->getAttributes() as $attribute)
+			foreach($this->getAttributes(false,true) as $attribute)
 			{
 				$attribute->getGetterDeclaration($_body,$this);
 				$attribute->getSetterDeclaration($_body,$this);
@@ -179,7 +182,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 			/**
 			 * A array struct
 			 */
-			if($this->isArray() && count($this->getAttributes()) == 1)
+			if($this->isArray())
 			{
 				foreach($this->getAttributes() as $attr)
 					$attribute = $attr;
@@ -337,11 +340,12 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	/**
 	 * Returns true if the current struct is a collection of values (like an array)
 	 * @uses WsdlToPhpModel::getName()
+	 * @uses WsdlToPhpStruct::countOwnAttributes()
 	 * @return bool
 	 */
 	public function isArray()
 	{
-		return (stripos($this->getName(),'array') !== false);
+		return ($this->countOwnAttributes() === 1 && stripos($this->getName(),'array') !== false);
 	}
 	/**
 	 * Returns the attributes of the struct and potentially from the parent class
@@ -350,10 +354,15 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStruct::getAttributes()
 	 * @param bool $_includeInheritanceAttributes include the attributes of parent class, default parent attributes are not included. If true, then the array is an associative array containing and index "attribute" for the WsdlToPhpStructAttribute object and an index "model" for the WsdlToPhpStruct object.
+	 * @param bool $_requiredFirst places the required attributes first, then the not required in order to have the _contrust method with the required attribute at first
 	 * @return array
 	 */
-	public function getAttributes($_includeInheritanceAttributes = false)
+	public function getAttributes($_includeInheritanceAttributes = false,$_requiredFirst = false)
 	{
+		$attributes = $this->attributes;
+		/**
+		 * Return the inherited attributes
+		 */
 		if($_includeInheritanceAttributes)
 		{
 			$attributes = array();
@@ -370,6 +379,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 														'attribute'=>$attribute,
 														'model'=>$model));
 					}
+					unset($modelAttributes);
 					$model = WsdlToPhpModel::getModelByName($model->getInheritance());
 				}
 			}
@@ -381,13 +391,43 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 												'attribute'=>$attribute,
 												'model'=>$this));
 			}
-			return $attributes;
+			unset($thisAttributes);
 		}
-		else
-			return $this->attributes;
+		/**
+		 * Return the required attributes at first position
+		 */
+		if($_requiredFirst)
+		{
+			$requiredAttributes = array();
+			$notRequiredAttributes = array();
+			foreach($attributes as $attribute)
+			{
+				$attributeModel = $_includeInheritanceAttributes?$attribute['attribute']:$attribute;
+				if($attributeModel->isRequired())
+					array_push($requiredAttributes,$attribute);
+				else
+					array_push($notRequiredAttributes,$attribute);
+			}
+			$attributes = array();
+			foreach($requiredAttributes as $attribute)
+				array_push($attributes,$attribute);
+			foreach($notRequiredAttributes as $attribute)
+				array_push($attributes,$attribute);
+			unset($requiredAttributes,$notRequiredAttributes);
+		}
+		return $attributes;
 	}
 	/**
-	 * set the attributes of the struct
+	 * Returns the number of own attributes
+	 * @uses WsdlToPhpStruct::getAttributes()
+	 * @return int
+	 */
+	public function countOwnAttributes()
+	{
+		return count($this->getAttributes(false,false));
+	}
+	/**
+	 * Set the attributes of the struct
 	 * @param array
 	 * @return array
 	 */
