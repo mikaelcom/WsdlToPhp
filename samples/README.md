@@ -1,0 +1,1 @@
+Samples were outdated and not maintained, so find samples and create your onwn on http://www.wsdltophp.com !
