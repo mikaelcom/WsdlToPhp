@@ -232,7 +232,7 @@ class WsdlToPhpModel
 		{
 			foreach($this->getMeta() as $metaName=>$metaValue)
 			{
-				$cleanedMetaValue = self::cleanComment($metaValue,$metaName == self::META_DOCUMENTATION?' ':',',stripos($metaName,'SOAPHeader') !== false);
+				$cleanedMetaValue = self::cleanComment($metaValue,$metaName == self::META_DOCUMENTATION?' ':',',stripos($metaName,'SOAPHeader') === false);
 				if(($_ignoreDocumentation && $metaName == self::META_DOCUMENTATION) || $cleanedMetaValue === '')
 					continue;
 				array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : $cleanedMetaValue");
