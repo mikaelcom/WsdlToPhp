@@ -3118,13 +3118,13 @@ class WsdlToPhpGenerator extends SoapClient
 					case self::OPT_CAT_END_NAME:
 						if($_string != $mainCatPart && strlen($mainCatPart) < strlen($_string))
 							$_string = substr($_string,0,strlen($_string) - strlen($mainCatPart));
-						elseif($_string = $mainCatPart)
+						elseif($_string == $mainCatPart)
 							$_string = '';
 						break;
 					case self::OPT_CAT_START_NAME:
 						if($_string != $mainCatPart && strlen($mainCatPart) < strlen($_string))
 							$_string = substr($_string,strlen($mainCatPart));
-						elseif($_string = $mainCatPart)
+						elseif($_string == $mainCatPart)
 							$_string = '';
 						break;
 					case self::OPT_SUB_CAT_NONE_NAME:
