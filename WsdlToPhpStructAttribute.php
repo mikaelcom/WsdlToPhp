@@ -117,6 +117,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @uses WsdlToPhpStructAttribute::getGetterName()
+	 * @uses WsdlToPhpStructAttribute::isRequired()
 	 * @param array $_body
 	 * @param WsdlToPhpStruct $_struct
 	 * @return void
@@ -139,7 +140,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 			array_push($comments,'@uses ' . $_struct->getPackagedName() . '::' . $this->getSetterName() . '()');
 			array_push($comments,'@param bool true or false whether to return XML value as string or as DOMDocument');
 		}
-		array_push($comments,'@return ' . ($model?($model->getIsStruct()?$model->getPackagedName():($model->getInheritance()?$model->getInheritance():$this->getType())):$this->getType()));
+		array_push($comments,'@return ' . ($model?($model->getIsStruct()?$model->getPackagedName():($model->getInheritance()?$model->getInheritance():$this->getType())):$this->getType()) . ($this->isRequired()?'':'|null'));
 		array_push($_body,array(
 								'comment'=>$comments));
 		/**
