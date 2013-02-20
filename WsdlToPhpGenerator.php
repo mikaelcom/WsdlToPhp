@@ -295,13 +295,13 @@ class WsdlToPhpGenerator extends SoapClient
 	const WSDL_TO_PHP_GENERATOR_AUDIT_KEY = '__WsdlToPhpGeneratorAuditKey__';
 	/**
 	 * Set categorization of classes based on the end of the name of the struct or the function
-	 * The catagory set the tree folders
+	 * The category set the tree folders
 	 * @var int
 	 */
 	const OPT_CAT_END_NAME = 0;
 	/**
 	 * Set categorization of classes based on the start of the name of the struct or the function
-	 * The catagory set the tree folders
+	 * The category set the tree folders
 	 * @var int
 	 */
 	const OPT_CAT_START_NAME = 1;
@@ -312,19 +312,26 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	const OPT_CAT_NONE_NAME = 2;
 	/**
+	 * Set typed categorization of classes
+	 * Files are put in folder named as their ContextualPart value.
+	 * In this cas, there is no subfolder.
+	 * @var int
+	 */
+	const OPT_CAT_TYPE = 3;
+	/**
 	 * Index to set categorization when calling the constructor
 	 * @var string
 	 */
 	const OPT_CAT_KEY = 'option_category_key';
 	/**
 	 * Set subcategorization of classes based on the end of the name of the struct or the function
-	 * The catagory set the tree folders
+	 * The category set the tree folders
 	 * @var int
 	 */
 	const OPT_SUB_CAT_END_NAME = 0;
 	/**
 	 * Set subcategorization of classes based on the start of the name of the struct or the function
-	 * The catagory set the tree folders
+	 * The category set the tree folders
 	 * @var int
 	 */
 	const OPT_SUB_CAT_START_NAME = 1;
@@ -845,7 +852,7 @@ class WsdlToPhpGenerator extends SoapClient
 			{
 				if(!$struct->getIsStruct())
 					continue;
-				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$struct->getCleanName());
+				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$struct);
 				$structsClassesFiles[] = $structClassFileName = $elementFolder . $struct->getPackagedName() . '.php';
 				/**
 				 * Generate file
@@ -966,7 +973,7 @@ class WsdlToPhpGenerator extends SoapClient
 		{
 			foreach($services as $serviceName=>$service)
 			{
-				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$service->getCleanName());
+				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$service);
 				$servicesClassesFiles[] = $serviceClassFileName = $elementFolder . $service->getPackagedName() . '.php';
 				/**
 				 * Generate file
@@ -1625,7 +1632,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	public static function setOptionCategory($_optionCategory = self::OPT_CAT_START_NAME)
 	{
-		if($_optionCategory == self::OPT_CAT_END_NAME || $_optionCategory == self::OPT_CAT_START_NAME || $_optionCategory == self::OPT_CAT_NONE_NAME)
+		if($_optionCategory == self::OPT_CAT_END_NAME || $_optionCategory == self::OPT_CAT_START_NAME || $_optionCategory == self::OPT_CAT_NONE_NAME || $_optionCategory == self::OPT_CAT_TYPE)
 		{
 			self::$optionCategory = $_optionCategory;
 			return true;
@@ -3031,14 +3038,14 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::getSubCategory()
 	 * @param string $_rootDirectory the directory
 	 * @param int $_rootDirectoryRights the permissions to apply
-	 * @param string $_string the string to use to generate the directory
+	 * @param WsdlToPhpModel $_model the model for which we generate the folder
 	 * @return string
 	 */
-	private function getDirectory($_rootDirectory,$_rootDirectoryRights,$_string)
+	private function getDirectory($_rootDirectory,$_rootDirectoryRights,WsdlToPhpModel $_model)
 	{
 		$directory = $_rootDirectory;
-		$mainCat = $this->getCategory($_string);
-		$subCat = $this->getSubCategory($_string);
+		$mainCat = $this->getCategory($_model);
+		$subCat = $this->getSubCategory($_model);
 		if(!empty($mainCat))
 		{
 			$directory .= ucfirst($mainCat) . '/';
@@ -3055,41 +3062,40 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Get main category part
-	 * @param string $_string element name
+	 * @param WsdlToPhpModel $_model the model for which we generate the folder
 	 * @return string
 	 */
-	private function getCategory($_string)
+	private function getCategory(WsdlToPhpModel $_model)
 	{
-		return $this->getPart($_string,self::OPT_CAT_KEY);
+		return $this->getPart($_model,self::OPT_CAT_KEY);
 	}
 	/**
 	 * Get sub category part
-	 * @param string $_string element name
+	 * @param WsdlToPhpModel $_model the model for which we generate the folder
 	 * @return string
 	 */
-	private function getSubCategory($_string)
+	private function getSubCategory(WsdlToPhpModel $_model)
 	{
-		return $this->getPart($_string,self::OPT_SUB_CAT_KEY);
+		return $this->getPart($_model,self::OPT_SUB_CAT_KEY);
 	}
 	/**
 	 * Get gather name class
-	 * @param string $_string element name
+	 * @param WsdlToPhpModel $_model the model for which we generate the folder
 	 * @return string
 	 */
-	private function getGather($_string)
+	private function getGather(WsdlToPhpModel $_model)
 	{
-		return $this->getPart($_string,self::OPT_GATH_METH_KEY);
+		return $this->getPart($_model,self::OPT_GATH_METH_KEY);
 	}
 	/**
 	 * Returns the service name associated to the function/operation name in order to gather them in one service class
 	 * @uses WsdlToPhpGenerator::getGather()
-	 * @uses WsdlToPhpModel::cleanString()
 	 * @param string $_functionName original operation/function anme
 	 * @return string
 	 */
 	private function getServiceName($_functionName)
 	{
-		return ucfirst($this->getGather(WsdlToPhpModel::cleanString($_functionName)));
+		return ucfirst($this->getGather(new WsdlToPhpModel($_functionName)));
 	}
 	/**
 	 * Get category part
@@ -3097,14 +3103,17 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::getOptionSubCategory()
 	 * @uses WsdlToPhpGenerator::getPart()
 	 * @uses WsdlToPhpGenerator::getOptionGatherMethods()
-	 * @param string $_string element name
+	 * @uses WsdlToPhpGenerator::getCleanName()
+	 * @uses WsdlToPhpGenerator::getContextualPart()
+	 * @param WsdlToPhpModel $_model the model for which we generate the folder
 	 * @param string $_optionName category type
 	 * @return string
 	 */
-	protected function getPart($_string,$_optionName)
+	protected function getPart(WsdlToPhpModel $_model,$_optionName)
 	{
 		$elementType = '';
 		$optionValue = 0;
+		$string = $_model->getCleanName();
 		switch($_optionName)
 		{
 			case self::OPT_CAT_KEY:
@@ -3112,24 +3121,25 @@ class WsdlToPhpGenerator extends SoapClient
 				break;
 			case self::OPT_SUB_CAT_KEY:
 				$optionValue = self::getOptionSubCategory();
-				$mainCatPart = $this->getPart($_string,self::OPT_CAT_KEY);
+				$mainCatPart = $this->getPart($_model,self::OPT_CAT_KEY);
 				switch(self::getOptionCategory())
 				{
 					case self::OPT_CAT_END_NAME:
-						if($_string != $mainCatPart && strlen($mainCatPart) < strlen($_string))
-							$_string = substr($_string,0,strlen($_string) - strlen($mainCatPart));
-						elseif($_string == $mainCatPart)
-							$_string = '';
+						if($string != $mainCatPart && strlen($mainCatPart) < strlen($string))
+							$string = substr($string,0,strlen($string) - strlen($mainCatPart));
+						elseif($string == $mainCatPart)
+							$string = '';
 						break;
 					case self::OPT_CAT_START_NAME:
-						if($_string != $mainCatPart && strlen($mainCatPart) < strlen($_string))
-							$_string = substr($_string,strlen($mainCatPart));
-						elseif($_string == $mainCatPart)
-							$_string = '';
+						if($string != $mainCatPart && strlen($mainCatPart) < strlen($string))
+							$string = substr($string,strlen($mainCatPart));
+						elseif($string == $mainCatPart)
+							$string = '';
 						break;
-					case self::OPT_SUB_CAT_NONE_NAME:
+					case self::OPT_CAT_NONE_NAME:
+					case self::OPT_CAT_TYPE:
 					default:
-						$_string = '';
+						$string = '';
 						break;
 				}
 				break;
@@ -3137,7 +3147,7 @@ class WsdlToPhpGenerator extends SoapClient
 				$optionValue = self::getOptionGatherMethods();
 				break;
 		}
-		if(!empty($_string))
+		if(!empty($string))
 		{
 			switch($optionValue)
 			{
@@ -3147,14 +3157,14 @@ class WsdlToPhpGenerator extends SoapClient
 					/**
 					 * Determine category from last word
 					 */
-					$parts = preg_split('/[A-Z]/',ucfirst($_string));
+					$parts = preg_split('/[A-Z]/',ucfirst($string));
 					/**
 					 * Ex : Error or error
 					 */
 					if(count($parts) == 0)
-						$elementType = $_string;
+						$elementType = $string;
 					elseif(!empty($parts[count($parts) - 1]))
-						$elementType = substr($_string,strrpos($_string,implode('',array_slice($parts,-1))) - 1);
+						$elementType = substr($string,strrpos($string,implode('',array_slice($parts,-1))) - 1);
 					else
 					{
 						$part = '';
@@ -3164,7 +3174,7 @@ class WsdlToPhpGenerator extends SoapClient
 							if(!empty($part))
 								break;
 						}
-						$elementType = substr($_string,((count($parts) - 2 - $i) + 1) * -1);
+						$elementType = substr($string,((count($parts) - 2 - $i) + 1) * -1);
 					}
 					break;
 				case self::OPT_CAT_START_NAME:
@@ -3173,14 +3183,14 @@ class WsdlToPhpGenerator extends SoapClient
 					/**
 					 * Determine category from first word
 					 */
-					$parts = preg_split('/[A-Z]/',ucfirst($_string));
+					$parts = preg_split('/[A-Z]/',ucfirst($string));
 					/**
 					 * Ex : Error or error
 					 */
 					if(count($parts) == 0)
-						$elementType = $_string;
+						$elementType = $string;
 					elseif(empty($parts[0]) && !empty($parts[1]))
-						$elementType = substr($_string,0,strlen($parts[1]) + 1);
+						$elementType = substr($string,0,strlen($parts[1]) + 1);
 					else
 					{
 						$part = '';
@@ -3190,8 +3200,11 @@ class WsdlToPhpGenerator extends SoapClient
 							if(!empty($part))
 								break;
 						}
-						$elementType = substr($_string,0,$i);
+						$elementType = substr($string,0,$i);
 					}
+					break;
+				case self::OPT_CAT_TYPE:
+					$elementType = $_model->getContextualPart();
 					break;
 				case self::OPT_CAT_NONE_NAME:
 				case self::OPT_SUB_CAT_NONE_NAME:
