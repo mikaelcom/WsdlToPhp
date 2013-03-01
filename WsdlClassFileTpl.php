@@ -166,7 +166,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	}
 	/**
 	 * Method initiating SoapClient
-	 * @uses PackageNameWsdlClass::classMap()
+	 * @uses PackageNameClassMap::classMap()
 	 * @uses PackageNameWsdlClass::getDefaultWsdlOptions()
 	 * @uses PackageNameWsdlClass::setSoapClient()
 	 * @param array $_wsdlOptions WSDL options
@@ -241,8 +241,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	}
 	/**
 	 * Method returning item length, alias to length
-	 * @uses PackageNameWsdlClass::internArrayToIterateIsArray()
 	 * @uses PackageNameWsdlClass::getInternArrayToIterate()
+	 * @uses PackageNameWsdlClass::getInternArrayToIterateIsArray()
 	 * @return int
 	 */
 	public function count()
