@@ -2461,7 +2461,9 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::getStruct()
 	 * @uses WsdlToPhpGenerator::getGlobal()
 	 * @uses WsdlToPhpGenerator::setGlobal()
+	 * @uses WsdlToPhpGenerator::getServiceFunction()
 	 * @uses WsdlToPhpModel::getPackagedName()
+	 * @uses WsdlToPhpModel::getMetaValue()
 	 * @uses DOMElement::getAttribute()
 	 * @uses DOMElement::hasAttribute()
 	 * @uses DOMXPath::query()
@@ -2522,7 +2524,7 @@ class WsdlToPhpGenerator extends SoapClient
 				/**
 				 * Find it in the wsdls and avoid mutliple searches for the same message part
 				 */
-				if(!empty($headerName) && !empty($headerMessage))
+				if(!empty($headerName) && !empty($headerMessage) && !in_array($headerName,$this->getServiceFunction($parentNode->getAttribute('name'))->getMetaValue('SOAPHeaderNames',array())))
 				{
 					/**
 					 * Indicate the required header name
@@ -2604,12 +2606,12 @@ class WsdlToPhpGenerator extends SoapClient
 							}
 						}
 					}
+					/**
+					 * Indicate the required header type
+					 */
+					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderTypes',array(
+																											$headerType));
 				}
-				/**
-				 * Indicate the required header type
-				 */
-				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderTypes',array(
-																										$headerType));
 			}
 		}
 	}
