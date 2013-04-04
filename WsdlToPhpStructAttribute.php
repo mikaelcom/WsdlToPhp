@@ -262,6 +262,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * Return potential default value
 	 * @uses WsdlToPhpModel::getMetaValueFirstSet()
 	 * @uses WsdlToPhpModel::getValueWithinItsType()
+	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @return mixed
 	 */
 	public function getDefaultValue()
@@ -271,7 +272,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 																			'Default',
 																			'DefaultValue',
 																			'defaultValue',
-																			'defaultvalue')));
+																			'defaultvalue')),$this->getType());
 	}
 	/**
 	 * Return true or false depending on minOccurs information associated to the attribute

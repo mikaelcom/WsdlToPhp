@@ -123,17 +123,19 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::initSoapClient()
 	 * @uses PackageNameWsdlClass::initInternArrayToIterate()
 	 * @uses PackageNameWsdlClass::_set()
-	 * @param array $_arrayOfValues values
+	 * @param array $_arrayOfValues SoapClient options or object attribute values
+	 * @param bool $_resetSoapClient allows to disable the SoapClient redefinition
 	 * @return PackageNameWsdlClass
 	 */
-	public function __construct($_arrayOfValues = array())
+	public function __construct($_arrayOfValues = array(),$_resetSoapClient = true)
 	{
 		$this->setLastError(array());
 		/**
 		 * Init soap Client
 		 * Set default values
 		 */
-		$this->initSoapClient($_arrayOfValues);
+		if($_resetSoapClient)
+			$this->initSoapClient($_arrayOfValues);
 		/**
 		 * Init array of values if set
 		 */

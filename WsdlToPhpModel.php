@@ -538,16 +538,40 @@ class WsdlToPhpModel
 	 * @param mixed $_value the value
 	 * @return mixed
 	 */
-	public static function getValueWithinItsType($_value)
+	public static function getValueWithinItsType($_value,$_knownType = null)
 	{
-		if(is_int($_value))
+		if(is_int($_value) || in_array($_knownType,array(
+														'time',
+														'positiveInteger',
+														'unsignedLong',
+														'unsignedInt',
+														'short',
+														'long',
+														'int',
+														'integer')))
 			return intval($_value);
-		elseif(is_float($_value))
+		elseif(is_float($_value) || in_array($_knownType,array(
+																'float',
+																'double',
+																'decimal')))
 			return floatval($_value);
-		elseif(is_numeric($_value))
+		elseif(is_numeric($_value) || in_array($_knownType,array(
+																'time',
+																'positiveInteger',
+																'unsignedLong',
+																'unsignedInt',
+																'short',
+																'long',
+																'int',
+																'integer',
+																'float',
+																'double',
+																'decimal')))
 			return intval($_value) == $_value?intval($_value):floatval($_value);
-		elseif(is_bool($_value))
-			return $_value?true:false;
+		elseif(is_bool($_value) || in_array($_knownType,array(
+															'bool',
+															'boolean')))
+			return ($_value === 'true' || $_value === true || $_value === 1 || $_value === '1');
 		else
 			return $_value;
 	}
