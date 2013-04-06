@@ -555,18 +555,7 @@ class WsdlToPhpModel
 																'double',
 																'decimal')))
 			return floatval($_value);
-		elseif(is_numeric($_value) || in_array($_knownType,array(
-																'time',
-																'positiveInteger',
-																'unsignedLong',
-																'unsignedInt',
-																'short',
-																'long',
-																'int',
-																'integer',
-																'float',
-																'double',
-																'decimal')))
+		elseif(is_numeric($_value))
 			return intval($_value) == $_value?intval($_value):floatval($_value);
 		elseif(is_bool($_value) || in_array($_knownType,array(
 															'bool',
