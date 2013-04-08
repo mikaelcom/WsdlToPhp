@@ -233,6 +233,59 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 					self::WSDL_USER_AGENT=>null);
 	}
 	/**
+	 * Returns the last request content as a DOMDocument or as a formated XML String
+	 * @see SoapClient::__getLastRequest()
+	 * @uses PackageNameWsdlClass::getSoapClient()
+	 * @uses PackageNameWsdlClass::getFormatedXml()
+	 * @uses SoapClient::__getLastRequest()
+	 * @param bool $_asDomDocument
+	 * @return DOMDocument|string
+	 */
+	public function getLastRequest($_asDomDocument = false)
+	{
+		if(self::getSoapClient())
+			return self::getFormatedXml(self::getSoapClient()->__getLastRequest(),$_asDomDocument);
+		return null;
+	}
+	/**
+	 * Returns the last response content as a DOMDocument or as a formated XML String
+	 * @see SoapClient::__getLastResponse()
+	 * @uses PackageNameWsdlClass::getSoapClient()
+	 * @uses PackageNameWsdlClass::getFormatedXml()
+	 * @uses SoapClient::__getLastResponse()
+	 * @param bool $_asDomDocument
+	 * @return DOMDocument|string
+	 */
+	public function getLastResponse($_asDomDocument = false)
+	{
+		if(self::getSoapClient())
+			return self::getFormatedXml(self::getSoapClient()->__getLastResponse(),$_asDomDocument);
+		return null;
+	}
+	/**
+	 * Returns a XML string content as a DOMDocument or as a formated XML string
+	 * @uses DOMDocument::loadXML()
+	 * @uses DOMDocument::saveXML()
+	 * @param string $_string
+	 * @param bool $_asDomDocument
+	 * @return DOMDocument|string|null
+	 */
+	public function getFormatedXml($_string,$_asDomDocument = false)
+	{
+		if(class_exists('DOMDocument'))
+		{
+			$dom = new DOMDocument('1.0','UTF-8');
+			$dom->formatOutput = true;
+			$dom->preserveWhiteSpace = false;
+			$dom->resolveExternals = false;
+			$dom->substituteEntities = false;
+			$dom->validateOnParse = false;
+			if($dom->loadXML($_string))
+				return $_asDomDocument?$dom:$dom->saveXML();
+		}
+		return $_asDomDocument?null:$_string;
+	}
+	/**
 	 * Method alias to count
 	 * @uses PackageNameWsdlClass::count()
 	 * @return int
