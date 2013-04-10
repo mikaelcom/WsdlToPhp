@@ -233,6 +233,16 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 					self::WSDL_USER_AGENT=>null);
 	}
 	/**
+	 * Allows to set the SoapClient location to call
+	 * @uses PackageNameWsdlClass::getSoapClient()
+	 * @uses SoapClient::__setLocation()
+	 * @param string $_location
+	 */
+	public function setLocation($_location)
+	{
+		return self::getSoapClient()?self::getSoapClient()->__setLocation($_location):false;
+	}
+	/**
 	 * Returns the last request content as a DOMDocument or as a formated XML String
 	 * @see SoapClient::__getLastRequest()
 	 * @uses PackageNameWsdlClass::getSoapClient()

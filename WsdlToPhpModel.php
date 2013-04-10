@@ -46,7 +46,7 @@ class WsdlToPhpModel
 	 * Plus {PackageName}WsdlClass specific/common methods
 	 * @var string
 	 */
-	private static $phpReserverKeywords = 'add|getResult|count|current|item|offsetGet|offsetSet|key|last|first|next|offsetExists|offsetUnset|rewind|setResult|toSend|valueIsValid|valid|_set|_get|__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor';
+	private static $phpReserverKeywords = '__construct|getSoapClient|setSoapClient|initSoapClient|setLocation|getDefaultWsdlOptions|getLastRequest|getLastResponse|getFormatedXml|add|getResult|length|count|current|item|offsetGet|offsetSet|key|last|first|next|offsetExists|offsetUnset|rewind|setResult|toSend|valueIsValid|valid|getLastError|setLastError|saveLastError|getLastErrorForMethod|getInternArrayToIterate|setInternArrayToIterate|getInternArrayToIterateOffset|initInternArrayToIterate|setInternArrayToIterateOffset|getInternArrayToIterateIsArray|setInternArrayToIterateIsArray|getAttributeName|__toString|_set|_get|__halt_compiler|abstract|and|array|as|break|callable|case|catch|class|clone|const|continue|declare|default|die|do|echo|else|elseif|empty|enddeclare|endfor|endforeach|endif|endswitch|endwhile|eval|exit|extends|final|for|foreach|function|global|goto|if|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|new|or|print|private|protected|public|require|require_once|return|static|switch|throw|trait|try|unset|use|var|while|xor';
 	/**
 	 * Replaced keywords time in order to generate unique new keyword
 	 * @var array
@@ -540,26 +540,26 @@ class WsdlToPhpModel
 	 */
 	public static function getValueWithinItsType($_value,$_knownType = null)
 	{
-		if(is_int($_value) || in_array($_knownType,array(
-														'time',
-														'positiveInteger',
-														'unsignedLong',
-														'unsignedInt',
-														'short',
-														'long',
-														'int',
-														'integer')))
+		if(is_int($_value) || (!is_null($_value) && in_array($_knownType,array(
+																				'time',
+																				'positiveInteger',
+																				'unsignedLong',
+																				'unsignedInt',
+																				'short',
+																				'long',
+																				'int',
+																				'integer'))))
 			return intval($_value);
-		elseif(is_float($_value) || in_array($_knownType,array(
-																'float',
-																'double',
-																'decimal')))
+		elseif(is_float($_value) || (!is_null($_value) && in_array($_knownType,array(
+																					'float',
+																					'double',
+																					'decimal'))))
 			return floatval($_value);
 		elseif(is_numeric($_value))
 			return intval($_value) == $_value?intval($_value):floatval($_value);
-		elseif(is_bool($_value) || in_array($_knownType,array(
-															'bool',
-															'boolean')))
+		elseif(is_bool($_value) || (!is_null($_value) && in_array($_knownType,array(
+																					'bool',
+																					'boolean'))))
 			return ($_value === 'true' || $_value === true || $_value === 1 || $_value === '1');
 		else
 			return $_value;

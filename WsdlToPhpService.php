@@ -173,11 +173,11 @@ class WsdlToPhpService extends WsdlToPhpModel
 					array_push($_body,'}');
 					array_push($_body,'if(!empty($_actor))');
 					array_push($_body,'{');
-					array_push($_body,'array_push($defaultHeaders,new SoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($cleanedName) . ',$_mustUnderstand,$_actor));');
+					array_push($_body,'array_push($defaultHeaders,new SoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName) . ',$_mustUnderstand,$_actor));');
 					array_push($_body,'}');
 					array_push($_body,'else');
 					array_push($_body,'{');
-					array_push($_body,'array_push($defaultHeaders,new SoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($cleanedName) . ',$_mustUnderstand));');
+					array_push($_body,'array_push($defaultHeaders,new SoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName) . ',$_mustUnderstand));');
 					array_push($_body,'}');
 					array_push($_body,'return self::getSoapClient()->__setSoapheaders($defaultHeaders);');
 					array_push($_body,'}');
