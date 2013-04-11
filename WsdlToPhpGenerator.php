@@ -2530,7 +2530,7 @@ class WsdlToPhpGenerator extends SoapClient
 				/**
 				 * Find it in the wsdls and avoid mutliple searches for the same message part
 				 */
-				if(!empty($headerName) && !empty($headerMessage) && !in_array($headerName,$this->getServiceFunction($parentNode->getAttribute('name'))->getMetaValue('SOAPHeaderNames',array())))
+				if(!empty($headerName) && !empty($headerMessage) && $this->getServiceFunction($parentNode->getAttribute('name')) && !in_array($headerName,$this->getServiceFunction($parentNode->getAttribute('name'))->getMetaValue('SOAPHeaderNames',array())))
 				{
 					/**
 					 * Indicate the required header name
