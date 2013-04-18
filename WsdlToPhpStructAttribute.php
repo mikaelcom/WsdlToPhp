@@ -206,18 +206,18 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		{
 			if($model->getIsStruct())
 			{
-				array_push($comments,'@param ' . $model->getPackagedName() . ' the ' . $this->getName());
+				array_push($comments,'@param ' . $model->getPackagedName() . ' $_' . lcfirst($this->getCleanName()) . ' the ' . $this->getName());
 				array_push($comments,'@return ' . $model->getPackagedName());
 			}
 			else
 			{
-				array_push($comments,'@param ' . ($model->getInheritance()?$model->getInheritance():$this->getType()) . ' the ' . $this->getName());
+				array_push($comments,'@param ' . ($model->getInheritance()?$model->getInheritance():$this->getType()) . ' $_' . lcfirst($this->getCleanName()) . ' the ' . $this->getName());
 				array_push($comments,'@return ' . ($model->getInheritance()?$model->getInheritance():$this->getType()));
 			}
 		}
 		else
 		{
-			array_push($comments,'@param ' . $this->getType() . ' the ' . $this->getName());
+			array_push($comments,'@param ' . $this->getType() . ' $_' . lcfirst($this->getCleanName()) . ' the ' . $this->getName());
 			array_push($comments,'@return ' . $this->getType());
 		}
 		array_push($_body,array(
