@@ -2394,6 +2394,8 @@ class WsdlToPhpGenerator extends SoapClient
 			$upParentNode = self::findSuitableParent($anyNode);
 			if($upParentNode)
 				$this->setStructAttributeDocumentation($upParentNode->getAttribute('name'),$anyNode->getAttribute('name'),$documentation);
+			elseif(stripos($anyNode->nodeName,'element') !== false)
+				$this->setStructDocumentation($anyNode->getAttribute('name'),$documentation);
 		}
 		/**
 		 * is it a struct ?
