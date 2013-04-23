@@ -335,6 +335,32 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 				}
 				unset($attribute);
 			}
+			/**
+			 * __set_state method override
+			 */
+			if(WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
+			{
+				/**
+				 * __set_state() method comments
+				 */
+				$comments = array();
+				array_push($comments,'Method called when an object has been exported with var_export() functions');
+				array_push($comments,'It allows to return an object instantiated with the values');
+				array_push($comments,'@see ' . self::getGenericWsdlClassName() . '::__set_state()');
+				array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::__set_state()');
+				array_push($comments,'@param array $_array the exported values');
+				array_push($comments,'@return ' . $this->getPackagedName());
+				array_push($_body,array(
+										'comment'=>$comments));
+				unset($comments);
+				/**
+				 * __set_state method body
+				 */
+				array_push($_body,'public static function __set_state(array $_array,$_className = __CLASS__)');
+				array_push($_body,'{');
+				array_push($_body,'return parent::__set_state($_array,$_className);');
+				array_push($_body,'}');
+			}
 		}
 	}
 	/**

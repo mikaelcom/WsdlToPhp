@@ -150,6 +150,29 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		}
 	}
 	/**
+	 * Generic method called when an object has been exported with var_export() functions
+	 * It allows to return an object instantiated with the values
+	 * @uses PackageNameWsdlClass::_set()
+	 * @param array $_array the exported values
+	 * @param string $_className optional (used by inherited classes in order to always call this method)
+	 * @return PackageNameWsdlClass|null
+	 */
+	public static function __set_state(array $_array,$_className = __CLASS__)
+	{
+		if(class_exists($_className))
+		{
+			$object = @new $_className($_array);
+			if($object)
+			{
+				foreach($_array as $name=>$value)
+					$object->_set($name,$value);
+			}
+			return $object;
+		}
+		else
+			return null;
+	}
+	/**
 	 * Static method getting current SoapClient
 	 * @return SoapClient
 	 */
