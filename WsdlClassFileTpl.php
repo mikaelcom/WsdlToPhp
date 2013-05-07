@@ -5,7 +5,7 @@
  * @date generation_date
  */
 /**
- * File for PackageNameWsdlClass to communicate with SOAP service
+ * PackageNameWsdlClass to communicate with SOAP service
  * meta_informations
  * @package PackageName
  * @date generation_date

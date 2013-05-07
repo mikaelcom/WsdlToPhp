@@ -1172,7 +1172,7 @@ class WsdlToPhpGenerator extends SoapClient
 										'meta_informations'),array(
 																lcfirst(self::getPackageName(false)),
 																self::getPackageName(),
-																date('d/m/Y'),
+																date('Y-m-d'),
 																$metaInformation),$content);
 			file_put_contents($_rootDirectory . self::getPackageName() . 'WsdlClass.php',$content);
 			self::audit('generate_wsdlclass');
@@ -1254,7 +1254,7 @@ class WsdlToPhpGenerator extends SoapClient
 																ucfirst(self::getPackageName()),
 																strtoupper(self::getPackageName()),
 																implode('',array_slice(array_keys($this->getWsdls()),0,1)),
-																date('d/m/Y'),
+																date('Y-m-d'),
 																$content),$fileContent);
 				file_put_contents($_rootDirectory . 'sample-' . strtolower(self::getPackageName()) . '.php',$fileContent);
 			}
