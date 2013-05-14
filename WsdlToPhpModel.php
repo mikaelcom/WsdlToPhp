@@ -17,6 +17,11 @@ class WsdlToPhpModel
 	 */
 	const META_DOCUMENTATION = 'documentation';
 	/**
+	 * Constant used to define the key to store from schema value in meta
+	 * @var string
+	 */
+	const META_FROM_SCHEMA = 'from schema';
+	/**
 	 * Original name od the element
 	 * @var string
 	 */
@@ -238,7 +243,7 @@ class WsdlToPhpModel
 				$cleanedMetaValue = self::cleanComment($metaValue,$metaName == self::META_DOCUMENTATION?' ':',',stripos($metaName,'SOAPHeader') === false);
 				if(($_ignoreDocumentation && $metaName == self::META_DOCUMENTATION) || $cleanedMetaValue === '')
 					continue;
-				array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : $cleanedMetaValue");
+				array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : " . (($metaName == self::META_FROM_SCHEMA && stripos($cleanedMetaValue,'http') === 0)?"{@link $cleanedMetaValue}":$cleanedMetaValue));
 			}
 		}
 		if(count($metaComments))
@@ -317,6 +322,27 @@ class WsdlToPhpModel
 	public function getDocumentation()
 	{
 		return self::cleanComment($this->getMetaValue(self::META_DOCUMENTATION,''),' ');
+	}
+	/**
+	 * Set the from schema meta value.
+	 * @uses WsdlToPhpModel::META_FROM_SCHEMA
+	 * @uses WsdlToPhpModel::addMeta()
+	 * @param string $_fromSchema the url from which the element comes from
+	 * @return string the url from which the element comes from
+	 */
+	public function setFromSchema($_fromSchema)
+	{
+		return $this->addMeta(self::META_FROM_SCHEMA,$_fromSchema);
+	}
+	/**
+	 * Get the from schema meta value
+	 * @uses WsdlToPhpModel::META_FROM_SCHEMA
+	 * @uses WsdlToPhpModel::getMetaValue()
+	 * @return string the from schema meta value
+	 */
+	public function getFromSchema()
+	{
+		return $this->getMetaValue(self::META_FROM_SCHEMA,'');
 	}
 	/**
 	 * Returns a meta value according to its name

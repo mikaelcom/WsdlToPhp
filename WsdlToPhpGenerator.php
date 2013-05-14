@@ -2298,8 +2298,8 @@ class WsdlToPhpGenerator extends SoapClient
 		$parentNode = self::findSuitableParent($_domNode);
 		if($parentNode && $_domNode->hasAttribute('value'))
 		{
-			if($this->getStruct($parentNode->getAttribute('name')) && !$this->getStruct($parentNode->getAttribute('name'))->getMetaValue('from schema',false))
-				$this->addStructMeta($parentNode->getAttribute('name'),'from schema',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+			if($this->getStruct($parentNode->getAttribute('name')) && !$this->getStruct($parentNode->getAttribute('name'))->getFromSchema())
+				$this->getStruct($parentNode->getAttribute('name'))->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 			$this->addRestrictionValue($parentNode->getAttribute('name'),$_domNode->getAttribute('value'));
 		}
 		self::audit('managewsdlnode_enumeration',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
@@ -2320,7 +2320,8 @@ class WsdlToPhpGenerator extends SoapClient
 	protected function manageWsdlNodeElement($_wsdlLocation = '',DOMNode $_domNode,$_fromWsdlLocation = '')
 	{
 		self::auditInit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
-		$this->addStructMeta($_domNode->getAttribute('name'),'from schema',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+		if($this->getStruct($_domNode->getAttribute('name')))
+			$this->getStruct($_domNode->getAttribute('name'))->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 		self::audit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 	}
 	/**
@@ -2674,8 +2675,8 @@ class WsdlToPhpGenerator extends SoapClient
 			$parentNode = self::findSuitableParent($_domNode);
 			if($parentNode)
 			{
-				if($this->getStruct($parentNode->getAttribute('name')) && !$this->getStruct($parentNode->getAttribute('name'))->getMetaValue('from schema',false))
-					$this->addStructMeta($parentNode->getAttribute('name'),'from schema',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+				if($this->getStruct($parentNode->getAttribute('name')) && !$this->getStruct($parentNode->getAttribute('name'))->getFromSchema())
+					$this->getStruct($parentNode->getAttribute('name'))->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
 				$attributes = $_domNode->attributes;
 				$attributesLength = $attributes->length;
 				for($i = 0;$i < $attributesLength;$i++)

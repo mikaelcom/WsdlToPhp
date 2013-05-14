@@ -161,7 +161,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	{
 		if(class_exists($_className))
 		{
-			$object = @new $_className($_array);
+			$object = @new $_className();
 			if($object)
 			{
 				foreach($_array as $name=>$value)
