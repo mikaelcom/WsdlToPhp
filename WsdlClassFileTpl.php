@@ -2,11 +2,19 @@
 /**
  * File for PackageNameWsdlClass to communicate with SOAP service
  * @package PackageName
+<<<<<<< HEAD
+=======
+ * @date generation_date
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
  */
 /**
  * PackageNameWsdlClass to communicate with SOAP service
  * meta_informations
  * @package PackageName
+<<<<<<< HEAD
+=======
+ * @date generation_date
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
  */
 class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Countable
 {

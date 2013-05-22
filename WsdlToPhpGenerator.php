@@ -402,6 +402,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	const OPT_GEN_TUTORIAL_KEY = 'option_generate_tutorial_file_key';
 	/**
+<<<<<<< HEAD
 	 * Index to set additional PHP doc block tags to every generated file and class
 	 * In order to set additional PHP doc block tags, pass an associative array as for example:
 	 * - date=>date('Y-m-d')
@@ -415,6 +416,12 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @var bool
 	 */
 	const OPT_ADD_COMMENTS = 'option_add_comments_key';
+=======
+	 * Index to enable/disable date generation
+	 * @var bool
+	 */
+	const OPT_GEN_DATE = 'option_generate_date_key';
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	/**
 	 * Structs array
 	 * @var array
@@ -491,10 +498,17 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	private static $optionGenerateTutorialFile;
 	/**
+<<<<<<< HEAD
 	 * Option to set additional PHP doc block tags to every generated file and class
 	 * @var array
 	 */
 	private static $optionAddComments;
+=======
+	 * Option to enabled/disable date generation
+	 * @var bool
+	 */
+	private static $optionGenerateDate;
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	/**
 	 * Constructor
 	 * @uses SoapClient::__construct()
@@ -505,7 +519,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::setOptionCategory()
 	 * @uses WsdlToPhpGenerator::setOptionGenerateAutoloadFile()
 	 * @uses WsdlToPhpGenerator::setOptionGenerateTutorialFile()
+<<<<<<< HEAD
 	 * @uses WsdlToPhpGenerator::setOptionAddComments()
+=======
+	 * @uses WsdlToPhpGenerator::setOptionGenerateDate()
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	 * @uses WsdlToPhpGenerator::setOptionSubCategory()
 	 * @uses WsdlToPhpGenerator::setOptionGenerateWsdlClassFile()
 	 * @uses WsdlToPhpGenerator::setOptionGatherMethods()
@@ -518,7 +536,10 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::OPT_CAT_START_NAME
 	 * @uses WsdlToPhpGenerator::OPT_GEN_AUTOLOAD_KEY
 	 * @uses WsdlToPhpGenerator::OPT_GEN_TUTORIAL_KEY
+<<<<<<< HEAD
 	 * @uses WsdlToPhpGenerator::OPT_ADD_COMMENTS
+=======
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	 * @uses WsdlToPhpGenerator::OPT_SUB_CAT_KEY
 	 * @uses WsdlToPhpGenerator::OPT_SUB_CAT_START_NAME
 	 * @uses WsdlToPhpGenerator::OPT_GEN_WSDL_CLASS_KEY
@@ -582,8 +603,12 @@ class WsdlToPhpGenerator extends SoapClient
 		self::setOptionCategory(array_key_exists(self::OPT_CAT_KEY,$_options)?$_options[self::OPT_CAT_KEY]:self::OPT_CAT_START_NAME);
 		self::setOptionGenerateAutoloadFile(array_key_exists(self::OPT_GEN_AUTOLOAD_KEY,$_options)?$_options[self::OPT_GEN_AUTOLOAD_KEY]:false);
 		self::setOptionGenerateTutorialFile(array_key_exists(self::OPT_GEN_TUTORIAL_KEY,$_options)?$_options[self::OPT_GEN_TUTORIAL_KEY]:false);
+<<<<<<< HEAD
 		self::setOptionAddComments(array_key_exists(self::OPT_ADD_COMMENTS,$_options)?$_options[self::OPT_ADD_COMMENTS]:array(
 																															'date'=>date('Y-m-d')));
+=======
+		self::setOptionGenerateDate(array_key_exists(self::OPT_GEN_DATE,$_options)?$_options[self::OPT_GEN_DATE]:false);
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 		self::setOptionSubCategory(array_key_exists(self::OPT_SUB_CAT_KEY,$_options)?$_options[self::OPT_SUB_CAT_KEY]:self::OPT_SUB_CAT_START_NAME);
 		self::setOptionGenerateWsdlClassFile(array_key_exists(self::OPT_GEN_WSDL_CLASS_KEY,$_options)?$_options[self::OPT_GEN_WSDL_CLASS_KEY]:false);
 		self::setOptionGatherMethods(array_key_exists(self::OPT_GATH_METH_KEY,$_options)?$_options[self::OPT_GATH_METH_KEY]:self::OPT_GATH_METH_START_NAME);
@@ -1058,7 +1083,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 * Generate classMap class
 	 * @uses WsdlToPhpGenerator::getStructs()
 	 * @uses WsdlToPhpGenerator::getPackageName()
+<<<<<<< HEAD
 	 * @uses WsdlToPhpGenerator::getOptionAddComments()
+=======
+	 * @uses WsdlToPhpGenerator::getOptionGenerateDate()
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	 * @uses WsdlToPhpGenerator::populateFile()
 	 * @uses WsdlToPhpGenerator::auditInit()
 	 * @uses WsdlToPhpGenerator::audit()
@@ -1077,20 +1106,30 @@ class WsdlToPhpGenerator extends SoapClient
 		$comments = array();
 		array_push($comments,'File for the class which returns the class map definition');
 		array_push($comments,'@package ' . self::getPackageName());
+<<<<<<< HEAD
 		if(count(self::getOptionAddComments()))
 		{
 			foreach(self::getOptionAddComments() as $tagName=>$tagValue)
 				array_push($comments,"@$tagName $tagValue");
+=======
+		if (self::getOptionGenerateDate()) {
+			array_push($comments,'@date ' . date('Y-m-d'));
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 		}
 		array_push($classMapDeclaration,array(
 											'comment'=>$comments));
 		$comments = array();
 		array_push($comments,'Class which returns the class map definition by the static method ' . self::getPackageName() . 'ClassMap::classMap()');
 		array_push($comments,'@package ' . self::getPackageName());
+<<<<<<< HEAD
 		if(count(self::getOptionAddComments()))
 		{
 			foreach(self::getOptionAddComments() as $tagName=>$tagValue)
 				array_push($comments,"@$tagName $tagValue");
+=======
+		if (self::getOptionGenerateDate()) {
+			array_push($comments,'@date ' . date('Y-m-d'));
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 		}
 		array_push($classMapDeclaration,array(
 											'comment'=>$comments));
@@ -1137,7 +1176,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 * Generate autoload file for all classes. 
 	 * The classes are loaded automatically in order of their dependency regarding their inheritance (defined in WsdlToPhpGenerate::generateStructsClasses() method).
 	 * @uses WsdlToPhpGenerator::getPackageName()
+<<<<<<< HEAD
 	 * @uses WsdlToPhpGenerator::getOptionAddComments()
+=======
+	 * @uses WsdlToPhpGenerator::getOptionGenerateDate()
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	 * @uses WsdlToPhpGenerator::populateFile()
 	 * @uses WsdlToPhpGenerator::auditInit()
 	 * @uses WsdlToPhpGenerator::audit()
@@ -1154,19 +1197,29 @@ class WsdlToPhpGenerator extends SoapClient
 			$comments = array();
 			array_push($comments,'File to load generated classes once at once time');
 			array_push($comments,'@package ' . self::getPackageName());
+<<<<<<< HEAD
 			if(count(self::getOptionAddComments()))
 			{
 				foreach(self::getOptionAddComments() as $tagName=>$tagValue)
 					array_push($comments,"@$tagName $tagValue");
+=======
+			if (self::getOptionGenerateDate()) {
+				array_push($comments,'@date ' . date('Y-m-d'));
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 			}
 			array_push($autoloadDeclaration,array(
 												'comment'=>$comments));
 			$comments = array();
 			array_push($comments,'Includes for all generated classes files');
+<<<<<<< HEAD
 			if(count(self::getOptionAddComments()))
 			{
 				foreach(self::getOptionAddComments() as $tagName=>$tagValue)
 					array_push($comments,"@$tagName $tagValue");
+=======
+			if (self::getOptionGenerateDate()) {
+				array_push($comments,'@date ' . date('Y-m-d'));
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 			}
 			array_push($autoloadDeclaration,array(
 												'comment'=>$comments));
@@ -1194,6 +1247,7 @@ class WsdlToPhpGenerator extends SoapClient
 		if(is_file(dirname(__FILE__) . '/WsdlClassFileTpl.php'))
 		{
 			self::auditInit('generate_wsdlclass');
+<<<<<<< HEAD
 			/**
 			 * Add additional PHP doc block tags if needed to the two main PHP doc block
 			 */
@@ -1218,6 +1272,9 @@ class WsdlToPhpGenerator extends SoapClient
 			}
 			else
 				$content = file_get_contents(dirname(__FILE__) . '/WsdlClassFileTpl.php');
+=======
+			$content = file_get_contents(dirname(__FILE__) . '/WsdlClassFileTpl.php');
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 			$metaInformation = '';
 			foreach($this->wsdls as $wsdlLocation=>$wsdlinfos)
 			{
@@ -1306,6 +1363,7 @@ class WsdlToPhpGenerator extends SoapClient
 			}
 			if(!empty($content))
 			{
+<<<<<<< HEAD
 				/**
 				 * Add additional PHP doc block tags if needed to the one main PHP doc block
 				 */
@@ -1330,6 +1388,9 @@ class WsdlToPhpGenerator extends SoapClient
 				}
 				else
 					$fileContent = file_get_contents(dirname(__FILE__) . '/sample-tpl.php');
+=======
+				$fileContent = file_get_contents(dirname(__FILE__) . '/sample-tpl.php');
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 				$fileContent = str_replace(array(
 												'packageName',
 												'PackageName',
@@ -1929,6 +1990,7 @@ class WsdlToPhpGenerator extends SoapClient
 		return (self::$optionGenerateTutorialFile = $_optionGenerateTutorialFile);
 	}
 	/**
+<<<<<<< HEAD
 	 * Get the optionAddComments value
 	 * @return array
 	 */
@@ -1944,6 +2006,23 @@ class WsdlToPhpGenerator extends SoapClient
 	public static function setOptionAddComments(array $_optionAddComments = array())
 	{
 		return (self::$optionAddComments = $_optionAddComments);
+=======
+	 * Get the optionGenerateDate value
+	 * @return bool
+	 */
+	public static function getOptionGenerateDate()
+	{
+		return self::$optionGenerateDate;
+	}
+	/**
+	 * Set the optionGenerateDate value
+	 * @param bool
+	 * @return bool
+	 */
+	public static function setOptionGenerateDate($_optionGenerateDate = false)
+	{
+		return (self::$optionGenerateDate = $_optionGenerateDate);
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	}
 	/**
 	 * Get the package name

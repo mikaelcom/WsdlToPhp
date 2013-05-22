@@ -79,7 +79,11 @@ class WsdlToPhpModel
 	/**
 	 * Returns comments for the class
 	 * @uses WsdlToPhpModel::getPackagedName()
+<<<<<<< HEAD
      * @uses WsdlToPhpGenerator::getOptionGenerateDate()
+=======
+	 * @uses WsdlToPhpGenerator::getOptionGenerateDate()
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 	 * @uses WsdlToPhpModel::getDocumentation()
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getDocSubPackages()
@@ -98,10 +102,15 @@ class WsdlToPhpModel
 				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
+<<<<<<< HEAD
 				if(count(WsdlToPhpGenerator::getOptionAddComments()))
 				{
 					foreach(WsdlToPhpGenerator::getOptionAddComments() as $tagName=>$tagValue)
 						array_push($comments,"@$tagName $tagValue");
+=======
+				if (WsdlToPhpGenerator::getOptionGenerateDate()) {
+					array_push($comments,'@date ' . date('Y-m-d'));
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 				}
 				break;
 			case 2:
@@ -122,10 +131,15 @@ class WsdlToPhpModel
 				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
+<<<<<<< HEAD
 				if(count(WsdlToPhpGenerator::getOptionAddComments()))
 				{
 					foreach(WsdlToPhpGenerator::getOptionAddComments() as $tagName=>$tagValue)
 						array_push($comments,"@$tagName $tagValue");
+=======
+				if (WsdlToPhpGenerator::getOptionGenerateDate()) {
+					array_push($comments,'@date ' . date('Y-m-d'));
+>>>>>>> fac89e01d1e0ead7e1fb3359f308d24f5d876c24
 				}
 				break;
 		}
