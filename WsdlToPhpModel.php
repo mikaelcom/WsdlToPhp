@@ -79,6 +79,7 @@ class WsdlToPhpModel
 	/**
 	 * Returns comments for the class
 	 * @uses WsdlToPhpModel::getPackagedName()
+     * @uses WsdlToPhpGenerator::getOptionGenerateDate()
 	 * @uses WsdlToPhpModel::getDocumentation()
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getDocSubPackages()
@@ -97,7 +98,9 @@ class WsdlToPhpModel
 				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
-				array_push($comments,'@date ' . date('Y-m-d'));
+                if (WsdlToPhpGenerator::getOptionGenerateDate()) {
+				    array_push($comments,'@date ' . date('Y-m-d'));
+                }
 				break;
 			case 2:
 				array_push($comments,'This class stands for ' . $this->getPackagedName() . ' originally named ' . $this->getName());
@@ -117,7 +120,9 @@ class WsdlToPhpModel
 				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
 				if(count($this->getDocSubPackages()))
 					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
-				array_push($comments,'@date ' . date('Y-m-d'));
+                if (WsdlToPhpGenerator::getOptionGenerateDate()) {
+				    array_push($comments,'@date ' . date('Y-m-d'));
+                }
 				break;
 		}
 		return $comments;
