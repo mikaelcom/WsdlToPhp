@@ -37,7 +37,7 @@ require_once $localDir . 'WsdlToPhpStructAttribute.php';
  */
 if(false)
 {
-	echo "\r\n Clean Name for '2And'is-go54  83od+*/you=yÃ¨Ã§Ã©s_3' is " . WsdlToPhpModel::cleanString("2And'is-go54  83od+*/you=yÃ©Ã§Ã¨s_3") . " \r\n";
+	echo "\r\n Clean Name for '2And'is-go54  83od+*/you=yèçés_3' is " . WsdlToPhpModel::cleanString("2And'is-go54  83od+*/you=yéçès_3") . " \r\n";
 	return;
 }
 /**
@@ -118,8 +118,8 @@ if(false)
  */
 if(true)
 {
-	$name = 'mobilefish';
-	$wsdl = 'http://www.mobilefish.com/services/web_service/countries.php?wsdl';
+	$name = 'PayPal';
+	$wsdl = 'https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl';
 	exec('rm -rf ' . __DIR__ . '/samples/' . $name . '/*;');
 	echo "\r\nStart at " . date('H:i:s');
 	$w = new WsdlToPhpGenerator($wsdl);
@@ -131,6 +131,7 @@ if(true)
 	WsdlToPhpGenerator::setOptionSendParametersAsArray(false);
 	WsdlToPhpGenerator::setOptionCategory(WsdlToPhpGenerator::OPT_CAT_START_NAME);
 	WsdlToPhpGenerator::setOptionSubCategory(WsdlToPhpGenerator::OPT_SUB_CAT_END_NAME);
+	WsdlToPhpGenerator::setOptionAddComments(array('date'=>date('Y-m-d'),'author'=>'Mikaël DELSOL','version'=>1));
 	echo "\r\nStart generation at " . date('H:i:s');
 	$w->generateClasses($name,dirname(__FILE__) . '/samples/' . $name . '/');
 	echo "\r\nEnd generation at " . date('H:i:s');
