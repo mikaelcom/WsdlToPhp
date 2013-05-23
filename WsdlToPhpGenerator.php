@@ -402,6 +402,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	const OPT_GEN_TUTORIAL_KEY = 'option_generate_tutorial_file_key';
 	/**
+	 * Index to enable/disable date generation
+	 * @var bool
+	 */
+	const OPT_GEN_DATE = 'option_generate_date_key';
+	/**
 	 * Structs array
 	 * @var array
 	 */
@@ -477,6 +482,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	private static $optionGenerateTutorialFile;
 	/**
+	 * Option to enabled/disable date generation
+	 * @var bool
+	 */
+	private static $optionGenerateDate;
+	/**
 	 * Constructor
 	 * @uses SoapClient::__construct()
 	 * @uses WsdlToPhpGenerator::setStructs()
@@ -486,6 +496,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::setOptionCategory()
 	 * @uses WsdlToPhpGenerator::setOptionGenerateAutoloadFile()
 	 * @uses WsdlToPhpGenerator::setOptionGenerateTutorialFile()
+	 * @uses WsdlToPhpGenerator::setOptionGenerateDate()
 	 * @uses WsdlToPhpGenerator::setOptionSubCategory()
 	 * @uses WsdlToPhpGenerator::setOptionGenerateWsdlClassFile()
 	 * @uses WsdlToPhpGenerator::setOptionGatherMethods()
@@ -561,6 +572,7 @@ class WsdlToPhpGenerator extends SoapClient
 		self::setOptionCategory(array_key_exists(self::OPT_CAT_KEY,$_options)?$_options[self::OPT_CAT_KEY]:self::OPT_CAT_START_NAME);
 		self::setOptionGenerateAutoloadFile(array_key_exists(self::OPT_GEN_AUTOLOAD_KEY,$_options)?$_options[self::OPT_GEN_AUTOLOAD_KEY]:false);
 		self::setOptionGenerateTutorialFile(array_key_exists(self::OPT_GEN_TUTORIAL_KEY,$_options)?$_options[self::OPT_GEN_TUTORIAL_KEY]:false);
+		self::setOptionGenerateDate(array_key_exists(self::OPT_GEN_DATE,$_options)?$_options[self::OPT_GEN_DATE]:false);
 		self::setOptionSubCategory(array_key_exists(self::OPT_SUB_CAT_KEY,$_options)?$_options[self::OPT_SUB_CAT_KEY]:self::OPT_SUB_CAT_START_NAME);
 		self::setOptionGenerateWsdlClassFile(array_key_exists(self::OPT_GEN_WSDL_CLASS_KEY,$_options)?$_options[self::OPT_GEN_WSDL_CLASS_KEY]:false);
 		self::setOptionGatherMethods(array_key_exists(self::OPT_GATH_METH_KEY,$_options)?$_options[self::OPT_GATH_METH_KEY]:self::OPT_GATH_METH_START_NAME);
@@ -1035,6 +1047,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * Generate classMap class
 	 * @uses WsdlToPhpGenerator::getStructs()
 	 * @uses WsdlToPhpGenerator::getPackageName()
+	 * @uses WsdlToPhpGenerator::getOptionGenerateDate()
 	 * @uses WsdlToPhpGenerator::populateFile()
 	 * @uses WsdlToPhpGenerator::auditInit()
 	 * @uses WsdlToPhpGenerator::audit()
@@ -1053,13 +1066,17 @@ class WsdlToPhpGenerator extends SoapClient
 		$comments = array();
 		array_push($comments,'File for the class which returns the class map definition');
 		array_push($comments,'@package ' . self::getPackageName());
-		array_push($comments,'@date ' . date('Y-m-d'));
+		if (self::getOptionGenerateDate()) {
+			array_push($comments,'@date ' . date('Y-m-d'));
+		}
 		array_push($classMapDeclaration,array(
 											'comment'=>$comments));
 		$comments = array();
 		array_push($comments,'Class which returns the class map definition by the static method ' . self::getPackageName() . 'ClassMap::classMap()');
 		array_push($comments,'@package ' . self::getPackageName());
-		array_push($comments,'@date ' . date('Y-m-d'));
+		if (self::getOptionGenerateDate()) {
+			array_push($comments,'@date ' . date('Y-m-d'));
+		}
 		array_push($classMapDeclaration,array(
 											'comment'=>$comments));
 		/**
@@ -1105,6 +1122,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * Generate autoload file for all classes. 
 	 * The classes are loaded automatically in order of their dependency regarding their inheritance (defined in WsdlToPhpGenerate::generateStructsClasses() method).
 	 * @uses WsdlToPhpGenerator::getPackageName()
+	 * @uses WsdlToPhpGenerator::getOptionGenerateDate()
 	 * @uses WsdlToPhpGenerator::populateFile()
 	 * @uses WsdlToPhpGenerator::auditInit()
 	 * @uses WsdlToPhpGenerator::audit()
@@ -1121,12 +1139,16 @@ class WsdlToPhpGenerator extends SoapClient
 			$comments = array();
 			array_push($comments,'File to load generated classes once at once time');
 			array_push($comments,'@package ' . self::getPackageName());
-			array_push($comments,'@date ' . date('Y-m-d'));
+			if (self::getOptionGenerateDate()) {
+				array_push($comments,'@date ' . date('Y-m-d'));
+			}
 			array_push($autoloadDeclaration,array(
 												'comment'=>$comments));
 			$comments = array();
 			array_push($comments,'Includes for all generated classes files');
-			array_push($comments,'@date ' . date('Y-m-d'));
+			if (self::getOptionGenerateDate()) {
+				array_push($comments,'@date ' . date('Y-m-d'));
+			}
 			array_push($autoloadDeclaration,array(
 												'comment'=>$comments));
 			foreach($_classesFiles as $classFile)
@@ -1840,6 +1862,23 @@ class WsdlToPhpGenerator extends SoapClient
 	public static function setOptionGenerateTutorialFile($_optionGenerateTutorialFile = false)
 	{
 		return (self::$optionGenerateTutorialFile = $_optionGenerateTutorialFile);
+	}
+	/**
+	 * Get the optionGenerateDate value
+	 * @return bool
+	 */
+	public static function getOptionGenerateDate()
+	{
+		return self::$optionGenerateDate;
+	}
+	/**
+	 * Set the optionGenerateDate value
+	 * @param bool
+	 * @return bool
+	 */
+	public static function setOptionGenerateDate($_optionGenerateDate = false)
+	{
+		return (self::$optionGenerateDate = $_optionGenerateDate);
 	}
 	/**
 	 * Get the package name
