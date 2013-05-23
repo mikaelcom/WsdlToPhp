@@ -405,11 +405,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 * Index to set additional PHP doc block tags to every generated file and class
 	 * In order to set additional PHP doc block tags, pass an associative array as for example:
 	 * - date=>date('Y-m-d')
-	 * - author=>'Mikaël DELSOL'
+	 * - author=>'MikaÃ«l DELSOL'
 	 * - etc.
 	 * so every generated file and class will contain these PHP doc block tags:
 	 * @date 2013-05-23
-	 * @author Mikaël DELSOL
+	 * @author MikaÃ«l DELSOL
 	 * etc.
 	 * By default, the "date" tag is added with the current date
 	 * @var string
