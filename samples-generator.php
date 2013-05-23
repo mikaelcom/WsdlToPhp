@@ -131,6 +131,7 @@ if(true)
 	WsdlToPhpGenerator::setOptionSendParametersAsArray(false);
 	WsdlToPhpGenerator::setOptionCategory(WsdlToPhpGenerator::OPT_CAT_START_NAME);
 	WsdlToPhpGenerator::setOptionSubCategory(WsdlToPhpGenerator::OPT_SUB_CAT_END_NAME);
+	WsdlToPhpGenerator::setOptionAddComments(array('date'=>date('Y-m-d'),'author'=>'Mikaël DELSOL','version'=>1));
 	echo "\r\nStart generation at " . date('H:i:s');
 	$w->generateClasses($name,dirname(__FILE__) . '/samples/' . $name . '/');
 	echo "\r\nEnd generation at " . date('H:i:s');

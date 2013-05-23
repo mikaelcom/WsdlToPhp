@@ -2,7 +2,6 @@
 /**
  * Test with PackageName
  * @package PackageName
- * @date generation_date
  */
 ini_set('memory_limit','512M');
 ini_set('display_errors', true);
