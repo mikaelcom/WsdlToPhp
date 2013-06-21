@@ -301,7 +301,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @param bool $_asDomDocument
 	 * @return DOMDocument|string|null
 	 */
-	public function getFormatedXml($_string,$_asDomDocument = false)
+	public static function getFormatedXml($_string,$_asDomDocument = false)
 	{
 		if(class_exists('DOMDocument'))
 		{
@@ -315,6 +315,46 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 				return $_asDomDocument?$dom:$dom->saveXML();
 		}
 		return $_asDomDocument?null:$_string;
+	}
+	/**
+	 * Sets a SoapHeader to send
+	 * For more information, please read the online documentation on {@link http://www.php.net/manual/en/class.soapheader.php}
+	 * @uses PackageNameWsdlClass::getSoapClient()
+	 * @uses SoapClient::__setSoapheaders()
+	 * @param string $_nameSpace SoapHeader namespace
+	 * @param string $_name SoapHeader name
+	 * @param mixed $_data SoapHeader data
+	 * @param bool $_mustUnderstand
+	 * @param string $_actor
+	 * @return bool true|false
+	 */
+	public function setSoapHeader($_nameSpace,$_name,$_data,$_mustUnderstand = false,$_actor = null)
+	{
+		if(self::getSoapClient())
+		{
+			$defaultHeaders = @self::getSoapClient()->__default_headers;
+			if(!is_array($defaultHeaders))
+				$defaultHeaders = array();
+			else
+			{
+				foreach($defaultHeaders as $index=>$soapheader)
+				{
+					if($soapheader->name == $_name)
+					{
+						unset($defaultHeaders[$index]);
+						break;
+					}
+				}
+				self::getSoapClient()->__setSoapheaders(null);
+			}
+			if(!empty($_actor))
+				array_push($defaultHeaders,new SoapHeader($_nameSpace,$_name,$_data,$_mustUnderstand,$_actor));
+			else
+				array_push($defaultHeaders,new SoapHeader($_nameSpace,$_name,$_data,$_mustUnderstand));
+			return self::getSoapClient()->__setSoapheaders($defaultHeaders);
+		}
+		else
+			return false;
 	}
 	/**
 	 * Method alias to count

@@ -91,7 +91,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 				 */
 				$soapHeaderNames = $function->getMetaValue('SOAPHeaderNames',array());
 				$soapHeaderTypes = $function->getMetaValue('SOAPHeaderTypes',array());
-				$soapHeaderNameSpace = $function->getMetaValue('SOAPHeaderNamespace','');
+				$soapHeaderNameSpaces = $function->getMetaValue('SOAPHeaderNamespaces','');
 				if(count($soapHeaderNames) && count($soapHeaderNames) == count($soapHeaderTypes))
 				{
 					foreach($soapHeaderNames as $index=>$soapHeaderName)
@@ -104,16 +104,16 @@ class WsdlToPhpService extends WsdlToPhpModel
 																'name'=>$soapHeaderName,
 																'type'=>$soapHeaderType,
 																'namespaces'=>array(
-																					$soapHeaderNameSpace));
-						elseif(!in_array($soapHeaderNameSpace,$soapHeaders[$soapHeaderKey]['namespaces']))
-							array_push($soapHeaders[$soapHeaderKey]['namespaces'],$soapHeaderNameSpace);
+																					$soapHeaderNameSpaces[$index]));
+						elseif(!in_array($soapHeaderNameSpaces[$index],$soapHeaders[$soapHeaderKey]['namespaces']))
+							array_push($soapHeaders[$soapHeaderKey]['namespaces'],$soapHeaderNameSpaces[$index]);
 					}
 				}
 			}
 			/**
 			 * Generates the SoapHeaders setter methods
 			 */
-			if(count($soapHeaders))
+			if(count($soapHeaders) && WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
 			{
 				$whateverStruct = new WsdlToPhpStruct('whatever');
 				$soapHeaderNameUniqueMethods = array();
@@ -138,10 +138,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 					 */
 					$comments = array();
 					array_push($comments,'Sets the ' . $soapHeaderName . ' SoapHeader param');
-					array_push($comments,'For more information, please read the online documentation on {@link http://www.php.net/manual/en/class.soapheader.php}');
-					if(WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
-						array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::getSoapClient()');
-					array_push($comments,'@uses SoapClient::__setSoapheaders()');
+					array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::setSoapHeader()');
 					array_push($comments,'@param ' . $soapHeaderType . ' $_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName));
 					array_push($comments,'@param string $_nameSpace ' . implode(', ',$soapHeaderNameSpaces));
 					array_push($comments,'@param bool $_mustUnderstand');
@@ -154,32 +151,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 											'comment'=>$comments));
 					array_push($_body,'public function setSoapHeader' . $methodName . '(' . ($headerParamKnown?$soapHeaderType . ' ':'') . '$_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName) . ',$_nameSpace' . (count($soapHeaderNameSpaces) > 1?'':' = ' . var_export($soapHeaderNameSpaces[0],true)) . ',$_mustUnderstand = false,$_actor = null)');
 					array_push($_body,'{');
-					array_push($_body,'$defaultHeaders = @self::getSoapClient()->__default_headers;');
-					array_push($_body,'if(!is_array($defaultHeaders))');
-					array_push($_body,'{');
-					array_push($_body,'$defaultHeaders = array();');
-					array_push($_body,'}');
-					array_push($_body,'else');
-					array_push($_body,'{');
-					array_push($_body,'foreach($defaultHeaders as $index=>$soapheader)');
-					array_push($_body,'{');
-					array_push($_body,'if($soapheader->name == \'' . $soapHeaderName . '\')');
-					array_push($_body,'{');
-					array_push($_body,'unset($defaultHeaders[$index]);');
-					array_push($_body,'break;');
-					array_push($_body,'}');
-					array_push($_body,'}');
-					array_push($_body,'self::getSoapClient()->__setSoapheaders(null);');
-					array_push($_body,'}');
-					array_push($_body,'if(!empty($_actor))');
-					array_push($_body,'{');
-					array_push($_body,'array_push($defaultHeaders,new SoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName) . ',$_mustUnderstand,$_actor));');
-					array_push($_body,'}');
-					array_push($_body,'else');
-					array_push($_body,'{');
-					array_push($_body,'array_push($defaultHeaders,new SoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName) . ',$_mustUnderstand));');
-					array_push($_body,'}');
-					array_push($_body,'return self::getSoapClient()->__setSoapheaders($defaultHeaders);');
+					array_push($_body,'return $this->setSoapHeader($_nameSpace,\'' . $soapHeaderName . '\',$_' . lcfirst($headerParamKnown?$soapHeaderType:$cleanedName) . ',$_mustUnderstand,$_actor);');
 					array_push($_body,'}');
 					unset($soapHeaderName,$soapHeaderType,$soapHeaderNameSpaces,$cleanedName,$headerParamKnown,$methodName,$comments);
 				}

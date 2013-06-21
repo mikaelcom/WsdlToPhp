@@ -167,7 +167,7 @@
  * <li>{@link https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl}</li>
  * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
  * <li>{@link http://securedev.sedagroup.com.au/ws/jadehttp.dll?SOS&listName=SedaWebService&serviceName=SedaWebServiceProvider&wsdl=wsdl}</li>
- * <li>{@link http://api.actonsoftware.com/soap/services/ActonService2?wsdl}</li>
+ * <li>{@link http://api.actonsoftware.com/soap/services/ActonService2?wsdl}, multiple header for a given operation</li>
  * <li>{@link http://webservices.eurotaxglass.com/wsdl/forecast.wsdl}</li>
  * <li>{@link http://s7ips1.scene7.com/scene7/webservice/IpsApi.wsdl}</li>
  * <li>{@link https://ewus.nfz.gov.pl/ws-broker-server-ewus/services/ServiceBroker?wsdl}</li>
@@ -178,7 +178,7 @@
  * <li>{@link http://87.106.12.100:9090/schemas/order-service.wsdl}</li>
  * <li>{@link http://destservices.touricoholidays.com/DestinationsService.svc?wsdl}</li>
  * <li>{@link http://partners.a2zinc.net/dataservices/public/exhibitorprovider.asmx?WSDL}</li>
- * <li>{@link http://sharepoint-wsdl.googlecode.com/svn/trunk/WSDL/dspsts.asmx.xml}</li>
+ * <li>{@link http://sharepoint-wsdl.googlecode.com/svn/trunk/WSDL/dspsts.asmx.xml}, multiple header for a given operation</li>
  * <li>{@link http://eit.ebscohost.com/Services/SearchService.asmx?WSDL}</li>
  * <li>{@link http://drachenklasse.hosted-application.de/WebService.asmx?WSDL}</li>
  * <li>{@link https://api.cvent.com/soap/V200611.asmx?WSDL&debug=1}</li>
@@ -242,7 +242,7 @@
  * <li>{@link http://bondmaster.xignite.com/xBondMaster.asmx?WSDL}</li>
  * <li>{@link http://radiopilatusadmin.showare.sta.v-1.ch/WebServices/MemberDataServiceProvider.asmx?WSDL}</li>
  * <li>{@link http://mail.yahooapis.com/ws/mail/v1.1/wsdl}</li>
- * <li>{@link https://xhi.venere.com/xhi-1.0/services/OTA_ReadNotifReport.soap?wsdl}</li>
+ * <li>{@link https://xhi.venere.com/xhi-1.0/services/OTA_ReadNotifReport.soap?wsdl}, multiple header for a given operation</li>
  * <li>{@link http://demo.braingroup.ch/financial-kernel-ws/b2c/1?wsdl}</li>
  * <li>{@link http://demo.braingroup.ch/financial-kernel-ws/tax/1?wsdl}</li>
  * <li>{@link http://commonwebservices.saralee-de.com/mcdb2g/Services.asmx?WSDL}</li>
@@ -1232,11 +1232,9 @@ class WsdlToPhpGenerator extends SoapClient
 			$content = str_replace(array(
 										'packageName',
 										'PackageName',
-										'generation_date',
 										'meta_informations'),array(
 																lcfirst(self::getPackageName(false)),
 																self::getPackageName(),
-																date('Y-m-d'),
 																$metaInformation),$content);
 			file_put_contents($_rootDirectory . self::getPackageName() . 'WsdlClass.php',$content);
 			self::audit('generate_wsdlclass');
@@ -1335,13 +1333,11 @@ class WsdlToPhpGenerator extends SoapClient
 												'PackageName',
 												'PACKAGENAME',
 												'WSDL_PATH',
-												'generation_date',
 												'$content;'),array(
 																lcfirst(self::getPackageName()),
 																ucfirst(self::getPackageName()),
 																strtoupper(self::getPackageName()),
 																implode('',array_slice(array_keys($this->getWsdls()),0,1)),
-																date('Y-m-d'),
 																$content),$fileContent);
 				file_put_contents($_rootDirectory . 'sample-' . strtolower(self::getPackageName()) . '.php',$fileContent);
 			}
@@ -2603,30 +2599,6 @@ class WsdlToPhpGenerator extends SoapClient
 																		'operation'));
 			if($parentNode)
 			{
-				$notRequired = false;
-				$attributes = $_domNode->attributes;
-				$attributesCount = $attributes->length;
-				for($i = 0;$i < $attributesCount;$i++)
-				{
-					if($attributes->item($i) && stripos($attributes->item($i)->nodeName,'required') !== false)
-						$notRequired |= ($attributes->item($i)->nodeValue === 0 || $attributes->item($i)->nodeValue === 'false' || $attributes->item($i)->nodeValue === false || $attributes->item($i)->nodeValue === 'non' || $attributes->item($i)->nodeValue === 'no');
-				}
-				/**
-				 * Indicate that header is required for this operation
-				 */
-				$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeader',$notRequired?'optional':'required');
-				/**
-				 * Header Namespace ?
-				 */
-				if($_domNode->hasAttribute('namespace') && $_domNode->getAttribute('namespace') != '')
-					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNamespace',$_domNode->getAttribute('namespace'));
-				else
-				{
-					$definitions = self::findSuitableParent($parentNode,false,array(
-																					'definitions'));
-					if($definitions && $definitions->hasAttribute('targetNamespace') && $definitions->getAttribute('targetNamespace') != '')
-						$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNamespace',$definitions->getAttribute('targetNamespace'));
-				}
 				/**
 				 * Header types and names
 				 */
@@ -2639,16 +2611,27 @@ class WsdlToPhpGenerator extends SoapClient
 				 */
 				if(!empty($headerName) && !empty($headerMessage) && $this->getServiceFunction($parentNode->getAttribute('name')) && !in_array($headerName,$this->getServiceFunction($parentNode->getAttribute('name'))->getMetaValue('SOAPHeaderNames',array())))
 				{
+					$notRequired = false;
+					$attributes = $_domNode->attributes;
+					$attributesCount = $attributes->length;
+					for($i = 0;$i < $attributesCount;$i++)
+					{
+						if($attributes->item($i) && stripos($attributes->item($i)->nodeName,'required') !== false)
+							$notRequired |= ($attributes->item($i)->nodeValue === 0 || $attributes->item($i)->nodeValue === 'false' || $attributes->item($i)->nodeValue === false || $attributes->item($i)->nodeValue === 'non' || $attributes->item($i)->nodeValue === 'no');
+					}
 					/**
-					 * Indicate the required header name
+					 * Header Namespace ?
 					 */
-					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNames',array(
-																											$headerName));
+					$namespace = '';
+					if($_domNode->hasAttribute('namespace') && $_domNode->getAttribute('namespace') != '')
+						$namespace = $_domNode->getAttribute('namespace');
 					$globalHeaderKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName;
+					$globalNamespaceKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName . '_namespace';
 					/**
 					 * header name for the current message already known ?
 					 */
 					$headerType = self::getGlobal($globalHeaderKey,'');
+					$namespace = self::getGlobal($globalNamespaceKey,$namespace);
 					if(empty($headerType))
 					{
 						foreach($this->getWsdls() as $wsdlLocation=>$meta)
@@ -2666,6 +2649,7 @@ class WsdlToPhpGenerator extends SoapClient
 								{
 									$part = $nodes->item(0);
 									$partElement = '';
+									$partNamespace = '';
 									$partAttributes = array(
 															'element',
 															'type');
@@ -2675,8 +2659,12 @@ class WsdlToPhpGenerator extends SoapClient
 										{
 											$partElements = explode(':',$part->getAttribute($partAttributeName));
 											$partElement = count($partElements)?$partElements[count($partElements) - 1]:'';
+											$partNamespace = count($partElements)?$partElements[0]:'';
 											if(!empty($partElement))
+											{
+												$headerName = $partElement;
 												break;
+											}
 										}
 									}
 									if(!empty($partElement))
@@ -2689,6 +2677,16 @@ class WsdlToPhpGenerator extends SoapClient
 											$domDocument = self::wsdlLocationToDomDocument($wsdlLocation);
 											if($domDocument instanceof DOMDocument)
 											{
+												/**
+												 * Namespace value
+												 */
+												$definitions = self::findSuitableParent($part,false,array(
+																										'definitions'));
+												if($definitions && $definitions->hasAttribute('xmlns:' . $partNamespace) && $definitions->getAttribute('xmlns:' . $partNamespace) != '')
+													$namespace = $definitions->getAttribute('xmlns:' . $partNamespace);
+												/**
+												 * Header type value
+												 */
 												$domXPath = new DOMXPath($domDocument);
 												$nodes = $domXPath->query("//*[@name='$partElement']");
 												$nodesLength = $nodes->length;
@@ -2712,6 +2710,8 @@ class WsdlToPhpGenerator extends SoapClient
 									}
 								}
 							}
+							if(!empty($namespace))
+								self::setGlobal($globalNamespaceKey,$namespace);
 							if(!empty($headerType))
 							{
 								self::setGlobal($globalHeaderKey,$headerType);
@@ -2720,10 +2720,25 @@ class WsdlToPhpGenerator extends SoapClient
 						}
 					}
 					/**
+					 * Indicate that header is required for this operation
+					 */
+					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaders',array(
+																										$notRequired?'optional':'required'));
+					/**
+					 * Indicate the required header name
+					 */
+					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNames',array(
+																											$headerName));
+					/**
 					 * Indicate the required header type
 					 */
 					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderTypes',array(
 																											$headerType));
+					/**
+					 * Indicate the required header namespace
+					 */
+					$this->addServiceFunctionMeta($parentNode->getAttribute('name'),'SOAPHeaderNamespaces',array(
+																												$namespace));
 				}
 			}
 		}
