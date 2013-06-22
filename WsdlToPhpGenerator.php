@@ -2625,13 +2625,15 @@ class WsdlToPhpGenerator extends SoapClient
 					$namespace = '';
 					if($_domNode->hasAttribute('namespace') && $_domNode->getAttribute('namespace') != '')
 						$namespace = $_domNode->getAttribute('namespace');
-					$globalHeaderKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName;
-					$globalNamespaceKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName . '_namespace';
+					$globalHeaderTypeKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName . '_type';
+					$globalHeaderNameKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName . '_name';
+					$globalHeaderNamespaceKey = __METHOD__ . '_' . $headerMessage . '_' . $headerName . '_namespace';
 					/**
 					 * header name for the current message already known ?
 					 */
-					$headerType = self::getGlobal($globalHeaderKey,'');
-					$namespace = self::getGlobal($globalNamespaceKey,$namespace);
+					$headerType = self::getGlobal($globalHeaderTypeKey,'');
+					$namespace = self::getGlobal($globalHeaderNamespaceKey,$namespace);
+					$headerName = self::getGlobal($globalHeaderNameKey,$headerName);
 					if(empty($headerType))
 					{
 						foreach($this->getWsdls() as $wsdlLocation=>$meta)
@@ -2710,11 +2712,12 @@ class WsdlToPhpGenerator extends SoapClient
 									}
 								}
 							}
+							self::setGlobal($globalHeaderNameKey,$headerName);
 							if(!empty($namespace))
-								self::setGlobal($globalNamespaceKey,$namespace);
+								self::setGlobal($globalHeaderNamespaceKey,$namespace);
 							if(!empty($headerType))
 							{
-								self::setGlobal($globalHeaderKey,$headerType);
+								self::setGlobal($globalHeaderTypeKey,$headerType);
 								break;
 							}
 						}
