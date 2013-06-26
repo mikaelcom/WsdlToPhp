@@ -158,7 +158,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		 */
 		if($isXml)
 		{
-			array_push($_body,'if(!(' . $thisAccess . ' instanceof DOMDocument))');
+			array_push($_body,'if(!empty(' . $thisAccess . ') && !(' . $thisAccess . ' instanceof DOMDocument))');
 			array_push($_body,'{');
 			array_push($_body,'$dom = new DOMDocument(\'1.0\',\'UTF-8\');');
 			array_push($_body,'$dom->formatOutput = true;');

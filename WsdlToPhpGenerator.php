@@ -3241,8 +3241,8 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::getOptionSubCategory()
 	 * @uses WsdlToPhpGenerator::getPart()
 	 * @uses WsdlToPhpGenerator::getOptionGatherMethods()
-	 * @uses WsdlToPhpGenerator::getCleanName()
-	 * @uses WsdlToPhpGenerator::getContextualPart()
+	 * @uses WsdlToPhpModel::getCleanName()
+	 * @uses WsdlToPhpModel::getContextualPart()
 	 * @param WsdlToPhpModel $_model the model for which we generate the folder
 	 * @param string $_optionName category type
 	 * @return string
