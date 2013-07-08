@@ -451,7 +451,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 			{
 				$lines = explode("\r\n",$options['http']['header']);
 				/**
-				 * Ensure there is only header entry per header name
+				 * Ensure there is only one header entry for this header name
 				 */
 				$newLines = array();
 				foreach($lines as $line)
@@ -464,16 +464,16 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 				 */
 				array_push($newLines,"$_headerName: $_headerValue");
 				/**
-				 * Set the nex header options
+				 * Set the context http header option
 				 */
 				$options['http']['header'] = implode("\r\n",$newLines);
 				/**
 				 * Create context if it does not exist
 				 */
 				if(!is_resource($streamContext))
-					@self::getSoapClient()->_stream_context = stream_context_create($options);
+					return (@self::getSoapClient()->_stream_context = stream_context_create($options))?true:false;
 				/**
-				 * Set the new context options
+				 * Set the new context http header option
 				 */
 				else
 					return stream_context_set_option(@self::getSoapClient()->_stream_context,'http','header',$options['http']['header']);
