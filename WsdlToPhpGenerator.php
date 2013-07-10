@@ -277,6 +277,11 @@
  * <li>{@link https://webservices.netsuite.com/wsdl/v2012_2_0/netsuite.wsdl}</li>
  * </ul>
  * </li>
+ * <li>Web Service with multiple parameters of same type per operation, parameters are now named as the original parameter name
+ * <ul>
+ * <li>{@link http://demo.magentocommerce.com/api/v2_soap?wsdl=1}, ex: login operation</li>
+ * </ul>
+ * </li>
  * </ul>
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
@@ -1290,14 +1295,45 @@ class WsdlToPhpGenerator extends SoapClient
 						foreach($classMethods as $classMethod)
 						{
 							$content .= "\r\n// sample call for $className::" . $classMethod->getName() . '()';
-							$classParameters = $classMethod->getParameters();
+							$methodDoComment = $classMethod->getDocComment();
+							$methodParameters = $classMethod->getParameters();
+							$methodParametersCount = count($methodParameters);
+							$isSetSoapHeaderMethod = (strpos($classMethod->getName(),'setSoapHeader') === 0 && strlen($classMethod->getName()) > strlen('setSoapHeader'));
+							$end = $isSetSoapHeaderMethod?1:$methodParametersCount;
 							$parameters = array();
-							foreach($classParameters as $classParameter)
-								array_push($parameters,class_exists(ucfirst(substr($classParameter->getName(),1)))?'new ' . ucfirst(substr($classParameter->getName(),1)) . '(/*** update parameters list ***/)':'$' . lcfirst($classParameter->getName()));
-							$content .= "\r\nif(\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
-							$content .= "\r\n\t" . 'print_r($' . $classNameVar . '->getResult());';
-							$content .= "\r\nelse";
-							$content .= "\r\n\tprint_r($" . $classNameVar . "->getLastError());";
+							for($i = 0;$i < $end;$i++)
+							{
+								$methodParameter = $methodParameters[$i];
+								/**
+								 * Remove first _
+								 */
+								$methodParameterName = substr($methodParameter->getName(),1);
+								/**
+								 * Retrieve parameter type based on the method doc comment
+								 */
+								$matches = array();
+								preg_match('/\@param\s(.*)\s\$_' . $methodParameterName . '\r\n/',$methodDoComment,$matches);
+								$methodParameterType = (array_key_exists(1,$matches) && class_exists($matches[1]))?ucfirst($matches[1]):null;
+								array_push($parameters,!empty($methodParameterType)?"new $methodParameterType(/*** update parameters list ***/)":"\$_$methodParameterName");
+							}
+							/**
+							 * setSoapHeader call
+							 */
+							if($isSetSoapHeaderMethod)
+							{
+								$content .= " in order to initialize required SoapHeader";
+								$content .= "\r\n\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . ');';
+							}
+							/**
+							 * Operation call
+							 */
+							else
+							{
+								$content .= "\r\nif(\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
+								$content .= "\r\n\t" . 'print_r($' . $classNameVar . '->getResult());';
+								$content .= "\r\nelse";
+								$content .= "\r\n\tprint_r($" . $classNameVar . "->getLastError());";
+							}
 						}
 					}
 				}
