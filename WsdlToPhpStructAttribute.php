@@ -41,6 +41,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::getPackagedName()
+	 * @uses WsdlToPhpModel::getInheritance()
 	 * @param int $_part comment part
 	 * @return array
 	 */
@@ -69,7 +70,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		return $comments;
 	}
 	/**
-	 * Method returning the unique name in the current struct (for setters/getters and struct contrusctor array)
+	 * Returns the unique name in the current struct (for setters/getters and struct contrusctor array)
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getOwner()
 	 * @uses WsdlToPhpModel::getName()
@@ -250,7 +251,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		return $this->type;
 	}
 	/**
-	 * Set the type value
+	 * Sets the type value
 	 * @param string $_type
 	 * @return string
 	 */
@@ -259,7 +260,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		return ($this->type = $_type);
 	}
 	/**
-	 * Return potential default value
+	 * Returns potential default value
 	 * @uses WsdlToPhpModel::getMetaValueFirstSet()
 	 * @uses WsdlToPhpModel::getValueWithinItsType()
 	 * @uses WsdlToPhpStructAttribute::getType()
@@ -275,7 +276,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 																			'defaultvalue')),$this->getType());
 	}
 	/**
-	 * Return true or false depending on minOccurs information associated to the attribute
+	 * Returns true or false depending on minOccurs information associated to the attribute
 	 * @uses WsdlToPhpModel::getMetaValueFirstSet()
 	 * @uses WsdlToPhpModel::getMetaValue()
 	 * @return bool true|false
@@ -289,7 +290,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 																								'Minoccurs'),false));
 	}
 	/**
-	 * Return the patern which the value must match
+	 * Returns the patern which the value must match
 	 * @uses WsdlToPhpModel::getMetaValueFirstSet()
 	 * @return string
 	 */
@@ -302,7 +303,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 												'Match'),'');
 	}
 	/**
-	 * Return class name
+	 * Returns class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()

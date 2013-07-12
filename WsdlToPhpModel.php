@@ -222,7 +222,7 @@ class WsdlToPhpModel
 		return $this->inheritance;
 	}
 	/**
-	 * Set the name of the class the current class inherits from
+	 * Sets the name of the class the current class inherits from
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @param string
 	 */
@@ -273,7 +273,7 @@ class WsdlToPhpModel
 		return $this->meta;
 	}
 	/**
-	 * Set the meta
+	 * Sets the meta
 	 * @param array $_meta
 	 * @return array
 	 */
@@ -309,7 +309,7 @@ class WsdlToPhpModel
 		return $metaValue;
 	}
 	/**
-	 * Set the documentation meta value.
+	 * Sets the documentation meta value.
 	 * Documentation is set as an array so if multiple documentation nodes are set for an unique element, it will gather them.
 	 * @uses WsdlToPhpModel::META_DOCUMENTATION
 	 * @uses WsdlToPhpModel::addMeta()
@@ -333,7 +333,7 @@ class WsdlToPhpModel
 		return self::cleanComment($this->getMetaValue(self::META_DOCUMENTATION,''),' ');
 	}
 	/**
-	 * Set the from schema meta value.
+	 * Sets the from schema meta value.
 	 * @uses WsdlToPhpModel::META_FROM_SCHEMA
 	 * @uses WsdlToPhpModel::addMeta()
 	 * @param string $_fromSchema the url from which the element comes from
@@ -388,7 +388,7 @@ class WsdlToPhpModel
 		return $this->name;
 	}
 	/**
-	 * Set the original name extracted from the WSDL
+	 * Sets the original name extracted from the WSDL
 	 * @param string $_name
 	 * @return string
 	 */
@@ -416,7 +416,7 @@ class WsdlToPhpModel
 		return $this->owner;
 	}
 	/**
-	 * Set the owner model object
+	 * Sets the owner model object
 	 * @param WsdlToPhpModel $_owner object the owner of the current model
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @return WsdlToPhpModel
@@ -488,7 +488,7 @@ class WsdlToPhpModel
 		return self::$models;
 	}
 	/**
-	 * Return the model by its name
+	 * Returns the model by its name
 	 * @uses WsdlToPhpModel::getModels()
 	 * @param string $_modelName the original WsdlToPhpStruct name
 	 * @return WsdlToPhpStruct|null
@@ -500,7 +500,7 @@ class WsdlToPhpModel
 		return array_key_exists('_' . $_modelName . '_',self::getModels())?self::$models['_' . $_modelName . '_']:null;
 	}
 	/**
-	 * Set models
+	 * Sets models
 	 * @param array $_models the WsdlToPhpStruct's defined
 	 * @return array the WsdlToPhpStruct's defined
 	 */
@@ -509,7 +509,7 @@ class WsdlToPhpModel
 		return (self::$models = $_models);
 	}
 	/**
-	 * Update models with model
+	 * Updates models with model
 	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpModel::__toString()
 	 * @param WsdlToPhpModel $_model a WsdlToPhpModel object
@@ -572,7 +572,7 @@ class WsdlToPhpModel
 		return $uniqueName;
 	}
 	/**
-	 * Return the value with good type
+	 * Returns the value with good type
 	 * @param mixed $_value the value
 	 * @return mixed
 	 */
@@ -625,7 +625,7 @@ class WsdlToPhpModel
 		return WsdlToPhpGenerator::getPackageName() . 'WsdlClass';
 	}
 	/**
-	 * Return class name
+	 * Returns class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()

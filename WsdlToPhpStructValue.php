@@ -38,7 +38,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		$this->setOwner($_wsdlToPhpStruct);
 	}
 	/**
-	 * Method to return the name of the value as constant
+	 * Returns the name of the value as constant
 	 * @see WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getName()
@@ -70,7 +70,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return self::getValueWithinItsType($this->getName());
 	}
 	/**
-	 * Get the index attribute value
+	 * Gets the index attribute value
 	 * @return int
 	 */
 	public function getIndex()
@@ -78,7 +78,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return $this->index;
 	}
 	/**
-	 * Set the index attribute value
+	 * Sets the index attribute value
 	 * @param int
 	 * @return int $_index
 	 */
@@ -116,7 +116,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return 'const ' . $this->getCleanName() . ' = ' . var_export($this->getValue(),true) . ';';
 	}
 	/**
-	 * Return the index which has to be added at the end of natural constant name defined with the value cleaned
+	 * Returns the index which has to be added at the end of natural constant name defined with the value cleaned
 	 * Allows to avoid multiple constant name to be indentic
 	 * @param string $_structName the struct name
 	 * @param mixed $_value the value
@@ -137,7 +137,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return self::$uniqueConstants[$key];
 	}
 	/**
-	 * Return class name
+	 * Returns class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()

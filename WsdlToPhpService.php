@@ -28,7 +28,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 		parent::__construct($_name);
 	}
 	/**
-	 * Allows to define the contextual part of the class name for the package
+	 * Returns the contextual part of the class name for the package
 	 * @see WsdlToPhpModel::getContextualPart()
 	 * @return string
 	 */
@@ -161,7 +161,6 @@ class WsdlToPhpService extends WsdlToPhpModel
 			 */
 			foreach($this->getFunctions() as $function)
 			{
-				$function = $this->getFunction($function->getName());
 				array_push($_body,array(
 										'comment'=>$function->getComment()));
 				$function->getBody($_body);
@@ -203,7 +202,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 		return $this->functions;
 	}
 	/**
-	 * Set the functions
+	 * Sets the functions
 	 * @param array $_functions
 	 * @return array
 	 */
@@ -212,7 +211,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 		return ($this->functions = $_functions);
 	}
 	/**
-	 * Add a function to the service
+	 * Adds a function to the service
 	 * @param string $_functionName original function name
 	 * @param string $_functionParameterType original parameter type/name
 	 * @param string $_functionReturnType original return type/name
@@ -233,7 +232,7 @@ class WsdlToPhpService extends WsdlToPhpModel
 		return array_key_exists($_functionName,$this->getFunctions())?$this->functions[$_functionName]:null;
 	}
 	/**
-	 * Return class name
+	 * Returns class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()

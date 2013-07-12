@@ -35,8 +35,6 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	 * Main constructor
 	 * @see WsdlToPhpModel::__construct()
 	 * @uses WsdlToPhpStruct::setIsStruct()
-	 * @uses WsdlToPhpStruct::setValues()
-	 * @uses WsdlToPhpStruct::setAttributes()
 	 * @param string $_name the original name
 	 * @param bool $_isStruct defines if it's a real sruct or not
 	 * @return WsdlToPhpStruct
@@ -364,7 +362,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		}
 	}
 	/**
-	 * Allows to define the contextual part of the class name for the package
+	 * Returns the contextual part of the class name for the package
 	 * @see WsdlToPhpModel::getContextualPart()
 	 * @uses WsdlToPhpStruct::getIsRestriction()
 	 * @return string
@@ -409,7 +407,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 	{
 		$attributes = $this->attributes;
 		/**
-		 * Return the inherited attributes
+		 * Returns the inherited attributes
 		 */
 		if($_includeInheritanceAttributes)
 		{
@@ -442,7 +440,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 			unset($thisAttributes);
 		}
 		/**
-		 * Return the required attributes at first position
+		 * Returns the required attributes at first position
 		 */
 		if($_requiredFirst)
 		{
@@ -475,7 +473,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return count($this->getAttributes(false,false));
 	}
 	/**
-	 * Set the attributes of the struct
+	 * Sets the attributes of the struct
 	 * @param array
 	 * @return array
 	 */
@@ -484,7 +482,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return ($this->attributes = $_attributes);
 	}
 	/**
-	 * Add attribute based on its original name
+	 * Adds attribute based on its original name
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @param string $_attributeName the attribute name
 	 * @param string $_attributeType the attribute type
@@ -497,7 +495,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return $this->attributes[$_attributeName];
 	}
 	/**
-	 * Return the attribute by its name, otherwise null
+	 * Returns the attribute by its name, otherwise null
 	 * @uses WsdlToPhpStruct::getAttributes()
 	 * @param string $_attributeName the original attribute name
 	 * @return WsdlToPhpStructAttribute|null
@@ -515,7 +513,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return $this->isRestriction;
 	}
 	/**
-	 * Set the isRestriction value
+	 * Sets the isRestriction value
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @param bool $_isRestriction
 	 * @return bool
@@ -535,7 +533,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return $this->isStruct;
 	}
 	/**
-	 * Set the isStruct value
+	 * Sets the isStruct value
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @param bool $_isStruct
 	 * @return bool
@@ -555,7 +553,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return $this->values;
 	}
 	/**
-	 * Set the values for an enumeration
+	 * Sets the values for an enumeration
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @param array $_values
 	 * @return array
@@ -567,7 +565,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return $_values;
 	}
 	/**
-	 * Add value to values array
+	 * Adds value to values array
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @uses WsdlToPhpStruct::getValue()
 	 * @uses WsdlToPhpStruct::getValues()
@@ -580,7 +578,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		self::updateModels($this);
 	}
 	/**
-	 * Get the value object for the given value
+	 * Gets the value object for the given value
 	 * @uses WsdlToPhpStruct::getValues()
 	 * @uses WsdlToPhpModel::getName()
 	 * @param string $_value Value name
@@ -596,7 +594,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return null;
 	}
 	/**
-	 * Return class name
+	 * Returns class name
 	 * @return string __CLASS__
 	 */
 	public function __toString()
