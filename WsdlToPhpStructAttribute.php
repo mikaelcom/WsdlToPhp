@@ -238,7 +238,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		if($this->nameIsClean())
 			array_push($_body,'return ($this->' . $this->getName() . ' = $_' . lcfirst($this->getCleanName()) . ');');
 		else
-			array_push($_body,'return ($this->{\'' . addslashes($this->getName()) . '\'} = $_' . lcfirst($this->getCleanName()) . ');');
+			array_push($_body,'return ($this->' . $this->getCleanName() . ' = $this->{\'' . addslashes($this->getName()) . '\'} = $_' . lcfirst($this->getCleanName()) . ');');
 		array_push($_body,'}');
 		unset($model,$comments);
 	}
