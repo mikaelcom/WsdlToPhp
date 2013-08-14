@@ -362,7 +362,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 			if(strpos($line,':'))
 			{
 				$headerParts = explode(':',$line);
-				$headers[$headerParts[0]] = trim(implode('',array_slice($headerParts,1)));
+				$headers[$headerParts[0]] = trim(implode(':',array_slice($headerParts,1)));
 			}
 		}
 		return $headers;
