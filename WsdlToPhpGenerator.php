@@ -720,6 +720,7 @@ class WsdlToPhpGenerator extends SoapClient
 			$structsParams = array();
 			foreach($types as $type)
 			{
+				$typeSignature = md5($type);
 				/**
 				 * Remove useless break line, tabs
 				 */
@@ -764,9 +765,13 @@ class WsdlToPhpGenerator extends SoapClient
 				 */
 				$structName = $typeDef[1];
 				/**
-				 * Struct already known ?
+				 * Struct already known? If not, then parse it and add attributes to it. We don't parse twice the same struct.
+				 * This test now lets pass identically named elements with different structure such as the two followings:
+				 * - struct Create { Create request; }
+				 * - struct Create { ArrayOfDetailItem Details; string UserID; string Password; string TestMode; etc. }
+				 * This will generate a Struct class containing the merge of all the different structures
 				 */
-				if(in_array($structName,$structsDefined))
+				if(in_array($typeSignature,$structsDefined))
 					continue;
 				/**
 				 * Collect struct params
@@ -800,7 +805,7 @@ class WsdlToPhpGenerator extends SoapClient
 							if(!empty($structParamType) && !empty($structParamName) && !empty($structName))
 							{
 								$this->addStruct($structName,$structParamName,$structParamType);
-								$structsDefined[] = $structName;
+								array_push($structsDefined,$typeSignature);
 								$structParamName = '';
 								$structParamType = '';
 							}
@@ -881,7 +886,7 @@ class WsdlToPhpGenerator extends SoapClient
 				if(!$struct->getIsStruct())
 					continue;
 				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$struct);
-				$structsClassesFiles[] = $structClassFileName = $elementFolder . $struct->getPackagedName() . '.php';
+				array_push($structsClassesFiles,$structClassFileName = $elementFolder . $struct->getPackagedName() . '.php');
 				/**
 				 * Generates file
 				 */
@@ -1002,7 +1007,7 @@ class WsdlToPhpGenerator extends SoapClient
 			foreach($services as $serviceName=>$service)
 			{
 				$elementFolder = $this->getDirectory($_rootDirectory,$_rootDirectoryRights,$service);
-				$servicesClassesFiles[] = $serviceClassFileName = $elementFolder . $service->getPackagedName() . '.php';
+				array_push($servicesClassesFiles,$serviceClassFileName = $elementFolder . $service->getPackagedName() . '.php');
 				/**
 				 * Generates file
 				 */
