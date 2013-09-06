@@ -233,6 +233,8 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::WSDL_TYPEMAP
 	 * @uses PackageNameWsdlClass::WSDL_URL
 	 * @uses PackageNameWsdlClass::WSDL_USER_AGENT
+	 * @uses SOAP_SINGLE_ELEMENT_ARRAYS
+	 * @uses SOAP_USE_XSI_ARRAY_TYPE
 	 * @return array
 	 */
 	public static function getDefaultWsdlOptions()
@@ -243,7 +245,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 					self::WSDL_CONNECTION_TIMEOUT=>null,
 					self::WSDL_ENCODING=>null,
 					self::WSDL_EXCPTS=>true,
-					self::WSDL_FEATURES=>null,
+					self::WSDL_FEATURES=>SOAP_SINGLE_ELEMENT_ARRAYS | SOAP_USE_XSI_ARRAY_TYPE,
 					self::WSDL_LOGIN=>null,
 					self::WSDL_PASSWD=>null,
 					self::WSDL_SOAP_VERSION=>null,
