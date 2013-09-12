@@ -385,21 +385,16 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	{
 		if(self::getSoapClient())
 		{
-			$defaultHeaders = @self::getSoapClient()->__default_headers;
-			if(!is_array($defaultHeaders))
-				$defaultHeaders = array();
-			else
+			$defaultHeaders = (isset(self::getSoapClient()->__default_headers) && is_array(self::getSoapClient()->__default_headers))?self::getSoapClient()->__default_headers:array();
+			foreach($defaultHeaders as $index=>$soapheader)
 			{
-				foreach($defaultHeaders as $index=>$soapheader)
+				if($soapheader->name == $_name)
 				{
-					if($soapheader->name == $_name)
-					{
-						unset($defaultHeaders[$index]);
-						break;
-					}
+					unset($defaultHeaders[$index]);
+					break;
 				}
-				self::getSoapClient()->__setSoapheaders(null);
 			}
+			self::getSoapClient()->__setSoapheaders(null);
 			if(!empty($_actor))
 				array_push($defaultHeaders,new SoapHeader($_nameSpace,$_name,$_data,$_mustUnderstand,$_actor));
 			else
@@ -422,7 +417,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	{
 		if(self::getSoapClient())
 		{
-			$streamContext = @self::getSoapClient()->_stream_context;
+			$streamContext = (isset(self::getSoapClient()->_stream_context) && is_resource(self::getSoapClient()->_stream_context))?self::getSoapClient()->_stream_context:null;
 			if(!is_resource($streamContext))
 			{
 				$options = array();
@@ -473,12 +468,12 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 				 * Create context if it does not exist
 				 */
 				if(!is_resource($streamContext))
-					return (@self::getSoapClient()->_stream_context = stream_context_create($options))?true:false;
+					return (self::getSoapClient()->_stream_context = stream_context_create($options))?true:false;
 				/**
 				 * Set the new context http header option
 				 */
 				else
-					return stream_context_set_option(@self::getSoapClient()->_stream_context,'http','header',$options['http']['header']);
+					return stream_context_set_option(self::getSoapClient()->_stream_context,'http','header',$options['http']['header']);
 			}
 			else
 				return false;
