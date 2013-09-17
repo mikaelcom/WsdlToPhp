@@ -1,4 +1,4 @@
-WsdlToPhpGenerator
+WsdlToPhpGenerator [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/mikaelcom/WsdlToPhp/badges/quality-score.png?s=a52087390e8668b380c1b68fb49a016e8d318615)](https://scrutinizer-ci.com/g/mikaelcom/WsdlToPhp/)
 =========
 
 Generate PHP classes based on a WSDL
