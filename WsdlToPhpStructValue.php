@@ -45,6 +45,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getOwner()
 	 * @uses WsdlToPhpStructValue::constantSuffix()
 	 * @uses WsdlToPhpStructValue::getIndex()
+	 * @uses WsdlToPhpStructValue::getOwner()
 	 * @uses WsdlToPhpGenerator::getOptionGenericConstantsNames()
 	 * @param bool $_keepMultipleUnderscores optional, allows to keep the multiple consecutive underscores
 	 * @return string
@@ -135,6 +136,16 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 			self::$uniqueConstants[$key]++;
 		self::$uniqueConstants[$indexedKey] = self::$uniqueConstants[$key];
 		return self::$uniqueConstants[$key];
+	}
+	/**
+	 * Returns the owner model object, meaning a WsdlToPhpStruct object
+	 * @see WsdlToPhpModel::getOwner()
+	 * @uses WsdlToPhpModel::getOwner()
+	 * @return WsdlToPhpService
+	 */
+	public function getOwner()
+	{
+		return parent::getOwner();
 	}
 	/**
 	 * Returns class name

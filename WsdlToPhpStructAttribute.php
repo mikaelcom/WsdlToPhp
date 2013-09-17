@@ -38,6 +38,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpStructAttribute::getType()
+	 * @uses WsdlToPhpStructAttribute::getOwner()
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::getPackagedName()
@@ -55,9 +56,10 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		{
 			/**
 			 * A virtual struct exists only to store meta informations about itself
+			 * A property for which the data type points to its actual owner class has to be of its native type 
 			 * So don't add meta informations about a valid struct
 			 */
-			if(!$model->getIsStruct())
+			if(!$model->getIsStruct() || $model->getPackagedName() == $this->getOwner()->getPackagedName())
 			{
 				$model->addMetaComment($comments);
 				array_push($comments,'@var ' . ($model->getInheritance()?$model->getInheritance():$this->getType()));
@@ -72,9 +74,9 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	/**
 	 * Returns the unique name in the current struct (for setters/getters and struct contrusctor array)
 	 * @uses WsdlToPhpModel::getCleanName()
-	 * @uses WsdlToPhpModel::getOwner()
 	 * @uses WsdlToPhpModel::getName()
 	 * @uses WsdlToPhpModel::uniqueName()
+	 * @uses WsdlToPhpStructAttribute::getOwner()
 	 * @return string
 	 */
 	public function getUniqueName()
@@ -119,6 +121,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @uses WsdlToPhpStructAttribute::getGetterName()
 	 * @uses WsdlToPhpStructAttribute::isRequired()
+	 * @uses WsdlToPhpStructAttribute::getOwner()
 	 * @param array $_body
 	 * @param WsdlToPhpStruct $_struct
 	 * @return void
@@ -141,7 +144,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 			array_push($comments,'@uses ' . $_struct->getPackagedName() . '::' . $this->getSetterName() . '()');
 			array_push($comments,'@param bool true or false whether to return XML value as string or as DOMDocument');
 		}
-		array_push($comments,'@return ' . ($model?($model->getIsStruct()?$model->getPackagedName():($model->getInheritance()?$model->getInheritance():$this->getType())):$this->getType()) . ($this->isRequired()?'':'|null'));
+		array_push($comments,'@return ' . ($model?(($model->getIsStruct() && $model->getPackagedName() != $this->getOwner()->getPackagedName())?$model->getPackagedName():($model->getInheritance()?$model->getInheritance():$this->getType())):$this->getType()) . ($this->isRequired()?'':'|null'));
 		array_push($_body,array(
 								'comment'=>$comments));
 		/**
@@ -189,6 +192,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpStruct::isArray()
 	 * @uses WsdlToPhpStructAttribute::getType()
 	 * @uses WsdlToPhpStructAttribute::getSetterName()
+	 * @uses WsdlToPhpStructAttribute::getOwner()
 	 * @param array $_body
 	 * @param WsdlToPhpStruct $_struct
 	 * @return void
@@ -205,7 +209,7 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 			array_push($comments,'@uses ' . $model->getPackagedName() . '::valueIsValid()');
 		if($model)
 		{
-			if($model->getIsStruct())
+			if($model->getIsStruct() && $model->getPackagedName() != $this->getOwner()->getPackagedName())
 			{
 				array_push($comments,'@param ' . $model->getPackagedName() . ' $_' . lcfirst($this->getCleanName()) . ' the ' . $this->getName());
 				array_push($comments,'@return ' . $model->getPackagedName());
@@ -301,6 +305,16 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 												'Pattern',
 												'match',
 												'Match'),'');
+	}
+	/**
+	 * Returns the owner model object, meaning a WsdlToPhpStruct object
+	 * @see WsdlToPhpModel::getOwner()
+	 * @uses WsdlToPhpModel::getOwner()
+	 * @return WsdlToPhpStruct
+	 */
+	public function getOwner()
+	{
+		return parent::getOwner();
 	}
 	/**
 	 * Returns class name

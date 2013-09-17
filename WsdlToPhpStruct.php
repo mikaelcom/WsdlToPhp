@@ -131,7 +131,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 				$model = self::getModelByName($attribute->getType());
 				if($model)
 				{
-					if($model->getIsStruct())
+					if($model->getIsStruct() && $model->getPackagedName() != $this->getPackagedName())
 					{
 						if($model->isArray())
 							array_push($constructParameters,'\'' . $attribute->getUniqueName() . '\'=>($_' . lcfirst($attribute->getCleanName()) . ' instanceof ' . $model->getPackagedName() . ')?$_' . lcfirst($attribute->getCleanName()) . ':new ' . $model->getPackagedName() . '($_' . lcfirst($attribute->getCleanName()) . ')');
