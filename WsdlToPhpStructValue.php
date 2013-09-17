@@ -141,7 +141,7 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * Returns the owner model object, meaning a WsdlToPhpStruct object
 	 * @see WsdlToPhpModel::getOwner()
 	 * @uses WsdlToPhpModel::getOwner()
-	 * @return WsdlToPhpService
+	 * @return WsdlToPhpStruct
 	 */
 	public function getOwner()
 	{
