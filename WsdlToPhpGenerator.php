@@ -282,6 +282,11 @@
  * <li>{@link http://demo.magentocommerce.com/api/v2_soap?wsdl=1}, ex: login operation</li>
  * </ul>
  * </li>
+ * <li>Web Service with all parameter only detected with unknown parameter type and return per operation. These types must be retrieved from the WSDLs
+ * <ul>
+ * <li>{@link http://196.29.140.10:9091/services/MyBoardPack.Soap.svc?singleWsdl}</li>
+ * </ul>
+ * </li>
  * </ul>
  * @package WsdlToPhpGenerator
  * @date 19/12/2012
@@ -3036,7 +3041,7 @@ class WsdlToPhpGenerator extends SoapClient
 					elseif(is_array($operationParameterReturnType))
 					{
 						foreach($operationParameterReturnType as $parameterType)
-							$operationParameterReturnTypeKnown &= (!empty($parameterType) && !strtolower($parameterType) === 'unknown');
+							$operationParameterReturnTypeKnown &= (!empty($parameterType) && !(strtolower($parameterType) === 'unknown'));
 						$operationParameterReturnTypeFound = array();
 					}
 					/**
@@ -3113,6 +3118,20 @@ class WsdlToPhpGenerator extends SoapClient
 																	if(count($operationParameterReturnTypeFound) == count($operationParameterReturnType))
 																		$operationParameterReturnTypeDefined = true;
 																}
+															}
+														}
+														else
+														{
+															$nodeIndex = 0;
+															while(!$operationParameterReturnTypeDefined && $nodeIndex < $nodesLength)
+															{
+																$node = $nodes->item($nodeIndex);
+																if($node && !empty($node->nodeName) && $node->getAttribute('name') == $partElement && (stripos($node->nodeName,'element') !== false || stripos($node->nodeName,'complexType') !== false || stripos($node->nodeName,'simpleType') !== false))
+																{
+																	$operationParameterReturnTypeFound = $node->getAttribute('name');
+																	$operationParameterReturnTypeDefined = true;
+																}
+																$nodeIndex++;
 															}
 														}
 													}
