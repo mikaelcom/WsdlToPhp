@@ -2286,8 +2286,6 @@ class WsdlToPhpGenerator extends SoapClient
 		{
 			$locationsToParse = array();
 			array_push($locationsToParse,!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
-			if($_domNode->hasAttribute('namespace') && strpos($_domNode->getAttribute('namespace'),'://'))
-				array_push($locationsToParse,$_domNode->getAttribute('namespace'));
 			foreach($locationsToParse as $locationToParse)
 			{
 				$fileParts = pathinfo($locationToParse);
