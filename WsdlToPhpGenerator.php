@@ -2316,7 +2316,7 @@ class WsdlToPhpGenerator extends SoapClient
 				 */
 				elseif(empty($scheme) && empty($host) && count($pathParts))
 				{
-					$localPath = str_replace('//','/','/' . implode('/',$pathParts) . '/');
+					$localPath = str_replace('//','/',implode('/',$pathParts) . '/');
 					$localFile = $localPath . implode('/',$cleanLocation);
 					if(is_file($localFile))
 						array_push($locations,$localFile);
