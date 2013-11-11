@@ -25,7 +25,7 @@ Lets have a look to see how to use it basically:
 ```php
 /* Create an instance of the generator with the WSDL from which to generate the package */
 $w = new WsdlToPhpGenerator('https://www.paypalobjects.com/wsdl/PayPalSvc.wsdl');
-/* Call after or even before the static method to modify its behaviour */
+/* Call after the instanciation or before a new generation in order the modify the generator behaviour */
 // Activate the autoload file generation
 WsdlToPhpGenerator::setOptionGenerateAutoloadFile(true);
 // Activate the generation and the use of the generic WsdlClass from which each generated class will inherit
