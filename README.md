@@ -7,8 +7,6 @@ This package allows to programmatically send request to a SOAP service using PHP
 
 Generated classes are fully documented with php doc block according to phpDocumentor. It retrieves the documentation tags from the WSDL and its schemas and defines used methods, return type, parameter type, etc.
 
-It uses eZ Components, ezcPhpGenerator, in order to generate php files.
-
 Test this library online here : http://www.wsdltophp.com/
 
 Read the PHPDoc online here : http://phpdoc.wsdltophp.com/
