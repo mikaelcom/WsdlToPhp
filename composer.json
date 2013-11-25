@@ -1,5 +1,5 @@
 {
-    "name": "WsdlToPhp/WsdlToPhp",
+    "name": "wsdltophp/wsdltophp",
     "description": "Generate hierarchical PHP classes based on a WSDL",
     "version": "1.0.0",
     "type": "library",
