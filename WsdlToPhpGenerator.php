@@ -736,7 +736,6 @@ class WsdlToPhpGenerator extends SoapClient
 		if(is_array($types) && count($types))
 		{
 			$structsDefined = array();
-			$structsParams = array();
 			foreach($types as $type)
 			{
 				$typeSignature = md5($type);
