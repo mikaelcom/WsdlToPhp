@@ -92,10 +92,9 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 	 * @see WsdlToPhpModel::getComment()
 	 * @uses WsdlToPhpStructValue::getValue()
 	 * @uses WsdlToPhpModel::addMetaComment()
-	 * @param int $_part comment part
 	 * @return array
 	 */
-	public function getComment($_part = '')
+	public function getComment()
 	{
 		$value = $this->getValue();
 		$comments = array();

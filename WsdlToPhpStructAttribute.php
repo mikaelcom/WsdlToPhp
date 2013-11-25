@@ -43,10 +43,9 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getModelByName()
 	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses WsdlToPhpModel::getInheritance()
-	 * @param int $_part comment part
 	 * @return array
 	 */
-	public function getComment($_part = '')
+	public function getComment()
 	{
 		$comments = array();
 		array_push($comments,'The ' . $this->getName());

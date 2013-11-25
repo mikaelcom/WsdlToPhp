@@ -64,8 +64,6 @@ class WsdlToPhpModel
 	private static $uniqueNames = array();
 	/**
 	 * Main constructor
-	 * @uses WsdlToPhpModel::setInheritance()
-	 * @uses WsdlToPhpModel::setMeta()
 	 * @uses WsdlToPhpModel::setName()
 	 * @uses WsdlToPhpModel::updateModels()
 	 * @param string $_name the original name
@@ -77,57 +75,70 @@ class WsdlToPhpModel
 		self::updateModels($this);
 	}
 	/**
-	 * Returns comments for the class
+	 * Returns comments for the element
+	 * @return array
+	 */
+	public function getComment()
+	{
+		return array();
+	}
+	/**
+	 * Returns the comments for the file
 	 * @uses WsdlToPhpModel::getPackagedName()
-     * @uses WsdlToPhpGenerator::getOptionAddComments()
+	 * @uses WsdlToPhpGenerator::getOptionAddComments()
+	 * @uses WsdlToPhpModel::getDocSubPackages()
+	 * @uses WsdlToPhpGenerator::getPackageName()
+	 * @return array
+	 */
+	private function getFileComment()
+	{
+		$comments = array();
+		array_push($comments,'File for class ' . $this->getPackagedName());
+		array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
+		if(count($this->getDocSubPackages()))
+			array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
+		if(count(WsdlToPhpGenerator::getOptionAddComments()))
+		{
+			foreach(WsdlToPhpGenerator::getOptionAddComments() as $tagName=>$tagValue)
+				array_push($comments,"@$tagName $tagValue");
+		}
+		return $comments;
+	}
+	/**
+	 * Returns the comments for the class
+	 * @uses WsdlToPhpModel::getPackagedName()
+	 * @uses WsdlToPhpGenerator::getOptionAddComments()
 	 * @uses WsdlToPhpModel::getDocumentation()
 	 * @uses WsdlToPhpModel::addMetaComment()
 	 * @uses WsdlToPhpModel::getDocSubPackages()
 	 * @uses WsdlToPhpStruct::getIsStruct()
 	 * @uses WsdlToPhpGenerator::getPackageName()
-	 * @param int $_part comment part
 	 * @return array
 	 */
-	public function getComment($_part = '')
+	private function getClassComment()
 	{
 		$comments = array();
-		switch($_part)
+		array_push($comments,'This class stands for ' . $this->getPackagedName() . ' originally named ' . $this->getName());
+		if($this->getDocumentation() != '')
+			array_push($comments,'Documentation : ' . $this->getDocumentation());
+		$this->addMetaComment($comments,false,true);
+		if($this->getInheritance() != '')
 		{
-			case 1:
-				array_push($comments,'File for class ' . $this->getPackagedName());
-				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
-				if(count($this->getDocSubPackages()))
-					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
-				if(count(WsdlToPhpGenerator::getOptionAddComments()))
-				{
-					foreach(WsdlToPhpGenerator::getOptionAddComments() as $tagName=>$tagValue)
-						array_push($comments,"@$tagName $tagValue");
-				}
-				break;
-			case 2:
-				array_push($comments,'This class stands for ' . $this->getPackagedName() . ' originally named ' . $this->getName());
-				if($this->getDocumentation() != '')
-					array_push($comments,'Documentation : ' . $this->getDocumentation());
-				$this->addMetaComment($comments,false,true);
-				if($this->getInheritance() != '')
-				{
-					$inheritedModel = self::getModelByName($this->getInheritance());
-					/**
-					 * A virtual struct exists only to store meta informations about itself
-					 * So don't add meta informations about a valid struct
-					 */
-					if($inheritedModel && !$inheritedModel->getIsStruct())
-						$inheritedModel->addMetaComment($comments,false,false);
-				}
-				array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
-				if(count($this->getDocSubPackages()))
-					array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
-				if(count(WsdlToPhpGenerator::getOptionAddComments()))
-				{
-					foreach(WsdlToPhpGenerator::getOptionAddComments() as $tagName=>$tagValue)
-						array_push($comments,"@$tagName $tagValue");
-				}
-				break;
+			$inheritedModel = self::getModelByName($this->getInheritance());
+			/**
+			 * A virtual struct exists only to store meta informations about itself
+			 * So don't add meta informations about a valid struct
+			 */
+			if($inheritedModel && !$inheritedModel->getIsStruct())
+				$inheritedModel->addMetaComment($comments,false,false);
+		}
+		array_push($comments,'@package ' . WsdlToPhpGenerator::getPackageName());
+		if(count($this->getDocSubPackages()))
+			array_push($comments,'@subpackage ' . implode(',',$this->getDocSubPackages()));
+		if(count(WsdlToPhpGenerator::getOptionAddComments()))
+		{
+			foreach(WsdlToPhpGenerator::getOptionAddComments() as $tagName=>$tagValue)
+				array_push($comments,"@$tagName $tagValue");
 		}
 		return $comments;
 	}
@@ -152,9 +163,9 @@ class WsdlToPhpModel
 		 * Class comments
 		 */
 		array_push($class,array(
-								'comment'=>$this->getComment(1)));
+								'comment'=>$this->getFileComment()));
 		array_push($class,array(
-								'comment'=>$this->getComment(2)));
+								'comment'=>$this->getClassComment()));
 		/**
 		 * Extends
 		 */
@@ -498,15 +509,6 @@ class WsdlToPhpModel
 		if(!is_scalar($_modelName))
 			return null;
 		return array_key_exists('_' . $_modelName . '_',self::getModels())?self::$models['_' . $_modelName . '_']:null;
-	}
-	/**
-	 * Sets models
-	 * @param array $_models the WsdlToPhpStruct's defined
-	 * @return array the WsdlToPhpStruct's defined
-	 */
-	private static function setModels(array $_models = array())
-	{
-		return (self::$models = $_models);
 	}
 	/**
 	 * Updates models with model

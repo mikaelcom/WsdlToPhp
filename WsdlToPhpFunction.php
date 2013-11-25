@@ -55,10 +55,9 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 	 * @uses WsdlToPhpModel::getDocumentation()
 	 * @uses WsdlToPhpModel::getGenericWsdlClassName()
 	 * @uses WsdlToPhpModel::cleanString()
-	 * @param int $_part comment part
 	 * @return array
 	 */
-	public function getComment($_part = '')
+	public function getComment()
 	{
 		$comments = array();
 		array_push($comments,'Method to call the operation originally named ' . $this->getName());
