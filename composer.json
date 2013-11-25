@@ -1,0 +1,24 @@
+{
+    "name": "WsdlToPhp/WsdlToPhp",
+    "description": "Generate hierarchical PHP classes based on a WSDL",
+    "version": "1.0.0",
+    "type": "library",
+    "keywords" : ["soap","wsdl","php","generator"],
+    "homepage" : "https://github.com/mikaelcom/WsdlToPhp",
+    "time" : "2013-09-06 10:28:27",
+    "license" : "MIT",
+    "authors" : [
+                 {
+			        "name": "Mikaël DELSOL",
+			        "email": "contact@wsdltophp.com",
+			        "homepage": "https://www.wsdltophp.com",
+			        "role": "Owner"
+			     }
+                ],
+    "support" : {
+    				"email" : "contact@wsdltophp.com"
+    		    }
+    "require": {
+		    	"php": ">=5.3.0"
+    		   }
+}
