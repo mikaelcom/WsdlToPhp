@@ -21,10 +21,6 @@ if(!function_exists('lcfirst'))
  * Librairies
  */
 $localDir = dirname(__FILE__) . '/';
-require_once $localDir . 'Base/src/struct.php';
-require_once $localDir . 'PhpGenerator/src/php_generator.php';
-require_once $localDir . 'PhpGenerator/src/structs/php_generator_return_data.php';
-require_once $localDir . 'PhpGenerator/src/structs/php_generator_parameter.php';
 require_once $localDir . 'WsdlToPhpModel.php';
 require_once $localDir . 'WsdlToPhpStruct.php';
 require_once $localDir . 'WsdlToPhpService.php';
