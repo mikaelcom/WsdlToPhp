@@ -517,6 +517,11 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	private static $optionDebug;
 	/**
+	 * Use intern global variable instead of using the PHP $GLOBALS variable
+	 * @var array
+	 */
+	private static $globals;
+	/**
 	 * Constructor
 	 * @uses SoapClient::__construct()
 	 * @uses WsdlToPhpGenerator::setStructs()
@@ -3450,7 +3455,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	private static function initGlobals()
 	{
-		$GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY] = array();
+		self::$globals[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY] = array();
 		return true;
 	}
 	/**
@@ -3460,8 +3465,8 @@ class WsdlToPhpGenerator extends SoapClient
 	 */
 	public static function unsetGlobals()
 	{
-		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,$GLOBALS))
-			unset($GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY]);
+		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,self::$globals))
+			unset(self::$globals[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY]);
 		return true;
 	}
 	/**
@@ -3475,8 +3480,8 @@ class WsdlToPhpGenerator extends SoapClient
 	{
 		if(!is_scalar($_globalKey))
 			return null;
-		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,$GLOBALS))
-			return ($GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY][$_globalKey] = $_globalValue);
+		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,self::$globals))
+			return (self::$globals[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY][$_globalKey] = $_globalValue);
 		else
 			return null;
 	}
@@ -3491,8 +3496,8 @@ class WsdlToPhpGenerator extends SoapClient
 	{
 		if(!is_scalar($_globalKey))
 			return $_globalFallback;
-		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,$GLOBALS) && array_key_exists($_globalKey,$GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY]))
-			return $GLOBALS[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY][$_globalKey];
+		if(array_key_exists(self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY,self::$globals) && array_key_exists($_globalKey,self::$globals[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY]))
+			return self::$globals[self::WSDL_TO_PHP_GENERATOR_GLOBAL_KEY][$_globalKey];
 		else
 			return $_globalFallback;
 	}
