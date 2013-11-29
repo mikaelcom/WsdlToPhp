@@ -13,6 +13,11 @@
                     "email": "contact@wsdltophp.com",
                     "homepage": "https://www.wsdltophp.com",
                     "role": "Owner"
+                 },
+                 {
+                    "name": "Gemorroj",
+                    "email": "wapinet@mail.ru",
+                    "role": "Contributor"
                  }
                 ],
     "support" : {
