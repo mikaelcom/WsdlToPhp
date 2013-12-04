@@ -84,7 +84,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * Option key to define WSDL keep_alive
 	 * @var string
 	 */
-	const WSDL_FKEEP_ALIVE = 'wsdl_keep_alive';
+	const WSDL_KEEP_ALIVE = 'wsdl_keep_alive';
 	/**
 	 * Soapclient called to communicate with the actual SOAP Service
 	 * @var SoapClient
@@ -453,7 +453,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 				$newLines = array();
 				foreach($lines as $line)
 				{
-					if(strpos($line,$_headerName) === false)
+					if(!empty($line) && strpos($line,$_headerName) === false)
 						array_push($newLines,$line);
 				}
 				/**
