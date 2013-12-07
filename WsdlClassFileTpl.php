@@ -415,7 +415,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 */
 	public function setHttpHeader($_headerName,$_headerValue)
 	{
-		if(self::getSoapClient())
+		if(self::getSoapClient() && !empty($_headerName))
 		{
 			$streamContext = (isset(self::getSoapClient()->_stream_context) && is_resource(self::getSoapClient()->_stream_context))?self::getSoapClient()->_stream_context:null;
 			if(!is_resource($streamContext))
