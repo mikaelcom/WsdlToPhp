@@ -212,24 +212,35 @@ class WsdlToPhpService extends WsdlToPhpModel
 	}
 	/**
 	 * Adds a function to the service
+	 * @uses WsdlToPhpFunction::setIsUnique()
 	 * @param string $_functionName original function name
 	 * @param string $_functionParameterType original parameter type/name
 	 * @param string $_functionReturnType original return type/name
+	 * @param bool $_functionIsUnique original isUnique value
 	 * @return WsdlToPhpFunction
 	 */
-	public function addFunction($_functionName,$_functionParameterType,$_functionReturnType)
+	public function addFunction($_functionName,$_functionParameterType,$_functionReturnType,$_functionIsUnique = true)
 	{
-		return ($this->functions[$_functionName] = new WsdlToPhpFunction($_functionName,$_functionParameterType,$_functionReturnType,$this));
+		$function = new WsdlToPhpFunction($_functionName,$_functionParameterType,$_functionReturnType,$this);
+		$function->setIsUnique($_functionIsUnique);
+		array_push($this->functions,$function);
+		return $function;
 	}
 	/**
 	 * Returns the function by its original name
 	 * @uses WsdlToPhpService::getFunctions()
+	 * @uses WsdlToPhpModel::getName()
 	 * @param string $_functionName the original function name
 	 * @return WsdlToPhpFunction|null
 	 */
 	public function getFunction($_functionName)
 	{
-		return array_key_exists($_functionName,$this->getFunctions())?$this->functions[$_functionName]:null;
+		foreach($this->getFunctions() as $function)
+		{
+			if($function->getName() === $_functionName)
+				return $function;
+		}
+		return null;
 	}
 	/**
 	 * Returns class name

@@ -1679,6 +1679,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::getService()
 	 * @uses WsdlToPhpGenerator::getServiceFunction()
 	 * @uses WsdlToPhpService::addFunction()
+	 * @uses WsdlToPhpFunction::setIsUnique()
 	 * @param string $_functionName the original function name
 	 * @param string $_functionParameter the original parameter name
 	 * @param string $_functionReturn the original return name
@@ -1689,8 +1690,14 @@ class WsdlToPhpGenerator extends SoapClient
 		$serviceName = $this->getServiceName($_functionName);
 		if(!$this->getService($serviceName))
 			$this->services[$serviceName] = new WsdlToPhpService($serviceName);
-		if(!$this->getServiceFunction($_functionName))
+		$serviceFunction = $this->getServiceFunction($_functionName);
+		if(!$serviceFunction)
 			$this->getService($serviceName)->addFunction($_functionName,$_functionParameter,$_functionReturn);
+		else
+		{
+			$serviceFunction->setIsUnique(false);
+			$this->getService($serviceName)->addFunction($_functionName,$_functionParameter,$_functionReturn,false);
+		}
 	}
 	/**
 	 * Gets a service by its name
@@ -1734,6 +1741,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpGenerator::getService()
 	 * @uses WsdlToPhpService::getFunction()
 	 * @param string $_functionName the original function name
+	 * @param mixed $_functionParameter the original function paramter
 	 * @return WsdlToPhpFunction|null
 	 */
 	private function getServiceFunction($_functionName)
