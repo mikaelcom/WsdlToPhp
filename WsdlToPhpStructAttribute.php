@@ -324,4 +324,3 @@ class WsdlToPhpStructAttribute extends WsdlToPhpModel
 		return __CLASS__;
 	}
 }
-?>

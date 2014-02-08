@@ -635,4 +635,3 @@ class WsdlToPhpModel
 		return __CLASS__;
 	}
 }
-?>

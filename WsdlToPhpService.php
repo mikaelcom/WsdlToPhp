@@ -240,4 +240,3 @@ class WsdlToPhpService extends WsdlToPhpModel
 		return __CLASS__;
 	}
 }
-?>

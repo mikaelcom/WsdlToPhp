@@ -180,7 +180,7 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 			 * Uses the parent constructor method
 			 */
 			if(WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
-				array_push($_body,(($model && $model->getIsStruct())?self::getGenericWsdlClassName():'parent') . '::__construct(array(' . implode(',',$constructParameters) . '));');
+				array_push($_body,(($model && $model->getIsStruct())?self::getGenericWsdlClassName():'parent') . '::__construct(array(' . implode(',',$constructParameters) . '),false);');
 			/**
 			 * Uses its own setters
 			 */
@@ -602,4 +602,3 @@ class WsdlToPhpStruct extends WsdlToPhpModel
 		return __CLASS__;
 	}
 }
-?>

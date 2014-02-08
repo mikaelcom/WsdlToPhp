@@ -155,4 +155,3 @@ class WsdlToPhpStructValue extends WsdlToPhpModel
 		return __CLASS__;
 	}
 }
-?>

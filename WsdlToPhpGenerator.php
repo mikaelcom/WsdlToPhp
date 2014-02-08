@@ -625,6 +625,7 @@ class WsdlToPhpGenerator extends SoapClient
 	/**
 	 * Generates all classes based on options
 	 * @uses WsdlToPhpGenerator::setPackageName()
+	 * @uses WsdlToPhpGenerator::getWsdl()
 	 * @uses WsdlToPhpGenerator::getStructs()
 	 * @uses WsdlToPhpGenerator::initStructs()
 	 * @uses WsdlToPhpGenerator::getServices()
@@ -652,7 +653,7 @@ class WsdlToPhpGenerator extends SoapClient
 	public function generateClasses($_packageName,$_rootDirectory,$_rootDirectoryRights = 0775,$_createRootDirectory = true)
 	{
 		self::initGlobals();
-		$wsdl = implode('',array_slice(array_keys($this->wsdls),0,1));
+		$wsdl = $this->getWsdl(0);
 		self::auditInit('generate_classes',$wsdl);
 		self::setPackageName($_packageName);
 		$rootDirectory = $_rootDirectory . (substr($_rootDirectory,-1) != '/'?'/':'');
@@ -1268,10 +1269,12 @@ class WsdlToPhpGenerator extends SoapClient
 			$content = str_replace(array(
 										'packageName',
 										'PackageName',
-										'meta_informations'),array(
+										'meta_informations',
+										"'wsdl_url_value'"),array(
 																lcfirst(self::getPackageName(false)),
 																self::getPackageName(),
-																$metaInformation),$content);
+																$metaInformation,
+																var_export(self::getWsdl(0),true)),$content);
 			file_put_contents($_rootDirectory . self::getPackageName() . 'WsdlClass.php',$content);
 			self::audit('generate_wsdlclass');
 			return array(
@@ -1284,6 +1287,7 @@ class WsdlToPhpGenerator extends SoapClient
 	 * Generates tutorial file
 	 * @uses WsdlToPhpGenerator::getOptionGenerateAutoloadFile()
 	 * @uses WsdlToPhpGenerator::getWsdls()
+	 * @uses WsdlToPhpGenerator::getWsdl()
 	 * @uses WsdlToPhpGenerator::getPackageName()
 	 * @uses WsdlToPhpGenerator::auditInit()
 	 * @uses WsdlToPhpGenerator::audit()
@@ -1322,7 +1326,7 @@ class WsdlToPhpGenerator extends SoapClient
 					{
 						$classNameVar = lcfirst($className);
 						$content .= "\r\n\r\n/**" . str_repeat('*',strlen("Example for $className")) . "\r\n * Example for $className\r\n */";
-						$content .= "\r\n\$$classNameVar = new $className(\$wsdl);";
+						$content .= "\r\n\$$classNameVar = new $className();";
 						foreach($classMethods as $classMethod)
 						{
 							$content .= "\r\n// sample call for $className::" . $classMethod->getName() . '()';
@@ -1404,7 +1408,7 @@ class WsdlToPhpGenerator extends SoapClient
 																lcfirst(self::getPackageName()),
 																ucfirst(self::getPackageName()),
 																strtoupper(self::getPackageName()),
-																implode('',array_slice(array_keys($this->getWsdls()),0,1)),
+																var_export($this->getWsdl(0),true),
 																$content),$fileContent);
 				file_put_contents($_rootDirectory . 'sample-' . strtolower(self::getPackageName()) . '.php',$fileContent);
 			}
@@ -2052,6 +2056,15 @@ class WsdlToPhpGenerator extends SoapClient
 		return $this->wsdls;
 	}
 	/**
+	 * Gets the WSDL at the index
+	 * @param int $_index
+	 * @return string|null
+	 */
+	public function getWsdl($_index)
+	{
+		return (is_array($this->wsdls) && count($this->wsdls) > $_index)?implode('',array_slice(array_keys($this->wsdls),$_index,1)):null;
+	}
+	/**
 	 * Sets the WSDLs
 	 * @param array
 	 * @return array
@@ -2072,14 +2085,14 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Adds Wsdl location meta information
-	 * @uses WsdlToPhpGenerator::getWsdls()
+	 * @uses WsdlToPhpGenerator::getWsdl()
 	 * @param string $_metaName meta name
 	 * @param mixed $_metaValue meta value
 	 * @return string
 	 */
 	public function addWsdlMeta($_metaName,$_metaValue)
 	{
-		return ($this->wsdls[implode('',array_slice(array_keys($this->wsdls),0,1))]['meta'][$_metaName] = $_metaValue);
+		return ($this->wsdls[$this->getWsdl(0)]['meta'][$_metaName] = $_metaValue);
 	}
 	/**
 	 * Methods to load WSDL from current WSDL when current WSDL imports other WSDL
@@ -3625,4 +3638,3 @@ class WsdlToPhpGenerator extends SoapClient
 		return __CLASS__;
 	}
 }
-?>

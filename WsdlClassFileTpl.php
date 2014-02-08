@@ -16,6 +16,11 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 */
 	const WSDL_URL = 'wsdl_url';
 	/**
+	 * Constant to define the default WSDL URI
+	 * @var string
+	 */
+	const VALUE_WSDL_URL = 'wsdl_url_value';
+	/**
 	 * Option key to define WSDL login
 	 * @var string
 	 */
@@ -244,6 +249,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 * @uses PackageNameWsdlClass::WSDL_TRACE
 	 * @uses PackageNameWsdlClass::WSDL_TYPEMAP
 	 * @uses PackageNameWsdlClass::WSDL_URL
+	 * @uses PackageNameWsdlClass::VALUE_WSDL_URL
 	 * @uses PackageNameWsdlClass::WSDL_USER_AGENT
 	 * @uses SOAP_SINGLE_ELEMENT_ARRAYS
 	 * @uses SOAP_USE_XSI_ARRAY_TYPE
@@ -264,7 +270,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 					self::WSDL_STREAM_CONTEXT=>null,
 					self::WSDL_TRACE=>true,
 					self::WSDL_TYPEMAP=>null,
-					self::WSDL_URL=>null,
+					self::WSDL_URL=>self::VALUE_WSDL_URL,
 					self::WSDL_USER_AGENT=>null);
 	}
 	/**

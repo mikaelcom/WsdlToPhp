@@ -121,9 +121,9 @@ if(true)
 	$w = new WsdlToPhpGenerator($wsdl);
 	WsdlToPhpGenerator::setOptionGenerateAutoloadFile(true);
 	WsdlToPhpGenerator::setOptionGenerateWsdlClassFile(true);
-	WsdlToPhpGenerator::setOptionResponseAsWsdlObject(true);
+	WsdlToPhpGenerator::setOptionResponseAsWsdlObject(false);
 	WsdlToPhpGenerator::setOptionGenerateTutorialFile(true);
-	WsdlToPhpGenerator::setOptionSendArrayAsParameter(false);
+	WsdlToPhpGenerator::setOptionSendArrayAsParameter(true);
 	WsdlToPhpGenerator::setOptionSendParametersAsArray(false);
 	WsdlToPhpGenerator::setOptionCategory(WsdlToPhpGenerator::OPT_CAT_START_NAME);
 	WsdlToPhpGenerator::setOptionSubCategory(WsdlToPhpGenerator::OPT_SUB_CAT_END_NAME);
@@ -138,4 +138,3 @@ if(true)
 	echo "\r\nGenerate doc end " . date('H:i:s');
 	print_r($w->getAudit());
 }
-?>
