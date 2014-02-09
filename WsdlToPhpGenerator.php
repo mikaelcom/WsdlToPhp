@@ -1691,9 +1691,15 @@ class WsdlToPhpGenerator extends SoapClient
 		if(!$this->getService($serviceName))
 			$this->services[$serviceName] = new WsdlToPhpService($serviceName);
 		$serviceFunction = $this->getServiceFunction($_functionName);
+		/**
+		 * Service function does not already exist, register it
+		 */
 		if(!$serviceFunction)
 			$this->getService($serviceName)->addFunction($_functionName,$_functionParameter,$_functionReturn);
-		else
+		/**
+		 * Service function exists with a different signature, register it too by identifying the service functions as non unique functions
+		 */
+		elseif($serviceFunction->getParameterType() != $_functionParameter)
 		{
 			$serviceFunction->setIsUnique(false);
 			$this->getService($serviceName)->addFunction($_functionName,$_functionParameter,$_functionReturn,false);
