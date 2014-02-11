@@ -121,11 +121,8 @@ if(true)
 	$w = new WsdlToPhpGenerator($wsdl);
 	WsdlToPhpGenerator::setOptionGenerateAutoloadFile(true);
 	WsdlToPhpGenerator::setOptionGenerateWsdlClassFile(true);
-	WsdlToPhpGenerator::setOptionResponseAsWsdlObject(false);
 	WsdlToPhpGenerator::setOptionGenerateTutorialFile(true);
-	WsdlToPhpGenerator::setOptionSendArrayAsParameter(true);
-	WsdlToPhpGenerator::setOptionSendParametersAsArray(false);
-	WsdlToPhpGenerator::setOptionCategory(WsdlToPhpGenerator::OPT_CAT_START_NAME);
+	WsdlToPhpGenerator::setOptionCategory(WsdlToPhpGenerator::OPT_CAT_TYPE);
 	WsdlToPhpGenerator::setOptionSubCategory(WsdlToPhpGenerator::OPT_SUB_CAT_END_NAME);
 	WsdlToPhpGenerator::setOptionAddComments(array('date'=>date('Y-m-d'),'author'=>'Mikaël DELSOL','version'=>1));
 	echo "\r\nStart generation at " . date('H:i:s');

@@ -112,15 +112,7 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		{
 			$model = self::getModelByName($this->getParameterType());
 			if($model && $model->getIsStruct() && !$model->getIsRestriction())
-			{
-				$attributes = $model->getAttributes(true,true);
-				if(count($attributes))
-				{
-					foreach($attributes as $attributeData)
-						array_push($comments,'@uses ' . $attributeData['model']->getPackagedName() . '::' . $attributeData['attribute']->getGetterName() . '()');
-					array_push($comments,'@param ' . $model->getPackagedName() . ' $_' . lcfirst($model->getPackagedName()));
-				}
-			}
+				array_push($comments,'@param ' . $model->getPackagedName() . ' $_' . lcfirst($model->getPackagedName()));
 			else
 				array_push($comments,'@param ' . $this->getParameterType() . ' $_' . lcfirst($this->getParameterType()));
 		}
@@ -215,13 +207,10 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		 */
 		if($parameterModel)
 		{
-			$soapParametersEnd = array();
 			$attributes = $parameterModel->getAttributes(true,true);
 			if(count($attributes))
 			{
-				foreach($attributes as $attributeData)
-					array_push($soapParametersEnd,(WsdlToPhpGenerator::getOptionSendArrayAsParameter()?'\'' . addslashes($attributeData['attribute']->getName()) . '\'=>':'') . $parameterName . '->' . $attributeData['attribute']->getGetterName() . '()');
-				$soapParametersStart = implode(',',$soapParametersEnd);
+				$soapParametersStart = $parameterName;
 				$soapParametersEnd = '';
 			}
 			else
