@@ -11,7 +11,8 @@ error_reporting(-1);
  */
 require_once dirname(__FILE__) . '/PackageNameAutoload.php';
 /**
- * Wsdl instanciation infos. By default, nothing as to be set. If you wish to override the SoapClient's options, please refer to the below sample.
+ * Wsdl instanciation infos. By default, nothing has to be set.
+ * If you wish to override the SoapClient's options, please refer to the sample below.
  * 
  * This is an associative array as:
  * - the key must be a PackageNameWsdlClass constant beginning with WSDL_

@@ -105,7 +105,6 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		{
 			array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::getSoapClient()');
 			array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::setResult()');
-			array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::getResult()');
 			array_push($comments,'@uses ' . self::getGenericWsdlClassName() . '::saveLastError()');
 		}
 		if(is_string($this->getParameterType()))
@@ -264,13 +263,12 @@ class WsdlToPhpFunction extends WsdlToPhpModel
 		}
 		else
 			$sendArrayAsParameterStart = $sendArrayAsParameterEnd = '';
-		array_push($_body,'$this->setResult(' . $responseAsObjStart . $soapCallStart . $sendParametersAsArrayStart . $sendArrayAsParameterStart . $soapParametersStart . $soapParametersEnd . $sendArrayAsParameterEnd . $sendParametersAsArrayEnd . $soapCallEnd . $responseAsObjEnd . ');');
+		array_push($_body,'return $this->setResult(' . $responseAsObjStart . $soapCallStart . $sendParametersAsArrayStart . $sendArrayAsParameterStart . $soapParametersStart . $soapParametersEnd . $sendArrayAsParameterEnd . $sendParametersAsArrayEnd . $soapCallEnd . $responseAsObjEnd . ');');
 		array_push($_body,'}');
 		array_push($_body,'catch(SoapFault $soapFault)');
 		array_push($_body,'{');
 		array_push($_body,'return !$this->saveLastError(__METHOD__,$soapFault);');
 		array_push($_body,'}');
-		array_push($_body,'return $this->getResult();');
 		array_push($_body,'}');
 		unset($parameterModel,$parameter,$responseAsObjStart,$responseAsObjEnd,$soapCallStart,$soapCallEnd,$sendParametersAsArrayStart,$sendParametersAsArrayEnd,$sendParametersAsArrayStart,$sendArrayAsParameterEnd,$soapParametersStart,$soapParametersEnd);
 	}

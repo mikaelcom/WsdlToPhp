@@ -355,7 +355,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 	 */
 	public static function getFormatedXml($_string,$_asDomDocument = false)
 	{
-		if(class_exists('DOMDocument'))
+		if(!empty($_string) && class_exists('DOMDocument'))
 		{
 			$dom = new DOMDocument('1.0','UTF-8');
 			$dom->formatOutput = true;
