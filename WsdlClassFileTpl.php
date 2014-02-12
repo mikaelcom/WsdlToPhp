@@ -869,4 +869,3 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
 		return __CLASS__;
 	}
 }
-?>

@@ -867,7 +867,6 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses WsdlToPhpModel::getClassDeclaration()
 	 * @uses WsdlToPhpStruct::getIsStruct()
-	 * @uses ezcPhpGenerator::finish()
 	 * @param string $_rootDirectory the directory
 	 * @param int $_rootDirectoryRights the directory permissions
 	 */
@@ -1016,7 +1015,6 @@ class WsdlToPhpGenerator extends SoapClient
 	 * @uses WsdlToPhpModel::getCleanName()
 	 * @uses WsdlToPhpModel::getPackagedName()
 	 * @uses WsdlToPhpModel::getClassDeclaration()
-	 * @uses ezcPhpGenerator::finish()
 	 * @param string $_rootDirectory the directory
 	 * @param int $_rootDirectoryRights the directory permissions
 	 * @return array the absolute paths to the generated files
@@ -1043,9 +1041,6 @@ class WsdlToPhpGenerator extends SoapClient
 	}
 	/**
 	 * Populate the php file with the object and the declarations
-	 * @uses ezcPhpGenerator::ezcPhpGenerator()
-	 * @uses ezcPhpGenerator::appendCustomCode()
-	 * @uses ezcPhpGenerator::finish()
 	 * @uses WsdlToPhpModel::cleanComment()
 	 * @uses WsdlToPhpGenerator::auditInit()
 	 * @uses WsdlToPhpGenerator::audit()
@@ -1087,7 +1082,7 @@ class WsdlToPhpGenerator extends SoapClient
 				}
 			}
 		}
-		array_push($content,str_repeat($indentationString,$indentationLevel) . '?>');
+		array_push($content,str_repeat($indentationString,$indentationLevel) . "\r\n");
 		file_put_contents($_fileName,implode("\r\n",$content));
 		self::audit('populate',$_fileName);
 	}
