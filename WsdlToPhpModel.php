@@ -263,7 +263,7 @@ class WsdlToPhpModel
                 $cleanedMetaValue = self::cleanComment($metaValue,$metaName == self::META_DOCUMENTATION?' ':',',stripos($metaName,'SOAPHeader') === false);
                 if(($_ignoreDocumentation && $metaName == self::META_DOCUMENTATION) || $cleanedMetaValue === '')
                     continue;
-                array_push($metaComments,($_addStars?' * ':'') . "\t- $metaName : " . (($metaName == self::META_FROM_SCHEMA && stripos($cleanedMetaValue,'http') === 0)?"{@link $cleanedMetaValue}":$cleanedMetaValue));
+                array_push($metaComments,($_addStars?' * ':'') . "    - $metaName : " . (($metaName == self::META_FROM_SCHEMA && stripos($cleanedMetaValue,'http') === 0)?"{@link $cleanedMetaValue}":$cleanedMetaValue));
             }
         }
         if(count($metaComments))

@@ -1053,7 +1053,7 @@ class WsdlToPhpGenerator extends SoapClient
         self::auditInit('populate');
         $content = array(
                         '<?php');
-        $indentationString = "\t";
+        $indentationString = "    ";
         $indentationLevel = 0;
         foreach($_declarations as $declaration)
         {
@@ -1082,8 +1082,8 @@ class WsdlToPhpGenerator extends SoapClient
                 }
             }
         }
-        array_push($content,str_repeat($indentationString,$indentationLevel) . "\r\n");
-        file_put_contents($_fileName,implode("\r\n",$content));
+        array_push($content,str_repeat($indentationString,$indentationLevel));
+        file_put_contents($_fileName,implode("\n",$content));
         self::audit('populate',$_fileName);
     }
     /**
@@ -1241,7 +1241,7 @@ class WsdlToPhpGenerator extends SoapClient
                     if(strpos($line,' */') === 0 && $counter)
                     {
                         foreach(self::getOptionAddComments() as $tagName=>$tagValue)
-                            array_push($content," * @$tagName $tagValue\r\n");
+                            array_push($content," * @$tagName $tagValue\n");
                         $counter--;
                     }
                     array_push($content,$line);
@@ -1258,7 +1258,7 @@ class WsdlToPhpGenerator extends SoapClient
                     $metaValueCleaned = WsdlToPhpModel::cleanComment($metaValue);
                     if($metaValueCleaned === '')
                         continue;
-                    $metaInformation .= (!empty($metaInformation)?"\r\n * ":'') . ucfirst($metaName) . " : $metaValueCleaned";
+                    $metaInformation .= (!empty($metaInformation)?"\n * ":'') . ucfirst($metaName) . " : $metaValueCleaned";
                 }
             }
             $content = str_replace(array(
@@ -1320,11 +1320,11 @@ class WsdlToPhpGenerator extends SoapClient
                     if(count($classMethods))
                     {
                         $classNameVar = lcfirst($className);
-                        $content .= "\r\n\r\n/**" . str_repeat('*',strlen("Example for $className")) . "\r\n * Example for $className\r\n */";
-                        $content .= "\r\n\$$classNameVar = new $className();";
+                        $content .= "\n\n/**" . str_repeat('*',strlen("Example for $className")) . "\n * Example for $className\n */";
+                        $content .= "\n\$$classNameVar = new $className();";
                         foreach($classMethods as $classMethod)
                         {
-                            $content .= "\r\n// sample call for $className::" . $classMethod->getName() . '()';
+                            $content .= "\n// sample call for $className::" . $classMethod->getName() . '()';
                             $methodDoComment = $classMethod->getDocComment();
                             $methodParameters = $classMethod->getParameters();
                             $methodParametersCount = count($methodParameters);
@@ -1342,7 +1342,7 @@ class WsdlToPhpGenerator extends SoapClient
                                  * Retrieve parameter type based on the method doc comment
                                  */
                                 $matches = array();
-                                preg_match('/\@param\s(.*)\s\$_' . $methodParameterName . '\r\n/',$methodDoComment,$matches);
+                                preg_match('/\@param\s(.*)\s\$_' . $methodParameterName . '\n/',$methodDoComment,$matches);
                                 $methodParameterType = (array_key_exists(1,$matches) && class_exists($matches[1]))?ucfirst($matches[1]):null;
                                 array_push($parameters,!empty($methodParameterType)?"new $methodParameterType(/*** update parameters list ***/)":"\$_$methodParameterName");
                             }
@@ -1352,17 +1352,17 @@ class WsdlToPhpGenerator extends SoapClient
                             if($isSetSoapHeaderMethod)
                             {
                                 $content .= " in order to initialize required SoapHeader";
-                                $content .= "\r\n\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . ');';
+                                $content .= "\n\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . ');';
                             }
                             /**
                              * Operation call
                              */
                             else
                             {
-                                $content .= "\r\nif(\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
-                                $content .= "\r\n\t" . 'print_r($' . $classNameVar . '->getResult());';
-                                $content .= "\r\nelse";
-                                $content .= "\r\n\tprint_r($" . $classNameVar . "->getLastError());";
+                                $content .= "\nif(\$$classNameVar->" . $classMethod->getName() . '(' . implode(',',$parameters) . '))';
+                                $content .= "\n    " . 'print_r($' . $classNameVar . '->getResult());';
+                                $content .= "\nelse";
+                                $content .= "\n    print_r($" . $classNameVar . "->getLastError());";
                             }
                         }
                     }
@@ -1385,7 +1385,7 @@ class WsdlToPhpGenerator extends SoapClient
                         if(strpos($line,' */') === 0 && $counter)
                         {
                             foreach(self::getOptionAddComments() as $tagName=>$tagValue)
-                                array_push($fileContent," * @$tagName $tagValue\r\n");
+                                array_push($fileContent," * @$tagName $tagValue\n");
                             $counter--;
                         }
                         array_push($fileContent,$line);
@@ -1412,7 +1412,7 @@ class WsdlToPhpGenerator extends SoapClient
         }
         elseif(!class_exists('ReflectionClass'))
         {
-            echo "\r\n WsdlToPhpGenerator::generateTutorialFile() needs ReflectionClass, see http://fr2.php.net/manual/fr/class.reflectionclass.php\r\n";
+            echo "\n WsdlToPhpGenerator::generateTutorialFile() needs ReflectionClass, see http://fr2.php.net/manual/fr/class.reflectionclass.php\n";
             return false;
         }
         return false;
@@ -3565,7 +3565,7 @@ class WsdlToPhpGenerator extends SoapClient
          * Display debug
          */
         if(!$_createOnly && self::getOptionDebug())
-            echo "\r\n" . date('Y-m-d H:i:s') . " - {$_auditName} - {$_auditElement}";
+            echo "\n" . date('Y-m-d H:i:s') . " - {$_auditName} - {$_auditElement}";
         return true;
     }
     /**
