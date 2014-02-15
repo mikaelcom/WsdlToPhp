@@ -181,7 +181,7 @@ class WsdlToPhpModel
             if($model->getIsStruct())
                 $extends = $model->getPackagedName();
         }
-        elseif(class_exists($this->getInheritance()))
+        elseif(class_exists($this->getInheritance()) && stripos($this->getInheritance(),WsdlToPhpGenerator::getPackageName()) === 0)
             $extends = $this->getInheritance();
         if(empty($extends) && WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
             $extends = self::getGenericWsdlClassName();
