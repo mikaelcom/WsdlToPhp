@@ -103,6 +103,46 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
      */
     const WSDL_KEEP_ALIVE = 'wsdl_keep_alive';
     /**
+     * Option key to define WSDL proxy_host
+     * @var string
+     */
+    const WSDL_PROXY_HOST = 'wsdl_proxy_host';
+    /**
+     * Option key to define WSDL proxy_port
+     * @var string
+     */
+    const WSDL_PROXY_PORT = 'wsdl_proxy_port';
+    /**
+     * Option key to define WSDL proxy_login
+     * @var string
+     */
+    const WSDL_PROXY_LOGIN = 'wsdl_proxy_login';
+    /**
+     * Option key to define WSDL proxy_password
+     * @var string
+     */
+    const WSDL_PROXY_PASSWORD = 'wsdl_proxy_password';
+    /**
+     * Option key to define WSDL local_cert
+     * @var string
+     */
+    const WSDL_LOCAL_CERT = 'wsdl_local_cert';
+    /**
+     * Option key to define WSDL passphrase
+     * @var string
+     */
+    const WSDL_PASSPHRASE = 'wsdl_passphrase';
+    /**
+     * Option key to define WSDL authentication
+     * @var string
+     */
+    const WSDL_AUTHENTICATION = 'wsdl_authentication';
+    /**
+     * Option key to define WSDL ssl_method
+     * @var string
+     */
+    const WSDL_SSL_METHOD = 'wsdl_ssl_method';
+    /**
      * Soapclient called to communicate with the actual SOAP Service
      * @var SoapClient
      */
@@ -208,6 +248,7 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
      * Method initiating SoapClient
      * @uses PackageNameClassMap::classMap()
      * @uses PackageNameWsdlClass::getDefaultWsdlOptions()
+     * @uses PackageNameWsdlClass::getSoapClientClassName()
      * @uses PackageNameWsdlClass::setSoapClient()
      * @param array $_wsdlOptions WSDL options
      * @return void
@@ -230,9 +271,26 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
             {
                 $wsdlUrl = $wsdlOptions[str_replace('wsdl_','',self::WSDL_URL)];
                 unset($wsdlOptions[str_replace('wsdl_','',self::WSDL_URL)]);
-                self::setSoapClient(new SoapClient($wsdlUrl,$wsdlOptions));
+                $soapClientClassName = self::getSoapClientClassName();
+                self::setSoapClient(new $soapClientClassName($wsdlUrl,$wsdlOptions));
             }
         }
+    }
+    /**
+     * Returns the SoapClient class name to use to create the instance of the SoapClient.
+     * The SoapClient class is determined based on the package name.
+     * If a class is named as {PackageName}SoapClient, then this is the class that will be used.
+     * Be sure that this class inherits from the native PHP SoapClient class and this class has been loaded or can be loaded.
+     * The goal is to allow the override of the SoapClient without having to modify this generated class.
+     * Then the overridding SoapClient class can override for example the SoapClient::__toRequest() method if it is needed.
+     * @return string
+     */
+    public static function getSoapClientClassName()
+    {
+        if(class_exists('PackageNameSoapClient') && is_subclass_of('PackageNameSoapClient','SoapClient'))
+            return 'PackageNameSoapClient';
+        else
+            return 'SoapClient';
     }
     /**
      * Method returning all default options values
@@ -251,6 +309,14 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
      * @uses PackageNameWsdlClass::WSDL_URL
      * @uses PackageNameWsdlClass::VALUE_WSDL_URL
      * @uses PackageNameWsdlClass::WSDL_USER_AGENT
+     * @uses PackageNameWsdlClass::WSDL_PROXY_HOST
+     * @uses PackageNameWsdlClass::WSDL_PROXY_PORT
+     * @uses PackageNameWsdlClass::WSDL_PROXY_LOGIN
+     * @uses PackageNameWsdlClass::WSDL_PROXY_PASSWORD
+     * @uses PackageNameWsdlClass::WSDL_LOCAL_CERT
+     * @uses PackageNameWsdlClass::WSDL_PASSPHRASE
+     * @uses PackageNameWsdlClass::WSDL_AUTHENTICATION
+     * @uses PackageNameWsdlClass::WSDL_SSL_METHOD
      * @uses SOAP_SINGLE_ELEMENT_ARRAYS
      * @uses SOAP_USE_XSI_ARRAY_TYPE
      * @return array
@@ -271,7 +337,15 @@ class PackageNameWsdlClass extends stdClass implements ArrayAccess,Iterator,Coun
                     self::WSDL_TRACE=>true,
                     self::WSDL_TYPEMAP=>null,
                     self::WSDL_URL=>self::VALUE_WSDL_URL,
-                    self::WSDL_USER_AGENT=>null);
+                    self::WSDL_USER_AGENT=>null,
+                    self::WSDL_PROXY_HOST=>null,
+                    self::WSDL_PROXY_PORT=>null,
+                    self::WSDL_PROXY_LOGIN=>null,
+                    self::WSDL_PROXY_PASSWORD=>null,
+                    self::WSDL_LOCAL_CERT=>null,
+                    self::WSDL_PASSPHRASE=>null,
+                    self::WSDL_AUTHENTICATION=>null,
+                    self::WSDL_SSL_METHOD=>null);
     }
     /**
      * Allows to set the SoapClient location to call
