@@ -28,7 +28,7 @@ require_once dirname(__FILE__) . '/PackageNameAutoload.php';
  * $wsdl[PackageNameWsdlClass::WSDL_PASSWD] = '**********';
  * etc....
  * Then instantiate the Service class as: 
- * - $processor = new ProcessorServiceGet($wsdl);
+ * - $wsdlObject = new PackageNameWsdlClass($wsdl);
  */
 /**
  * Examples
