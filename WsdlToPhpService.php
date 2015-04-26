@@ -195,7 +195,7 @@ class WsdlToPhpService extends WsdlToPhpModel
     }
     /**
      * Returns the functions of the service
-     * @return array
+     * @return array[WsdlToPhpFunction]
      */
     public function getFunctions()
     {
@@ -231,13 +231,15 @@ class WsdlToPhpService extends WsdlToPhpModel
      * @uses WsdlToPhpService::getFunctions()
      * @uses WsdlToPhpModel::getName()
      * @param string $_functionName the original function name
+     * @param string $_functionParameter the original parameter name
+     * @param string $_functionReturn the original return name
      * @return WsdlToPhpFunction|null
      */
-    public function getFunction($_functionName)
+    public function getFunction($_functionName,$_functionParameter = null,$_functionReturn = null)
     {
         foreach($this->getFunctions() as $function)
         {
-            if($function->getName() === $_functionName)
+            if($function->getName() === $_functionName && ($_functionParameter === null || $function->getParameterType() === $_functionParameter) && ($_functionReturn === null || $function->getReturnType() === $_functionReturn))
                 return $function;
         }
         return null;
