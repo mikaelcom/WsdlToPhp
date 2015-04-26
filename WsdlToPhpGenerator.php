@@ -1166,7 +1166,7 @@ class WsdlToPhpGenerator extends SoapClient
                     $filename);
     }
     /**
-     * Generates autoload file for all classes. 
+     * Generates autoload file for all classes.
      * The classes are loaded automatically in order of their dependency regarding their inheritance (defined in WsdlToPhpGenerate::generateStructsClasses() method).
      * @uses WsdlToPhpGenerator::getPackageName()
      * @uses WsdlToPhpGenerator::getOptionAddComments()
@@ -1667,7 +1667,9 @@ class WsdlToPhpGenerator extends SoapClient
         elseif($serviceFunction->getParameterType() != $_functionParameter)
         {
             $serviceFunction->setIsUnique(false);
-            $this->getService($serviceName)->addFunction($_functionName,$_functionParameter,$_functionReturn,false);
+            $sameServiceFunction = $this->getServiceFunction($_functionName,$_functionParameter,$_functionReturn);
+            if($sameServiceFunction === null)
+                $this->getService($serviceName)->addFunction($_functionName,$_functionParameter,$_functionReturn,false);
         }
     }
     /**
@@ -1685,12 +1687,13 @@ class WsdlToPhpGenerator extends SoapClient
      * @uses WsdlToPhpGenerator::getService()
      * @uses WsdlToPhpService::getFunction()
      * @param string $_functionName the original function name
-     * @param mixed $_functionParameter the original function paramter
+     * @param string $_functionParameter the original parameter name
+     * @param string $_functionReturn the original return name
      * @return WsdlToPhpFunction|null
      */
-    private function getServiceFunction($_functionName)
+    private function getServiceFunction($_functionName,$_functionParameter = null,$_functionReturn = null)
     {
-        return $this->getService($this->getServiceName($_functionName))?$this->getService($this->getServiceName($_functionName))->getFunction($_functionName):null;
+        return $this->getService($this->getServiceName($_functionName))?$this->getService($this->getServiceName($_functionName))->getFunction($_functionName,$_functionParameter,$_functionReturn):null;
     }
     /**
      * Sets the service function documentation
@@ -2101,11 +2104,11 @@ class WsdlToPhpGenerator extends SoapClient
              */
             array_push($tags,'attribute');
             /**
-             * Retrieve operation message types in order to fully determine themselves  
+             * Retrieve operation message types in order to fully determine themselves
              */
             array_push($tags,'input');
             /**
-             * Retrieve operation message types in order to fully determine themselves  
+             * Retrieve operation message types in order to fully determine themselves
              */
             array_push($tags,'output');
             foreach($tags as $tagName)
@@ -2458,7 +2461,9 @@ class WsdlToPhpGenerator extends SoapClient
      * @uses WsdlToPhpGenerator::auditInit()
      * @uses WsdlToPhpGenerator::audit()
      * @uses WsdlToPhpGenerator::addStructMeta()
+     * @uses WsdlToPhpModel::setIsAbstract()
      * @uses DOMElement::getAttribute()
+     * @uses DOMElement::hasAttribute()
      * @param string $_wsdlLocation the wsdl location
      * @param DOMNode $_domNode the node
      * @param string $_fromWsdlLocation the wsdl location imported
@@ -2468,7 +2473,12 @@ class WsdlToPhpGenerator extends SoapClient
     {
         self::auditInit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
         if($this->getStruct($_domNode->getAttribute('name')))
-            $this->getStruct($_domNode->getAttribute('name'))->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+        {
+            $struct = $this->getStruct($_domNode->getAttribute('name'));
+            $struct->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+            if ($_domNode->hasAttribute('abstract') && ($_domNode->getAttribute('abstract') == 1 || $_domNode->getAttribute('abstract') == 'true'))
+                $struct->setIsAbstract(true);
+        }
         self::audit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
     }
     /**
@@ -3480,7 +3490,7 @@ class WsdlToPhpGenerator extends SoapClient
      * @uses WsdlToPhpGenerator::getGlobal()
      * @uses WsdlToPhpGenerator::setGlobal()
      * @uses WsdlToPhpGenerator::getOptionDebug()
-     * @param string $_auditName the type of audit (parsing, generating, etc..). If audit name is parsing_DOM, than parsing is created to cumulate time for all parsing processes 
+     * @param string $_auditName the type of audit (parsing, generating, etc..). If audit name is parsing_DOM, than parsing is created to cumulate time for all parsing processes
      * @param string $_auditElement audit specific element
      * @param int $_spentTime already spent time on the current audit category (and element)
      * @param bool $_createOnly indicates if the element must be only created or not
@@ -3571,7 +3581,7 @@ class WsdlToPhpGenerator extends SoapClient
     /**
      * Method to initialize audit for an element
      * @uses WsdlToPhpGenerator::audit()
-     * @param string $_auditName the type of audit (parsing, generating, etc..). If audit name is parsing_DOM, than parsing is created to cumulate time for all parsing processes 
+     * @param string $_auditName the type of audit (parsing, generating, etc..). If audit name is parsing_DOM, than parsing is created to cumulate time for all parsing processes
      * @param string $_auditElement audit specific element
      * @return bool true
      */
