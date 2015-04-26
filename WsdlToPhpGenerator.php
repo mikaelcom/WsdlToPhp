@@ -2461,7 +2461,9 @@ class WsdlToPhpGenerator extends SoapClient
      * @uses WsdlToPhpGenerator::auditInit()
      * @uses WsdlToPhpGenerator::audit()
      * @uses WsdlToPhpGenerator::addStructMeta()
+     * @uses WsdlToPhpModel::setIsAbstract()
      * @uses DOMElement::getAttribute()
+     * @uses DOMElement::hasAttribute()
      * @param string $_wsdlLocation the wsdl location
      * @param DOMNode $_domNode the node
      * @param string $_fromWsdlLocation the wsdl location imported
@@ -2471,7 +2473,12 @@ class WsdlToPhpGenerator extends SoapClient
     {
         self::auditInit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
         if($this->getStruct($_domNode->getAttribute('name')))
-            $this->getStruct($_domNode->getAttribute('name'))->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+        {
+            $struct = $this->getStruct($_domNode->getAttribute('name'));
+            $struct->setFromSchema(!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
+            if ($_domNode->hasAttribute('abstract') && ($_domNode->getAttribute('abstract') == 1 || $_domNode->getAttribute('abstract') == 'true'))
+                $struct->setIsAbstract(true);
+        }
         self::audit('managewsdlnode_element',!empty($_wsdlLocation)?$_wsdlLocation:$_fromWsdlLocation);
     }
     /**

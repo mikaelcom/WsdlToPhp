@@ -42,6 +42,13 @@ class WsdlToPhpModel
      */
     private $owner = null;
     /**
+     * Indicates that the current elemen is an abstract element.
+     * It allows to generated an abstract class.
+     * This will happen for element/complexType that are defined with abstract="true"
+     * @var bool
+     */
+    private $isAbstract = false;
+    /**
      * Store all the models generated
      * @var array
      */
@@ -185,7 +192,7 @@ class WsdlToPhpModel
             $extends = $this->getInheritance();
         if(empty($extends) && WsdlToPhpGenerator::getOptionGenerateWsdlClassFile())
             $extends = self::getGenericWsdlClassName();
-        array_push($class,'class ' . $this->getPackagedName() . (!empty($extends)?' extends ' . $extends:''));
+        array_push($class,($this->getIsAbstract()?'abstract ':'') . 'class ' . $this->getPackagedName() . (!empty($extends)?' extends ' . $extends:''));
         /**
          * Class body starts here
          */
@@ -437,6 +444,23 @@ class WsdlToPhpModel
         $this->owner = $_owner;
         self::updateModels($this);
         return $_owner;
+    }
+    /**
+     * @return bool
+     */
+    public function getIsAbstract()
+    {
+        return $this->isAbstract;
+    }
+    /**
+     * @param bool $_isAbstract
+     * @return bool
+     */
+    public function setIsAbstract($_isAbstract)
+    {
+        $this->isAbstract = $_isAbstract;
+        self::updateModels($this);
+        return $_isAbstract;
     }
     /**
      * Returns true if the original name is safe to use as a PHP property, variable name or class name
