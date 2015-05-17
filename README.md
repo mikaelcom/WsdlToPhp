@@ -1,6 +1,8 @@
-WsdlToPhpGenerator [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/mikaelcom/WsdlToPhp/badges/quality-score.png?s=a52087390e8668b380c1b68fb49a016e8d318615)](https://scrutinizer-ci.com/g/mikaelcom/WsdlToPhp/)
-=========
+# Warning
+This project is not intended to be improved/enhanced anymore. It is kept in his original state for those who use it as it is.
+From now, please look at https://github.com/WsdlToPhp/PackageGenerator to get the refactored and improved version of this project which is evoluting.
 
+# WsdlToPhpGenerator
 Generate PHP classes based on a WSDL
 
 This package allows to programmatically send request to a SOAP service using PHP classes. In order to do that, this class generates each class for each request and each request parameters and each request response. Each class is stored in a hierarchical folder/sub-folder system. The SOAP client is then abstracted and you only deal with objects representing the WSDL types.
@@ -13,9 +15,7 @@ Read the PHPDoc online here : http://phpdoc.wsdltophp.com/
 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KXBVCHP3UDQPL)
 
-Tutorial
-========
-
+# Tutorial
 The best way to understand how to use this code is to first look at the samples-generator.php file located in the root directory.
 This file shows you how to basically instanciate the WsdlToPhpGenerator class. This class has options in order to change its behaviour.
 
